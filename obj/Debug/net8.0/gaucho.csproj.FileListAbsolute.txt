@@ -70,3 +70,4 @@
 /home/martin/gaucho/obj/Debug/net8.0/gaucho.csproj.Up2Date
 /home/martin/gaucho/obj/Debug/net8.0/gaucho.genruntimeconfig.cache
 /home/martin/gaucho/obj/Debug/net8.0/ref/gaucho.dll
+/home/martin/gaucho/obj/Debug/net8.0/gaucho.sourcelink.json

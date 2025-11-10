@@ -1,6 +1,7 @@
 using System;
 
-namespace Gaucho;
+namespace Gaucho
+{
 
     /// <summary>
     /// Gambas-style helper functions for type conversion and string manipulation
@@ -317,59 +318,7 @@ namespace Gaucho;
 
         #endregion
 
-        #region File Path Helper Functions
-
-        /// <summary>
-        /// Returns the file name part after the last '/' in the path.
-        /// If no '/' is found, returns the original string.
-        /// Mirrors the behavior of the provided VB FileFromPath.
-        /// </summary>
-        /// <param name="sPath">The file path</param>
-        /// <returns>The file name portion</returns>
-        public static string? FileFromPath(string? sPath)
-        {
-            if (string.IsNullOrEmpty(sPath)) return sPath;
-            int last = sPath.LastIndexOf('/');
-            if (last == -1) return sPath;
-            return sPath.Substring(last + 1);
-        }
-
-        /// <summary>
-        /// Returns the path portion including the trailing '/' up to the last '/'.
-        /// If no '/' is found, returns an empty string.
-        /// Mirrors the behavior of the provided VB PathFromFile.
-        /// </summary>
-        /// <param name="sPath">The file path</param>
-        /// <returns>The path portion with trailing slash</returns>
-        public static string? PathFromFile(string? sPath)
-        {
-            if (sPath == null) return null;
-            int last = sPath.LastIndexOf('/');
-            if (last == -1) return string.Empty;
-            // include the trailing slash, matching VB's Left(..., p2 - 1) behavior
-            return sPath.Substring(0, last + 1);
-        }
-
-        /// <summary>
-        /// Returns the file name without its extension (the part before the last '.').
-        /// If there is no '.' in the file name, returns the file name unchanged.
-        /// Mirrors the behavior of the provided VB FileWithoutExtension.
-        /// </summary>
-        /// <param name="sPath">The file path</param>
-        /// <returns>The file name without extension</returns>
-        public static string? FileWithoutExtension(string? sPath)
-        {
-            if (sPath == null) return null;
-            string? fileName = FileFromPath(sPath);
-            if (fileName == null) return null;
-            int idx = fileName.LastIndexOf('.');
-            if (idx == -1) return fileName;
-            // if '.' is the first character, this returns an empty string (matches VB behavior)
-            return fileName.Substring(0, idx);
-        }
-
-        #endregion
-
+       
         #region Bit Manipulation Functions
 
         /// <summary>
@@ -418,3 +367,4 @@ namespace Gaucho;
 
         #endregion
     }
+}

@@ -79,32 +79,32 @@ public partial class MainWindow
 
         var quickAccessList = CreateTopBarQuickList();
 
-        topButtonBar.Append(CreateButton("", "new", Config.ButtonSize, Trans.Translate("New document")));
-        topButtonBar.Append(CreateButton("", "open", Config.ButtonSize, Trans.Translate("Open document")));
+        topButtonBar.Append(CreateButton("prog-new", "new", Config.ButtonSize, Trans.Translate("New document")));
+        topButtonBar.Append(CreateButton("prog-open", "open", Config.ButtonSize, Trans.Translate("Open document")));
         topButtonBar.Append(openHistoryButton);
         // topButtonBar.Append(quickAccessList);
-        topButtonBar.Append(CreateButton("", "save", Config.ButtonSize, Trans.Translate("Save document")));
-        topButtonBar.Append(CreateButton("", "export", Config.ButtonSize, Trans.Translate("Export document")));
+        topButtonBar.Append(CreateButton("prog-save", "save", Config.ButtonSize, Trans.Translate("Save document")));
+        topButtonBar.Append(CreateButton("prog-export", "export", Config.ButtonSize, Trans.Translate("Export document")));
         topButtonBar.Append(Separator.New(Gtk.Orientation.Vertical));
-        topButtonBar.Append(CreateButton("", "print", Config.ButtonSize, Trans.Translate("Print document")));
-        topButtonBar.Append(CreateButton("", "config", Config.ButtonSize, Trans.Translate("Configure document")));
+        topButtonBar.Append(CreateButton("prog-print", "print", Config.ButtonSize, Trans.Translate("Print document")));
+        topButtonBar.Append(CreateButton("prog-config", "config", Config.ButtonSize, Trans.Translate("Configure document")));
         topButtonBar.Append(Separator.New(Gtk.Orientation.Vertical));
-        topButtonBar.Append(CreateButton("", "cadZoomW", Config.ButtonSize, Trans.Translate("Zoom Window")));
-        topButtonBar.Append(CreateButton("", "cadZoomE", Config.ButtonSize, Trans.Translate("Zoom Extents")));
+        topButtonBar.Append(CreateButton("prog-cadZoomW", "cadZoomW", Config.ButtonSize, Trans.Translate("Zoom Window")));
+        topButtonBar.Append(CreateButton("prog-cadZoomE", "cadZoomE", Config.ButtonSize, Trans.Translate("Zoom Extents")));
         topButtonBar.Append(Separator.New(Gtk.Orientation.Vertical));
-        topButtonBar.Append(CreateButton("", "undo", Config.ButtonSize, Trans.Translate("Undo last action")));
-        topButtonBar.Append(CreateButton("", "redo", Config.ButtonSize, Trans.Translate("Redo last action")));
+        topButtonBar.Append(CreateButton("prog-undo", "undo", Config.ButtonSize, Trans.Translate("Undo last action")));
+        topButtonBar.Append(CreateButton("prog-redo", "redo", Config.ButtonSize, Trans.Translate("Redo last action")));
         topButtonBar.Append(Separator.New(Gtk.Orientation.Vertical));
-        topButtonBar.Append(CreateButton("", "cadLayers", Config.ButtonSize, Trans.Translate("Layers management")));
+        topButtonBar.Append(CreateButton("prog-cadLayers", "cadLayers", Config.ButtonSize, Trans.Translate("Layers management")));
         var Layerslist = DropDown.NewFromStrings(new string[] { "Layer 1", "Layer 2", "Layer 3" });
         Layerslist.SetTooltipText("Select Layer");
         topButtonBar.Append(Layerslist);
-        topButtonBar.Append(CreateButton("", "colors", Config.ButtonSize, Trans.Translate("Select Color")));
-        topButtonBar.Append(CreateButton("", "linetype", Config.ButtonSize, Trans.Translate("Select Line Type")));
-        topButtonBar.Append(CreateButton("", "linewt", Config.ButtonSize, Trans.Translate("Select Line Weight")));
-        topButtonBar.Append(CreateButton("", "dimstyle", Config.ButtonSize, Trans.Translate("Select Dimension Style")));
+        topButtonBar.Append(CreateButton("prog-colors", "colors", Config.ButtonSize, Trans.Translate("Select Color")));
+        topButtonBar.Append(CreateButton("prog-linetype", "linetype", Config.ButtonSize, Trans.Translate("Select Line Type")));
+        topButtonBar.Append(CreateButton("prog-linewt", "linewt", Config.ButtonSize, Trans.Translate("Select Line Weight")));
+        topButtonBar.Append(CreateButton("prog-dimstyle", "dimstyle", Config.ButtonSize, Trans.Translate("Select Dimension Style")));
         topButtonBar.Append(Separator.New(Gtk.Orientation.Vertical));
-        topButtonBar.Append(CreateButton("", "about", Config.ButtonSize, Trans.Translate("About")));
+        topButtonBar.Append(CreateButton("prog-about", "about", Config.ButtonSize, Trans.Translate("About")));
 
 
         // Left toolbar with sectors
