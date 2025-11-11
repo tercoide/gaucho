@@ -1,13 +1,15 @@
 
-    // Port of Gambas ToolsBase.class -> C#
-    //
-    // Notes:
-    // - This is a direct behavioral translation, not a full idiomatic rewrite.
-    // - External globals and types referenced here (Gcd, gl, glx, Mouse, clsEntities, cadSelection, clsMouseTracking, Paint, Color, DrawingAIds, etc.)
-    //   must exist in your project. Replace or adapt references to match your codebase.
-    // - Gambas "Float" -> double. Collections -> List<T> or project-specific collection types.
-    // - Some methods are left as thin wrappers/stubs (NewParameter, Run, KeyPress/KeyDown/KeyUp) because their behavior depends on other classes.
-    public static class ToolsBase
+// Port of Gambas ToolsBase.class -> C#
+//
+// Notes:
+// - This is a direct behavioral translation, not a full idiomatic rewrite.
+// - External globals and types referenced here (Gcd, gl, glx, Mouse, clsEntities, cadSelection, clsMouseTracking, Paint, Color, DrawingAIds, etc.)
+//   must exist in your project. Replace or adapt references to match your codebase.
+// - Gambas "Float" -> double. Collections -> List<T> or project-specific collection types.
+// - Some methods are left as thin wrappers/stubs (NewParameter, Run, KeyPress/KeyDown/KeyUp) because their behavior depends on other classes.
+using OpenTK.Graphics.OpenGL;
+
+public interface ToolsBase
     {
         public const string Gender = "TOOLSBASE";
         public const string USEWITH = "";
@@ -26,7 +28,7 @@
         public static double SelStartXr = 0.0;
         public static double SelStartYr = 0.0;
         public static double SelEndXr = 0.0;
-        public static double SelEndyr = 0.0;
+        public static double SelEndYr = 0.0;
 
         // Start/End in real coordinates for other uses
         public static double StartXr = 0.0;
@@ -97,14 +99,14 @@
             // Assumes 'gl' API exists with PushMatrix/PopMatrix/Translatef/Rotatef/Scalef/CallList methods.
             try
             {
-                gl.Translatef(Gcd.Drawing.Sheet.PanBaseRealX, Gcd.Drawing.Sheet.PanBaseRealY, 0.0f);
-                gl.PushMatrix();
-                gl.Translatef((float)glTranslate[0], (float)glTranslate[1], (float)glTranslate[2]);
-                gl.Rotatef((float)glAngle, (float)glRotate[0], (float)glRotate[1], (float)glRotate[2]);
-                gl.Scalef((float)glScale[0], (float)glScale[1], (float)glScale[2]);
-                gl.CallList(Gcd.Drawing.GlListEntitiesSelected);
-                gl.PopMatrix();
-                gl.Translatef(-(float)Gcd.Drawing.Sheet.PanBaseRealX, -(float)Gcd.Drawing.Sheet.PanBaseRealY, 0.0f);
+                GL.Translatef(Gcd.Drawing.Sheet.PanBaseRealX, Gcd.Drawing.Sheet.PanBaseRealY, 0.0f);
+                GL.PushMatrix();
+                GL.Translatef((float)glTranslate[0], (float)glTranslate[1], (float)glTranslate[2]);
+                GL.Rotatef((float)glAngle, (float)glRotate[0], (float)glRotate[1], (float)glRotate[2]);
+                GL.Scalef((float)glScale[0], (float)glScale[1], (float)glScale[2]);
+                GL.CallList(Gcd.Drawing.GlListEntitiesSelected);
+                GL.PopMatrix();
+                GL.Translatef(-(float)Gcd.Drawing.Sheet.PanBaseRealX, -(float)Gcd.Drawing.Sheet.PanBaseRealY, 0.0f);
             }
             catch (Exception)
             {

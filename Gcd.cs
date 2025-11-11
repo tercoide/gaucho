@@ -86,22 +86,21 @@ public static class Gcd
         public static Image picPrintOn;
         public static Image picPrintOff;
 
-        //---------------------------------------------------------------
-        // Point of Interest
+    //---------------------------------------------------------------
+    // Point of Interest
 
-        enum poi {
-            poiEndPoint = 1,
-            poiMIdPoint = 2,
-            poiQuadrant = 4,
-            poiTangent = 8,
-            poiCenter = 16,
-            poiIntersection = 32,
-            poiPerpendicular = 64,
-            poiNearest = 128,
-            poiBasePoint = 256,
-            poiAparentCenter = 512
-        }
-        // CAD colors
+    public const int poiEndPoint = 1;
+    public const int poiMIdPoint = 2;
+    public const int poiQuadrant = 4;
+    public const int poiTangent = 8;
+    public const int poiCenter = 16;
+    public const int poiIntersection = 32;
+    public const int poiPerpendicular = 64;
+    public const int poiNearest = 128;
+    public const int poiBasePoint = 256;
+    public const int poiAparentCenter = 512;
+
+    // CAD colors
         public const int ColorBlack = 0;
         public const int ColorRed = 1;
         public const int ColorBlue = 2;
@@ -1174,13 +1173,7 @@ public static class Gcd
 
         }
 
-        public static void RefreshTexts()
-        {
 
-
-            fmain.tmrSlash_Timer();
-
-        }
 
         // Regenera las listas de OpenGL
         public static void Regen()

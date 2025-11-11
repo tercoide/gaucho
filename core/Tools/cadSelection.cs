@@ -1,6 +1,6 @@
 namespace Gaucho;
 
-class cadSelection
+class cadSelection : IToolsBase
 {
  // Gambas class file
 

@@ -7,7 +7,7 @@
     // - Entity.P is expected to be double[] (x,y pairs). Adjust if your Entity model differs.
     // - Methods such as Gcd.CCC[gender].NewParameter / Finish / BuildGeometry are called as in the original.
     // - Error handling: Gambas Try blocks are translated to try/catch where sensible.
-    public static class cadEntityBuilder
+    public static class cadEntityBuilder : ToolsBase
     {
         // Identity
         public const string Gender = "BUILDER";
