@@ -9,7 +9,7 @@ using Menu = Gio.Menu;
 using System.Security.Cryptography.X509Certificates;
 namespace Gaucho;
 
-public partial class MainWindow : ApplicationWindow
+public partial class fMain : ApplicationWindow
 {
     private HeaderBar _headerBar = null!;
     private Box _mainBox = null!;
@@ -25,7 +25,7 @@ public partial class MainWindow : ApplicationWindow
     GestureClick mouse_click = null!;
 
 
-    public MainWindow(Application app) : base()
+    public fMain(Application app) : base()
     {
         Application = app;
         InitializeComponent();

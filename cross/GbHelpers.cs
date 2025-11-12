@@ -1,4 +1,5 @@
 using System;
+using OpenTK.Windowing.Common;
 
 namespace Gaucho
 {
@@ -6,6 +7,28 @@ namespace Gaucho
     /// <summary>
     /// Gambas-style helper functions for type conversion and string manipulation
     /// </summary>
+    /// 
+    public static class Mouse
+
+    {
+        public static int X = 0;
+        public static int Y = 0;
+        public static int Delta = 0; 
+        public static bool Left = false;
+        public static bool Right = false;
+        public static bool Middle = false;
+
+        public static void Update(int x, int y, bool left, bool right, bool middle)
+        {
+            X = x;
+            Y = y;
+            Left = left;
+            Right = right;
+            Middle = middle;
+        }
+
+    }
+
     public static class Gb
     {
         #region Type Conversion Functions
@@ -366,5 +389,19 @@ namespace Gaucho
         }
 
         #endregion
+        public static double ToRadians(double degrees)
+        {
+            return degrees * (Math.PI / 180.0);
+        }
+
+        public static double ToDegrees(double radians)
+        {
+            return radians * (180.0 / Math.PI);
+        }
+        public static void  Wait(int value)
+        {
+            System.Threading.Thread.Sleep(value);
+        }
+
     }
 }

@@ -108,8 +108,8 @@ public class Drawing
     // public Undo uUndo = new Undo();
 
     // interaccion del mouse en pantalla
-    // public LastPoint[] LastPoint = new LastPoint[];                 //// ultimo punto marcado o null si no existe
-    public double[] iEntity = [0, 0, 0];                  //// las coordenadas del punto encontrado y el tipo de punto
+    public int[] LastPoint = new int[2];                 //// ultimo punto marcado o null si no existe
+    public double[] iEntity = new double[3] { 0, 0, 0 };                  //// las coordenadas del punto encontrado y el tipo de punto
     public Entity? HoveredEntity;                 //// La entidad quee esta debajo del mouse
     public Entity? HoveredInsert;                  //// Si la entidad pertenece a un inserto, es este
     public List<Entity> HoveredEntities = [];          //// Las entidades que estan debajo del mouse

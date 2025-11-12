@@ -1,7 +1,7 @@
 
 namespace Gaucho
 {
-    public static class main
+    public static class Starter
     {
         // Gambas module file
 
@@ -90,15 +90,15 @@ namespace Gaucho
             // Public dirTemplates As String = User.Home &/ ".config/GambasCAD/templates"
             // Public dirBlocks As String      // path to Blocks
 
-            Application.MainWindow = fMain;
+            
 
-            Wait;
+            
 
             fSplash.Visible = true;
 
             fSplash.Show;
 
-            Wait;
+           
 
             //TINCHO 2023.05.22 > Config.class implementation
             // Anualdo: Los recursos se copiaran una unica vez, en la primera ejecucion, en el directorio del usuario.
@@ -113,7 +113,7 @@ namespace Gaucho
             //TINCHO 2023.05.22 > Config.class implementation
 
             // Inicializo el programa
-            Initialize; // general init
+            Initialize(); // general init
 
             //MyLog = Open User.Home &/ ".config/gambascad/log.txt" For Write Create
             //TINCHO 2023.05.22 > Config.class implementation
@@ -127,8 +127,8 @@ namespace Gaucho
             // leo la configuracion inicial
             //Utils.LoadClass(Config, Config.ConfigFile) // Deshabilitado, con la nueva configuracion no es necesario.
             InitColors; // CAD color init
-            InitClasses;
-            InitMenus; // fMain menus
+            InitClasses();
+            InitMenus(); // fMain menus
             loadPrintStyles();
             LoadPatterns();
             LoadCursors();
@@ -138,12 +138,12 @@ namespace Gaucho
 
             // armo el combo de colores
             // fLayersOnScreen.Run  // FIXME:
-            Gcd.debuginfo("LayersOnScreen initialized OK", false, false, true);
+            Gcd.debugInfo("LayersOnScreen initialized OK", false, false, true);
 
-            fMain.Run;
+            fMain.Run();
             //Wait
-            fmain.Refresh;
-            //Gcd.debuginfo("FMain initialized OK",,, true)
+            fMain.Refresh();
+            //Gcd.debugInfo("FMain initialized OK",,, true)
 
             fSplash.HIde;
 
@@ -431,415 +431,278 @@ namespace Gaucho
             // Load CAD color into Gambas colors
             // array index is CAD color, returning Gambas int color
 
-            Gcd.gColor.add(RGB(0, 0, 0));
-            Gcd.gColor.add(RGB(255, 0, 0));
-            Gcd.gColor.add(RGB(255, 255, 0));
-            Gcd.gColor.add(RGB(0, 255, 0));
-            Gcd.gColor.add(RGB(0, 255, 255));
-            Gcd.gColor.add(RGB(0, 0, 255));
-            Gcd.gColor.add(RGB(255, 0, 255));
-            Gcd.gColor.add(RGB(255, 255, 255));
-            Gcd.gColor.add(RGB(128, 128, 128));
-            Gcd.gColor.add(RGB(192, 192, 192));
-            Gcd.gColor.add(RGB(255, 0, 0));
-            Gcd.gColor.add(RGB(255, 127, 127));
-            Gcd.gColor.add(RGB(165, 0, 0));
-            Gcd.gColor.add(RGB(165, 82, 82));
-            Gcd.gColor.add(RGB(127, 0, 0));
-            Gcd.gColor.add(RGB(127, 63, 63));
-            Gcd.gColor.add(RGB(76, 0, 0));
-            Gcd.gColor.add(RGB(76, 38, 38));
-            Gcd.gColor.add(RGB(38, 0, 0));
-            Gcd.gColor.add(RGB(38, 19, 19));
-            Gcd.gColor.add(RGB(255, 63, 0));
-            Gcd.gColor.add(RGB(255, 159, 127));
-            Gcd.gColor.add(RGB(165, 41, 0));
-            Gcd.gColor.add(RGB(165, 103, 82));
-            Gcd.gColor.add(RGB(127, 31, 0));
-            Gcd.gColor.add(RGB(127, 79, 63));
-            Gcd.gColor.add(RGB(76, 19, 0));
-            Gcd.gColor.add(RGB(76, 47, 38));
-            Gcd.gColor.add(RGB(38, 9, 0));
-            Gcd.gColor.add(RGB(38, 23, 19));
-            Gcd.gColor.add(RGB(255, 127, 0));
-            Gcd.gColor.add(RGB(255, 191, 127));
-            Gcd.gColor.add(RGB(165, 82, 0));
-            Gcd.gColor.add(RGB(165, 124, 82));
-            Gcd.gColor.add(RGB(127, 63, 0));
-            Gcd.gColor.add(RGB(127, 95, 63));
-            Gcd.gColor.add(RGB(76, 38, 0));
-            Gcd.gColor.add(RGB(76, 57, 38));
-            Gcd.gColor.add(RGB(38, 19, 0));
-            Gcd.gColor.add(RGB(38, 28, 19));
-            Gcd.gColor.add(RGB(255, 191, 0));
-            Gcd.gColor.add(RGB(255, 223, 127));
-            Gcd.gColor.add(RGB(165, 124, 0));
-            Gcd.gColor.add(RGB(165, 145, 82));
-            Gcd.gColor.add(RGB(127, 95, 0));
-            Gcd.gColor.add(RGB(127, 111, 63));
-            Gcd.gColor.add(RGB(76, 57, 0));
-            Gcd.gColor.add(RGB(76, 66, 38));
-            Gcd.gColor.add(RGB(38, 28, 0));
-            Gcd.gColor.add(RGB(38, 33, 19));
-            Gcd.gColor.add(RGB(255, 255, 0));
-            Gcd.gColor.add(RGB(255, 255, 127));
-            Gcd.gColor.add(RGB(165, 165, 0));
-            Gcd.gColor.add(RGB(165, 165, 82));
-            Gcd.gColor.add(RGB(127, 127, 0));
-            Gcd.gColor.add(RGB(127, 127, 63));
-            Gcd.gColor.add(RGB(76, 76, 0));
-            Gcd.gColor.add(RGB(76, 76, 38));
-            Gcd.gColor.add(RGB(38, 38, 0));
-            Gcd.gColor.add(RGB(38, 38, 19));
-            Gcd.gColor.add(RGB(191, 255, 0));
-            Gcd.gColor.add(RGB(223, 255, 127));
-            Gcd.gColor.add(RGB(124, 165, 0));
-            Gcd.gColor.add(RGB(145, 165, 82));
-            Gcd.gColor.add(RGB(95, 127, 0));
-            Gcd.gColor.add(RGB(111, 127, 63));
-            Gcd.gColor.add(RGB(57, 76, 0));
-            Gcd.gColor.add(RGB(66, 76, 38));
-            Gcd.gColor.add(RGB(28, 38, 0));
-            Gcd.gColor.add(RGB(33, 38, 19));
-            Gcd.gColor.add(RGB(127, 255, 0));
-            Gcd.gColor.add(RGB(191, 255, 127));
-            Gcd.gColor.add(RGB(82, 165, 0));
-            Gcd.gColor.add(RGB(124, 165, 82));
-            Gcd.gColor.add(RGB(63, 127, 0));
-            Gcd.gColor.add(RGB(95, 127, 63));
-            Gcd.gColor.add(RGB(38, 76, 0));
-            Gcd.gColor.add(RGB(57, 76, 38));
-            Gcd.gColor.add(RGB(19, 38, 0));
-            Gcd.gColor.add(RGB(28, 38, 19));
-            Gcd.gColor.add(RGB(63, 255, 0));
-            Gcd.gColor.add(RGB(159, 255, 127));
-            Gcd.gColor.add(RGB(41, 165, 0));
-            Gcd.gColor.add(RGB(103, 165, 82));
-            Gcd.gColor.add(RGB(31, 127, 0));
-            Gcd.gColor.add(RGB(79, 127, 63));
-            Gcd.gColor.add(RGB(19, 76, 0));
-            Gcd.gColor.add(RGB(47, 76, 38));
-            Gcd.gColor.add(RGB(9, 38, 0));
-            Gcd.gColor.add(RGB(23, 38, 19));
-            Gcd.gColor.add(RGB(0, 255, 0));
-            Gcd.gColor.add(RGB(127, 255, 127));
-            Gcd.gColor.add(RGB(0, 165, 0));
-            Gcd.gColor.add(RGB(82, 165, 82));
-            Gcd.gColor.add(RGB(0, 127, 0));
-            Gcd.gColor.add(RGB(63, 127, 63));
-            Gcd.gColor.add(RGB(0, 76, 0));
-            Gcd.gColor.add(RGB(38, 76, 38));
-            Gcd.gColor.add(RGB(0, 38, 0));
-            Gcd.gColor.add(RGB(19, 38, 19));
-            Gcd.gColor.add(RGB(0, 255, 63));
-            Gcd.gColor.add(RGB(127, 255, 159));
-            Gcd.gColor.add(RGB(0, 165, 41));
-            Gcd.gColor.add(RGB(82, 165, 103));
-            Gcd.gColor.add(RGB(0, 127, 31));
-            Gcd.gColor.add(RGB(63, 127, 79));
-            Gcd.gColor.add(RGB(0, 76, 19));
-            Gcd.gColor.add(RGB(38, 76, 47));
-            Gcd.gColor.add(RGB(0, 38, 9));
-            Gcd.gColor.add(RGB(19, 38, 23));
-            Gcd.gColor.add(RGB(0, 255, 127));
-            Gcd.gColor.add(RGB(127, 255, 191));
-            Gcd.gColor.add(RGB(0, 165, 82));
-            Gcd.gColor.add(RGB(82, 165, 124));
-            Gcd.gColor.add(RGB(0, 127, 63));
-            Gcd.gColor.add(RGB(63, 127, 95));
-            Gcd.gColor.add(RGB(0, 76, 38));
-            Gcd.gColor.add(RGB(38, 76, 57));
-            Gcd.gColor.add(RGB(0, 38, 19));
-            Gcd.gColor.add(RGB(19, 38, 28));
-            Gcd.gColor.add(RGB(0, 255, 191));
-            Gcd.gColor.add(RGB(127, 255, 223));
-            Gcd.gColor.add(RGB(0, 165, 124));
-            Gcd.gColor.add(RGB(82, 165, 145));
-            Gcd.gColor.add(RGB(0, 127, 95));
-            Gcd.gColor.add(RGB(63, 127, 111));
-            Gcd.gColor.add(RGB(0, 76, 57));
-            Gcd.gColor.add(RGB(38, 76, 66));
-            Gcd.gColor.add(RGB(0, 38, 28));
-            Gcd.gColor.add(RGB(19, 38, 33));
-            Gcd.gColor.add(RGB(0, 255, 255));
-            Gcd.gColor.add(RGB(127, 255, 255));
-            Gcd.gColor.add(RGB(0, 165, 165));
-            Gcd.gColor.add(RGB(82, 165, 165));
-            Gcd.gColor.add(RGB(0, 127, 127));
-            Gcd.gColor.add(RGB(63, 127, 127));
-            Gcd.gColor.add(RGB(0, 76, 76));
-            Gcd.gColor.add(RGB(38, 76, 76));
-            Gcd.gColor.add(RGB(0, 38, 38));
-            Gcd.gColor.add(RGB(19, 38, 38));
-            Gcd.gColor.add(RGB(0, 191, 255));
-            Gcd.gColor.add(RGB(127, 223, 255));
-            Gcd.gColor.add(RGB(0, 124, 165));
-            Gcd.gColor.add(RGB(82, 145, 165));
-            Gcd.gColor.add(RGB(0, 95, 127));
-            Gcd.gColor.add(RGB(63, 111, 127));
-            Gcd.gColor.add(RGB(0, 57, 76));
-            Gcd.gColor.add(RGB(38, 66, 76));
-            Gcd.gColor.add(RGB(0, 28, 38));
-            Gcd.gColor.add(RGB(19, 33, 38));
-            Gcd.gColor.add(RGB(0, 127, 255));
-            Gcd.gColor.add(RGB(127, 191, 255));
-            Gcd.gColor.add(RGB(0, 82, 165));
-            Gcd.gColor.add(RGB(82, 124, 165));
-            Gcd.gColor.add(RGB(0, 63, 127));
-            Gcd.gColor.add(RGB(63, 95, 127));
-            Gcd.gColor.add(RGB(0, 38, 76));
-            Gcd.gColor.add(RGB(38, 57, 76));
-            Gcd.gColor.add(RGB(0, 19, 38));
-            Gcd.gColor.add(RGB(19, 28, 38));
-            Gcd.gColor.add(RGB(0, 63, 255));
-            Gcd.gColor.add(RGB(127, 159, 255));
-            Gcd.gColor.add(RGB(0, 41, 165));
-            Gcd.gColor.add(RGB(82, 103, 165));
-            Gcd.gColor.add(RGB(0, 31, 127));
-            Gcd.gColor.add(RGB(63, 79, 127));
-            Gcd.gColor.add(RGB(0, 19, 76));
-            Gcd.gColor.add(RGB(38, 47, 76));
-            Gcd.gColor.add(RGB(0, 9, 38));
-            Gcd.gColor.add(RGB(19, 23, 38));
-            Gcd.gColor.add(RGB(0, 0, 255));
-            Gcd.gColor.add(RGB(127, 127, 255));
-            Gcd.gColor.add(RGB(0, 0, 165));
-            Gcd.gColor.add(RGB(82, 82, 165));
-            Gcd.gColor.add(RGB(0, 0, 127));
-            Gcd.gColor.add(RGB(63, 63, 127));
-            Gcd.gColor.add(RGB(0, 0, 76));
-            Gcd.gColor.add(RGB(38, 38, 76));
-            Gcd.gColor.add(RGB(0, 0, 38));
-            Gcd.gColor.add(RGB(19, 19, 38));
-            Gcd.gColor.add(RGB(63, 0, 255));
-            Gcd.gColor.add(RGB(159, 127, 255));
-            Gcd.gColor.add(RGB(41, 0, 165));
-            Gcd.gColor.add(RGB(103, 82, 165));
-            Gcd.gColor.add(RGB(31, 0, 127));
-            Gcd.gColor.add(RGB(79, 63, 127));
-            Gcd.gColor.add(RGB(19, 0, 76));
-            Gcd.gColor.add(RGB(47, 38, 76));
-            Gcd.gColor.add(RGB(9, 0, 38));
-            Gcd.gColor.add(RGB(23, 19, 38));
-            Gcd.gColor.add(RGB(127, 0, 255));
-            Gcd.gColor.add(RGB(191, 127, 255));
-            Gcd.gColor.add(RGB(82, 0, 165));
-            Gcd.gColor.add(RGB(124, 82, 165));
-            Gcd.gColor.add(RGB(63, 0, 127));
-            Gcd.gColor.add(RGB(95, 63, 127));
-            Gcd.gColor.add(RGB(38, 0, 76));
-            Gcd.gColor.add(RGB(57, 38, 76));
-            Gcd.gColor.add(RGB(19, 0, 38));
-            Gcd.gColor.add(RGB(28, 19, 38));
-            Gcd.gColor.add(RGB(191, 0, 255));
-            Gcd.gColor.add(RGB(223, 127, 255));
-            Gcd.gColor.add(RGB(124, 0, 165));
-            Gcd.gColor.add(RGB(145, 82, 165));
-            Gcd.gColor.add(RGB(95, 0, 127));
-            Gcd.gColor.add(RGB(111, 63, 127));
-            Gcd.gColor.add(RGB(57, 0, 76));
-            Gcd.gColor.add(RGB(66, 38, 76));
-            Gcd.gColor.add(RGB(28, 0, 38));
-            Gcd.gColor.add(RGB(33, 19, 38));
-            Gcd.gColor.add(RGB(255, 0, 255));
-            Gcd.gColor.add(RGB(255, 127, 255));
-            Gcd.gColor.add(RGB(165, 0, 165));
-            Gcd.gColor.add(RGB(165, 82, 165));
-            Gcd.gColor.add(RGB(127, 0, 127));
-            Gcd.gColor.add(RGB(127, 63, 127));
-            Gcd.gColor.add(RGB(76, 0, 76));
-            Gcd.gColor.add(RGB(76, 38, 76));
-            Gcd.gColor.add(RGB(38, 0, 38));
-            Gcd.gColor.add(RGB(38, 19, 38));
-            Gcd.gColor.add(RGB(255, 0, 191));
-            Gcd.gColor.add(RGB(255, 127, 223));
-            Gcd.gColor.add(RGB(165, 0, 124));
-            Gcd.gColor.add(RGB(165, 82, 145));
-            Gcd.gColor.add(RGB(127, 0, 95));
-            Gcd.gColor.add(RGB(127, 63, 111));
-            Gcd.gColor.add(RGB(76, 0, 57));
-            Gcd.gColor.add(RGB(76, 38, 66));
-            Gcd.gColor.add(RGB(38, 0, 28));
-            Gcd.gColor.add(RGB(38, 19, 33));
-            Gcd.gColor.add(RGB(255, 0, 127));
-            Gcd.gColor.add(RGB(255, 127, 191));
-            Gcd.gColor.add(RGB(165, 0, 82));
-            Gcd.gColor.add(RGB(165, 82, 124));
-            Gcd.gColor.add(RGB(127, 0, 63));
-            Gcd.gColor.add(RGB(127, 63, 95));
-            Gcd.gColor.add(RGB(76, 0, 38));
-            Gcd.gColor.add(RGB(76, 38, 57));
-            Gcd.gColor.add(RGB(38, 0, 19));
-            Gcd.gColor.add(RGB(38, 19, 28));
-            Gcd.gColor.add(RGB(255, 0, 63));
-            Gcd.gColor.add(RGB(255, 127, 159));
-            Gcd.gColor.add(RGB(165, 0, 41));
-            Gcd.gColor.add(RGB(165, 82, 103));
-            Gcd.gColor.add(RGB(127, 0, 31));
-            Gcd.gColor.add(RGB(127, 63, 79));
-            Gcd.gColor.add(RGB(76, 0, 19));
-            Gcd.gColor.add(RGB(76, 38, 47));
-            Gcd.gColor.add(RGB(38, 0, 9));
-            Gcd.gColor.add(RGB(38, 19, 23));
-            Gcd.gColor.add(RGB(0, 0, 0));
-            Gcd.gColor.add(RGB(51, 51, 51));
-            Gcd.gColor.add(RGB(102, 102, 102));
-            Gcd.gColor.add(RGB(153, 153, 153));
-            Gcd.gColor.add(RGB(204, 204, 204));
-            Gcd.gColor.add(RGB(255, 255, 255));
-            Gcd.gColor.add(RGB(255, 255, 255)); //By Layer
-            Gcd.gColor.add(RGB(255, 255, 255)); //By Block
-            Gcd.gColor.add(RGB(255, 255, 255)); //By Object?
+            Gcd.gColor.Append(RGB(0, 0, 0));
+            Gcd.gColor.Append(RGB(255, 0, 0));
+            Gcd.gColor.Append(RGB(255, 255, 0));
+            Gcd.gColor.Append(RGB(0, 255, 0));
+            Gcd.gColor.Append(RGB(0, 255, 255));
+            Gcd.gColor.Append(RGB(0, 0, 255));
+            Gcd.gColor.Append(RGB(255, 0, 255));
+            Gcd.gColor.Append(RGB(255, 255, 255));
+            Gcd.gColor.Append(RGB(128, 128, 128));
+            Gcd.gColor.Append(RGB(192, 192, 192));
+            Gcd.gColor.Append(RGB(255, 0, 0));
+            Gcd.gColor.Append(RGB(255, 127, 127));
+            Gcd.gColor.Append(RGB(165, 0, 0));
+            Gcd.gColor.Append(RGB(165, 82, 82));
+            Gcd.gColor.Append(RGB(127, 0, 0));
+            Gcd.gColor.Append(RGB(127, 63, 63));
+            Gcd.gColor.Append(RGB(76, 0, 0));
+            Gcd.gColor.Append(RGB(76, 38, 38));
+            Gcd.gColor.Append(RGB(38, 0, 0));
+            Gcd.gColor.Append(RGB(38, 19, 19));
+            Gcd.gColor.Append(RGB(255, 63, 0));
+            Gcd.gColor.Append(RGB(255, 159, 127));
+            Gcd.gColor.Append(RGB(165, 41, 0));
+            Gcd.gColor.Append(RGB(165, 103, 82));
+            Gcd.gColor.Append(RGB(127, 31, 0));
+            Gcd.gColor.Append(RGB(127, 79, 63));
+            Gcd.gColor.Append(RGB(76, 19, 0));
+            Gcd.gColor.Append(RGB(76, 47, 38));
+            Gcd.gColor.Append(RGB(38, 9, 0));
+            Gcd.gColor.Append(RGB(38, 23, 19));
+            Gcd.gColor.Append(RGB(255, 127, 0));
+            Gcd.gColor.Append(RGB(255, 191, 127));
+            Gcd.gColor.Append(RGB(165, 82, 0));
+            Gcd.gColor.Append(RGB(165, 124, 82));
+            Gcd.gColor.Append(RGB(127, 63, 0));
+            Gcd.gColor.Append(RGB(127, 95, 63));
+            Gcd.gColor.Append(RGB(76, 38, 0));
+            Gcd.gColor.Append(RGB(76, 57, 38));
+            Gcd.gColor.Append(RGB(38, 19, 0));
+            Gcd.gColor.Append(RGB(38, 28, 19));
+            Gcd.gColor.Append(RGB(255, 191, 0));
+            Gcd.gColor.Append(RGB(255, 223, 127));
+            Gcd.gColor.Append(RGB(165, 124, 0));
+            Gcd.gColor.Append(RGB(165, 145, 82));
+            Gcd.gColor.Append(RGB(127, 95, 0));
+            Gcd.gColor.Append(RGB(127, 111, 63));
+            Gcd.gColor.Append(RGB(76, 57, 0));
+            Gcd.gColor.Append(RGB(76, 66, 38));
+            Gcd.gColor.Append(RGB(38, 28, 0));
+            Gcd.gColor.Append(RGB(38, 33, 19));
+            Gcd.gColor.Append(RGB(255, 255, 0));
+            Gcd.gColor.Append(RGB(255, 255, 127));
+            Gcd.gColor.Append(RGB(165, 165, 0));
+            Gcd.gColor.Append(RGB(165, 165, 82));
+            Gcd.gColor.Append(RGB(127, 127, 0));
+            Gcd.gColor.Append(RGB(127, 127, 63));
+            Gcd.gColor.Append(RGB(76, 76, 0));
+            Gcd.gColor.Append(RGB(76, 76, 38));
+            Gcd.gColor.Append(RGB(38, 38, 0));
+            Gcd.gColor.Append(RGB(38, 38, 19));
+            Gcd.gColor.Append(RGB(191, 255, 0));
+            Gcd.gColor.Append(RGB(223, 255, 127));
+            Gcd.gColor.Append(RGB(124, 165, 0));
+            Gcd.gColor.Append(RGB(145, 165, 82));
+            Gcd.gColor.Append(RGB(95, 127, 0));
+            Gcd.gColor.Append(RGB(111, 127, 63));
+            Gcd.gColor.Append(RGB(57, 76, 0));
+            Gcd.gColor.Append(RGB(66, 76, 38));
+            Gcd.gColor.Append(RGB(28, 38, 0));
+            Gcd.gColor.Append(RGB(33, 38, 19));
+            Gcd.gColor.Append(RGB(127, 255, 0));
+            Gcd.gColor.Append(RGB(191, 255, 127));
+            Gcd.gColor.Append(RGB(82, 165, 0));
+            Gcd.gColor.Append(RGB(124, 165, 82));
+            Gcd.gColor.Append(RGB(63, 127, 0));
+            Gcd.gColor.Append(RGB(95, 127, 63));
+            Gcd.gColor.Append(RGB(38, 76, 0));
+            Gcd.gColor.Append(RGB(57, 76, 38));
+            Gcd.gColor.Append(RGB(19, 38, 0));
+            Gcd.gColor.Append(RGB(28, 38, 19));
+            Gcd.gColor.Append(RGB(63, 255, 0));
+            Gcd.gColor.Append(RGB(159, 255, 127));
+            Gcd.gColor.Append(RGB(41, 165, 0));
+            Gcd.gColor.Append(RGB(103, 165, 82));
+            Gcd.gColor.Append(RGB(31, 127, 0));
+            Gcd.gColor.Append(RGB(79, 127, 63));
+            Gcd.gColor.Append(RGB(19, 76, 0));
+            Gcd.gColor.Append(RGB(47, 76, 38));
+            Gcd.gColor.Append(RGB(9, 38, 0));
+            Gcd.gColor.Append(RGB(23, 38, 19));
+            Gcd.gColor.Append(RGB(0, 255, 0));
+            Gcd.gColor.Append(RGB(127, 255, 127));
+            Gcd.gColor.Append(RGB(0, 165, 0));
+            Gcd.gColor.Append(RGB(82, 165, 82));
+            Gcd.gColor.Append(RGB(0, 127, 0));
+            Gcd.gColor.Append(RGB(63, 127, 63));
+            Gcd.gColor.Append(RGB(0, 76, 0));
+            Gcd.gColor.Append(RGB(38, 76, 38));
+            Gcd.gColor.Append(RGB(0, 38, 0));
+            Gcd.gColor.Append(RGB(19, 38, 19));
+            Gcd.gColor.Append(RGB(0, 255, 63));
+            Gcd.gColor.Append(RGB(127, 255, 159));
+            Gcd.gColor.Append(RGB(0, 165, 41));
+            Gcd.gColor.Append(RGB(82, 165, 103));
+            Gcd.gColor.Append(RGB(0, 127, 31));
+            Gcd.gColor.Append(RGB(63, 127, 79));
+            Gcd.gColor.Append(RGB(0, 76, 19));
+            Gcd.gColor.Append(RGB(38, 76, 47));
+            Gcd.gColor.Append(RGB(0, 38, 9));
+            Gcd.gColor.Append(RGB(19, 38, 23));
+            Gcd.gColor.Append(RGB(0, 255, 127));
+            Gcd.gColor.Append(RGB(127, 255, 191));
+            Gcd.gColor.Append(RGB(0, 165, 82));
+            Gcd.gColor.Append(RGB(82, 165, 124));
+            Gcd.gColor.Append(RGB(0, 127, 63));
+            Gcd.gColor.Append(RGB(63, 127, 95));
+            Gcd.gColor.Append(RGB(0, 76, 38));
+            Gcd.gColor.Append(RGB(38, 76, 57));
+            Gcd.gColor.Append(RGB(0, 38, 19));
+            Gcd.gColor.Append(RGB(19, 38, 28));
+            Gcd.gColor.Append(RGB(0, 255, 191));
+            Gcd.gColor.Append(RGB(127, 255, 223));
+            Gcd.gColor.Append(RGB(0, 165, 124));
+            Gcd.gColor.Append(RGB(82, 165, 145));
+            Gcd.gColor.Append(RGB(0, 127, 95));
+            Gcd.gColor.Append(RGB(63, 127, 111));
+            Gcd.gColor.Append(RGB(0, 76, 57));
+            Gcd.gColor.Append(RGB(38, 76, 66));
+            Gcd.gColor.Append(RGB(0, 38, 28));
+            Gcd.gColor.Append(RGB(19, 38, 33));
+            Gcd.gColor.Append(RGB(0, 255, 255));
+            Gcd.gColor.Append(RGB(127, 255, 255));
+            Gcd.gColor.Append(RGB(0, 165, 165));
+            Gcd.gColor.Append(RGB(82, 165, 165));
+            Gcd.gColor.Append(RGB(0, 127, 127));
+            Gcd.gColor.Append(RGB(63, 127, 127));
+            Gcd.gColor.Append(RGB(0, 76, 76));
+            Gcd.gColor.Append(RGB(38, 76, 76));
+            Gcd.gColor.Append(RGB(0, 38, 38));
+            Gcd.gColor.Append(RGB(19, 38, 38));
+            Gcd.gColor.Append(RGB(0, 191, 255));
+            Gcd.gColor.Append(RGB(127, 223, 255));
+            Gcd.gColor.Append(RGB(0, 124, 165));
+            Gcd.gColor.Append(RGB(82, 145, 165));
+            Gcd.gColor.Append(RGB(0, 95, 127));
+            Gcd.gColor.Append(RGB(63, 111, 127));
+            Gcd.gColor.Append(RGB(0, 57, 76));
+            Gcd.gColor.Append(RGB(38, 66, 76));
+            Gcd.gColor.Append(RGB(0, 28, 38));
+            Gcd.gColor.Append(RGB(19, 33, 38));
+            Gcd.gColor.Append(RGB(0, 127, 255));
+            Gcd.gColor.Append(RGB(127, 191, 255));
+            Gcd.gColor.Append(RGB(0, 82, 165));
+            Gcd.gColor.Append(RGB(82, 124, 165));
+            Gcd.gColor.Append(RGB(0, 63, 127));
+            Gcd.gColor.Append(RGB(63, 95, 127));
+            Gcd.gColor.Append(RGB(0, 38, 76));
+            Gcd.gColor.Append(RGB(38, 57, 76));
+            Gcd.gColor.Append(RGB(0, 19, 38));
+            Gcd.gColor.Append(RGB(19, 28, 38));
+            Gcd.gColor.Append(RGB(0, 63, 255));
+            Gcd.gColor.Append(RGB(127, 159, 255));
+            Gcd.gColor.Append(RGB(0, 41, 165));
+            Gcd.gColor.Append(RGB(82, 103, 165));
+            Gcd.gColor.Append(RGB(0, 31, 127));
+            Gcd.gColor.Append(RGB(63, 79, 127));
+            Gcd.gColor.Append(RGB(0, 19, 76));
+            Gcd.gColor.Append(RGB(38, 47, 76));
+            Gcd.gColor.Append(RGB(0, 9, 38));
+            Gcd.gColor.Append(RGB(19, 23, 38));
+            Gcd.gColor.Append(RGB(0, 0, 255));
+            Gcd.gColor.Append(RGB(127, 127, 255));
+            Gcd.gColor.Append(RGB(0, 0, 165));
+            Gcd.gColor.Append(RGB(82, 82, 165));
+            Gcd.gColor.Append(RGB(0, 0, 127));
+            Gcd.gColor.Append(RGB(63, 63, 127));
+            Gcd.gColor.Append(RGB(0, 0, 76));
+            Gcd.gColor.Append(RGB(38, 38, 76));
+            Gcd.gColor.Append(RGB(0, 0, 38));
+            Gcd.gColor.Append(RGB(19, 19, 38));
+            Gcd.gColor.Append(RGB(63, 0, 255));
+            Gcd.gColor.Append(RGB(159, 127, 255));
+            Gcd.gColor.Append(RGB(41, 0, 165));
+            Gcd.gColor.Append(RGB(103, 82, 165));
+            Gcd.gColor.Append(RGB(31, 0, 127));
+            Gcd.gColor.Append(RGB(79, 63, 127));
+            Gcd.gColor.Append(RGB(19, 0, 76));
+            Gcd.gColor.Append(RGB(47, 38, 76));
+            Gcd.gColor.Append(RGB(9, 0, 38));
+            Gcd.gColor.Append(RGB(23, 19, 38));
+            Gcd.gColor.Append(RGB(127, 0, 255));
+            Gcd.gColor.Append(RGB(191, 127, 255));
+            Gcd.gColor.Append(RGB(82, 0, 165));
+            Gcd.gColor.Append(RGB(124, 82, 165));
+            Gcd.gColor.Append(RGB(63, 0, 127));
+            Gcd.gColor.Append(RGB(95, 63, 127));
+            Gcd.gColor.Append(RGB(38, 0, 76));
+            Gcd.gColor.Append(RGB(57, 38, 76));
+            Gcd.gColor.Append(RGB(19, 0, 38));
+            Gcd.gColor.Append(RGB(28, 19, 38));
+            Gcd.gColor.Append(RGB(191, 0, 255));
+            Gcd.gColor.Append(RGB(223, 127, 255));
+            Gcd.gColor.Append(RGB(124, 0, 165));
+            Gcd.gColor.Append(RGB(145, 82, 165));
+            Gcd.gColor.Append(RGB(95, 0, 127));
+            Gcd.gColor.Append(RGB(111, 63, 127));
+            Gcd.gColor.Append(RGB(57, 0, 76));
+            Gcd.gColor.Append(RGB(66, 38, 76));
+            Gcd.gColor.Append(RGB(28, 0, 38));
+            Gcd.gColor.Append(RGB(33, 19, 38));
+            Gcd.gColor.Append(RGB(255, 0, 255));
+            Gcd.gColor.Append(RGB(255, 127, 255));
+            Gcd.gColor.Append(RGB(165, 0, 165));
+            Gcd.gColor.Append(RGB(165, 82, 165));
+            Gcd.gColor.Append(RGB(127, 0, 127));
+            Gcd.gColor.Append(RGB(127, 63, 127));
+            Gcd.gColor.Append(RGB(76, 0, 76));
+            Gcd.gColor.Append(RGB(76, 38, 76));
+            Gcd.gColor.Append(RGB(38, 0, 38));
+            Gcd.gColor.Append(RGB(38, 19, 38));
+            Gcd.gColor.Append(RGB(255, 0, 191));
+            Gcd.gColor.Append(RGB(255, 127, 223));
+            Gcd.gColor.Append(RGB(165, 0, 124));
+            Gcd.gColor.Append(RGB(165, 82, 145));
+            Gcd.gColor.Append(RGB(127, 0, 95));
+            Gcd.gColor.Append(RGB(127, 63, 111));
+            Gcd.gColor.Append(RGB(76, 0, 57));
+            Gcd.gColor.Append(RGB(76, 38, 66));
+            Gcd.gColor.Append(RGB(38, 0, 28));
+            Gcd.gColor.Append(RGB(38, 19, 33));
+            Gcd.gColor.Append(RGB(255, 0, 127));
+            Gcd.gColor.Append(RGB(255, 127, 191));
+            Gcd.gColor.Append(RGB(165, 0, 82));
+            Gcd.gColor.Append(RGB(165, 82, 124));
+            Gcd.gColor.Append(RGB(127, 0, 63));
+            Gcd.gColor.Append(RGB(127, 63, 95));
+            Gcd.gColor.Append(RGB(76, 0, 38));
+            Gcd.gColor.Append(RGB(76, 38, 57));
+            Gcd.gColor.Append(RGB(38, 0, 19));
+            Gcd.gColor.Append(RGB(38, 19, 28));
+            Gcd.gColor.Append(RGB(255, 0, 63));
+            Gcd.gColor.Append(RGB(255, 127, 159));
+            Gcd.gColor.Append(RGB(165, 0, 41));
+            Gcd.gColor.Append(RGB(165, 82, 103));
+            Gcd.gColor.Append(RGB(127, 0, 31));
+            Gcd.gColor.Append(RGB(127, 63, 79));
+            Gcd.gColor.Append(RGB(76, 0, 19));
+            Gcd.gColor.Append(RGB(76, 38, 47));
+            Gcd.gColor.Append(RGB(38, 0, 9));
+            Gcd.gColor.Append(RGB(38, 19, 23));
+            Gcd.gColor.Append(RGB(0, 0, 0));
+            Gcd.gColor.Append(RGB(51, 51, 51));
+            Gcd.gColor.Append(RGB(102, 102, 102));
+            Gcd.gColor.Append(RGB(153, 153, 153));
+            Gcd.gColor.Append(RGB(204, 204, 204));
+            Gcd.gColor.Append(RGB(255, 255, 255));
+            Gcd.gColor.Append(RGB(255, 255, 255)); //By Layer
+            Gcd.gColor.Append(RGB(255, 255, 255)); //By Block
+            Gcd.gColor.Append(RGB(255, 255, 255)); //By Object?
 
             // corrijo los colores que no se ven contra el fondo
-            Gcd.gColor[0] = config.WhiteAndBlack;
-            Gcd.gColor[7] = config.WhiteAndBlack;
-            Gcd.gColor[250] = config.WhiteAndBlack;
-            Gcd.gColor[255] = config.WhiteAndBlack;
-            Gcd.gColor[256] = config.WhiteAndBlack;
-            Gcd.gColor[257] = config.WhiteAndBlack;
-            Gcd.gColor[258] = config.WhiteAndBlack;
+            Gcd.gColor[0] = Config.WhiteAndBlack;
+            Gcd.gColor[7] = Config.WhiteAndBlack;
+            Gcd.gColor[250] = Config.WhiteAndBlack;
+            Gcd.gColor[255] = Config.WhiteAndBlack;
+            Gcd.gColor[256] = Config.WhiteAndBlack;
+            Gcd.gColor[257] = Config.WhiteAndBlack;
+            Gcd.gColor[258] = Config.WhiteAndBlack;
 
         }
 
-        public static void InitMenus()
-        {
-
-
-            // colores
-            void Menu(fMain)
-            {
-
-                Menu mItem;
-
-                int i;
-                int iColor;
-
-                string sMenuPre;
-                string sMenuPost;
-                string sMenuSnap;
-
-                mColors.Name = "mColores";
-
-                //============ByLayer======================
-                i = 256;
-                iColor = Gcd.gColor[i];
-                mItem = new Menu(mColors);
-                mItem.Text = "ByLayer";
-                mItem.Action = "Color_256"; // & CStr(i)
-                mItem.Picture = paintPlus.picCirculito(8, Gcd.gColor[256], Color.ButtonForeground);
-
-                //============Byblock======================
-                i = 257;
-                mItem = new Menu(mColors);
-                mItem.Text = "ByBlock";
-                mItem.Action = "Color_257"; // & CStr(i)
-                mItem.Picture = paintPlus.picCirculito(8, Gcd.gColor[i], Color.ButtonForeground);
-
-                //============separator======================
-                mItem = new Menu(mColors);
-                mItem.Text = "";
-                mItem.Action = ""; // & CStr(i)
-
-                for (i = 0; i <= 10; i + 1) //Gcd.gColor.Max
-                {
-                    mItem = new Menu(mColors);
-                    mItem.Text = "Color " + CStr(i);
-                    mItem.Action = "Color_" + CStr(i);
-                    mItem.Picture = paintPlus.picCirculito(8, Gcd.gColor[i], Color.ButtonForeground);
-
-                }
-                //============separator======================
-                mItem = new Menu(mColors);
-                mItem.Text = "";
-                mItem.Action = ""; // & CStr(i)
-
-                //============more colors======================
-                mItem = new Menu(mColors);
-                mItem.Text = ("more colors...");
-                mItem.Action = "more_colors"; // & CStr(i)
-
-                fMain.mbtcolors.text = mColors.Children[0].Text;
-                fMain.mbtColors.Picture = mColors.Children[0].Picture;
-                fMain.mbtColors.Menu = mColors.Name;
-                fMain.mbtColors.Tag = mColors.Children[0].Tag;
-                fMain.mbtColors.Action = "Color_256";
-
-                // Menu contextual de entidades
-                // colores
-                void Menu(fMai)
-                {
-
-
-                    mEntities.Name = "mEntities";
-                    //fMain.PopupMenu = "mEntities"
-                    // Cortar/Copiar/Pegar/Propiedades/Apagar sus layers/Hacer actual ese layer
-                    //============Cut======================
-                    mItem = new Menu(mEntities);
-                    mItem.Text = ("Cut");
-                    mItem.Action = "mEntities-Cut";
-                    mItem.Picture = Picture["icon:/32/cut"];
-                    //============Copy======================
-                    mItem = new Menu(mEntities);
-                    mItem.Text = ("Copy");
-                    mItem.Action = "mEntities-Copy";
-                    mItem.Picture = Picture["icon:/32/copy"];
-                    //============Paste======================
-                    mItem = new Menu(mEntities);
-                    mItem.Text = ("Paste");
-                    mItem.Action = "mEntities-Paste";
-                    mItem.Picture = Picture["icon:/32/paste"];
-                    //============separator======================
-                    mItem = new Menu(mColors);
-                    mItem.Text = "";
-                    mItem.Action = "";
-                    //============Agrupar======================
-                    mItem = new Menu(mEntities);
-                    mItem.Text = ("Make group");
-                    mItem.Action = "mEntities-Group";
-                    mItem.Picture = Picture["icon:/32/paste"];
-                    //============Desagrupar======================
-                    mItem = new Menu(mEntities);
-                    mItem.Text = ("Break group");
-                    mItem.Action = "mEntities-DeGroup";
-                    mItem.Picture = Picture["icon:/32/paste"];
-                    //============separator======================
-                    mItem = new Menu(mColors);
-                    mItem.Text = "";
-                    mItem.Action = ""; // & CStr(i)
-                                       //============Ocultar layers de todo=====
-                    mItem = new Menu(mEntities);
-                    mItem.Text = ("HIde these Layers");
-                    mItem.Action = "mEntities-HIdeLayers";
-                    mItem.Picture = Picture["icon:/32/paste"];
-                    //============Desagrupar======================
-                    mItem = new Menu(mEntities);
-                    mItem.Text = ("Paste");
-                    mItem.Action = "mEntities-Paste";
-                    mItem.Picture = Picture["icon:/32/paste"];
-                    //fMain.PopupMenu = "mEntities"
-
-                    //===================================================================================================================================
-                    // Armo el menu contextual de cada ENTIDAD
-                    Gcd.SnapMode = Config.SnapModeSaved;
-                    sMenuSnap = ";Snap to...;;<nothing>;_nothing;4;;4;End point;_end;end_point;4;MId point;_mId;mId_point;4;Perpendicular;_per;perpendicular;4";
-                    sMenuSnap &= ";Quadrant;_qua;quadrant;4";
-                    sMenuSnap &= ";Center;_cen;center_point;4";
-                    sMenuSnap &= ";Intersection;_int;intersection;4";
-                    sMenuSnap &= ";Tangent;_tan;tangent;4";
-                    sMenuSnap &= ";Nearest;_nea;nearest;4";
-                    sMenuSnap &= ";Base point;_bas;base_point;4";
-
-                    sMenuPost = (";;;Cancel;_CANCEL;");
-
-                    String[] stxMenus = [];
-
-                    foreach (var vClass in Gcd.CCC)
-                    {
-                        Utils.MenuMakerPlus(fmain, vClass.gender, vClass.contextmenu + sMenuSnap + sMenuPost, Gcd.dirResources &/ "svg" &/ Config.IconFamily);
-                    }
-
-                }
+        
 
  // carga los cursores desde SVG y los coloca en Gcd
 public static void LoadCursors()

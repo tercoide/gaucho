@@ -57,12 +57,16 @@ public static class Gcd
         public static int GrIdModePrev;
         public static bool MultiDraw;          // dibuja repetidamente la misma entidad
 
-        public static Dictionary<string, IEntity> CCC;          // CAD Classes Collection
-        public static Object clsJob;          // what I am doing now, thats either selecting or something else
-        public static Object clsJobPrevious;          // what was doing before
-        public static Object clsJobPreZoom;          // what was doing before Zooming or Panning
+    public static Dictionary<string, IEntity> CCC;          // CAD Classes Collection
+
+
+        public static Dictionary<string, ToolsBase> Tools;          // Tools Classes Collection
+    
+        public static ToolsBase clsJob;          // what I am doing now, thats either selecting or something else
+        public static ToolsBase clsJobPrevious;          // what was doing before
+        public static ToolsBase clsJobPreZoom;          // what was doing before Zooming or Panning
         public static int clsJobPreviousParam;          // a param to pass to clsJob.Start( param )
-        public static Object clsJobCallBack;          // An object to call back after finishing something (like selecting). Must have .Run() sub
+        public static ToolsBase clsJobCallBack;          // An object to call back after finishing something (like selecting). Must have .Run() sub
         public static int StepsDone;          // una variable de entorno util
                                               //public static  gColor As New Integer[]
 

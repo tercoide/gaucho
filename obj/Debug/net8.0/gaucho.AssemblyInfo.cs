@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("gaucho")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dfcfaeaf04437683169c640d8e2162714cf4fc85")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dd0bf38944e26fdecd58729e71f81317fa60d9f9")]
 [assembly: System.Reflection.AssemblyProductAttribute("gaucho")]
 [assembly: System.Reflection.AssemblyTitleAttribute("gaucho")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -5,7 +5,7 @@ using Gtk;
 
 namespace Gaucho;
 
-public partial class MainWindow
+public partial class fMain
 {
     public Button CreateButton(string tag, string name, int iconSize = 24, string? tooltip = null)
     {
@@ -48,7 +48,7 @@ public partial class MainWindow
     }
 
 
-  private void BuildUI()
+    private void BuildUI()
     {
         _mainBox = Box.New(Orientation.Vertical, 0);
         _mainBox.SetSpacing(6);
@@ -133,7 +133,7 @@ public partial class MainWindow
         var BoxInquiry = Grid.New();
         var BoxSnap = Grid.New();
 
-       
+
         // Entidades
         var entityButtons = new (string tag, string Name, string Tooltip)[]
             {
@@ -250,7 +250,7 @@ public partial class MainWindow
             };
 
         FillGridWithButtons(entitiesGrid, entityButtons, 4);
-        FillGridWithButtons(GridDimensions, dimButtons, 4); 
+        FillGridWithButtons(GridDimensions, dimButtons, 4);
         FillGridWithButtons(BoxBlocks, blockButtons, 4);
         FillGridWithButtons(BoxTools, toolButtons, 4);
         FillGridWithButtons(BoxInquiry, infoButtons, 4);
@@ -360,7 +360,145 @@ public partial class MainWindow
 
         SetChild(_mainBox);
     }
+    
+    public static void InitMenus()
+        {
 
+
+            // colores
+            void Menu(fMain)
+            {
+
+                Menu mItem;
+
+                int i;
+                int iColor;
+
+                string sMenuPre;
+                string sMenuPost;
+                string sMenuSnap;
+
+                mColors.Name = "mColores";
+
+                //============ByLayer======================
+                i = 256;
+                iColor = Gcd.gColor[i];
+                mItem = new Menu(mColors);
+                mItem.Text = "ByLayer";
+                mItem.Action = "Color_256"; // & CStr(i)
+                mItem.Picture = paintPlus.picCirculito(8, Gcd.gColor[256], Color.ButtonForeground);
+
+                //============Byblock======================
+                i = 257;
+                mItem = new Menu(mColors);
+                mItem.Text = "ByBlock";
+                mItem.Action = "Color_257"; // & CStr(i)
+                mItem.Picture = paintPlus.picCirculito(8, Gcd.gColor[i], Color.ButtonForeground);
+
+                //============separator======================
+                mItem = new Menu(mColors);
+                mItem.Text = "";
+                mItem.Action = ""; // & CStr(i)
+
+                for (i = 0; i <= 10; i + 1) //Gcd.gColor.Max
+                {
+                    mItem = new Menu(mColors);
+                    mItem.Text = "Color " + CStr(i);
+                    mItem.Action = "Color_" + CStr(i);
+                    mItem.Picture = paintPlus.picCirculito(8, Gcd.gColor[i], Color.ButtonForeground);
+
+                }
+                //============separator======================
+                mItem = new Menu(mColors);
+                mItem.Text = "";
+                mItem.Action = ""; // & CStr(i)
+
+                //============more colors======================
+                mItem = new Menu(mColors);
+                mItem.Text = ("more colors...");
+                mItem.Action = "more_colors"; // & CStr(i)
+
+                fMain.mbtcolors.text = mColors.Children[0].Text;
+                fMain.mbtColors.Picture = mColors.Children[0].Picture;
+                fMain.mbtColors.Menu = mColors.Name;
+                fMain.mbtColors.Tag = mColors.Children[0].Tag;
+                fMain.mbtColors.Action = "Color_256";
+
+                // Menu contextual de entidades
+                // colores
+                void Menu(fMai)
+                {
+
+
+                    mEntities.Name = "mEntities";
+                    //fMain.PopupMenu = "mEntities"
+                    // Cortar/Copiar/Pegar/Propiedades/Apagar sus layers/Hacer actual ese layer
+                    //============Cut======================
+                    mItem = new Menu(mEntities);
+                    mItem.Text = ("Cut");
+                    mItem.Action = "mEntities-Cut";
+                    mItem.Picture = Picture["icon:/32/cut"];
+                    //============Copy======================
+                    mItem = new Menu(mEntities);
+                    mItem.Text = ("Copy");
+                    mItem.Action = "mEntities-Copy";
+                    mItem.Picture = Picture["icon:/32/copy"];
+                    //============Paste======================
+                    mItem = new Menu(mEntities);
+                    mItem.Text = ("Paste");
+                    mItem.Action = "mEntities-Paste";
+                    mItem.Picture = Picture["icon:/32/paste"];
+                    //============separator======================
+                    mItem = new Menu(mColors);
+                    mItem.Text = "";
+                    mItem.Action = "";
+                    //============Agrupar======================
+                    mItem = new Menu(mEntities);
+                    mItem.Text = ("Make group");
+                    mItem.Action = "mEntities-Group";
+                    mItem.Picture = Picture["icon:/32/paste"];
+                    //============Desagrupar======================
+                    mItem = new Menu(mEntities);
+                    mItem.Text = ("Break group");
+                    mItem.Action = "mEntities-DeGroup";
+                    mItem.Picture = Picture["icon:/32/paste"];
+                    //============separator======================
+                    mItem = new Menu(mColors);
+                    mItem.Text = "";
+                    mItem.Action = ""; // & CStr(i)
+                                       //============Ocultar layers de todo=====
+                    mItem = new Menu(mEntities);
+                    mItem.Text = ("HIde these Layers");
+                    mItem.Action = "mEntities-HIdeLayers";
+                    mItem.Picture = Picture["icon:/32/paste"];
+                    //============Desagrupar======================
+                    mItem = new Menu(mEntities);
+                    mItem.Text = ("Paste");
+                    mItem.Action = "mEntities-Paste";
+                    mItem.Picture = Picture["icon:/32/paste"];
+                    //fMain.PopupMenu = "mEntities"
+
+                    //===================================================================================================================================
+                    // Armo el menu contextual de cada ENTIDAD
+                    Gcd.SnapMode = Config.SnapModeSaved;
+                    sMenuSnap = ";Snap to...;;<nothing>;_nothing;4;;4;End point;_end;end_point;4;MId point;_mId;mId_point;4;Perpendicular;_per;perpendicular;4";
+                    sMenuSnap &= ";Quadrant;_qua;quadrant;4";
+                    sMenuSnap &= ";Center;_cen;center_point;4";
+                    sMenuSnap &= ";Intersection;_int;intersection;4";
+                    sMenuSnap &= ";Tangent;_tan;tangent;4";
+                    sMenuSnap &= ";Nearest;_nea;nearest;4";
+                    sMenuSnap &= ";Base point;_bas;base_point;4";
+
+                    sMenuPost = (";;;Cancel;_CANCEL;");
+
+                    String[] stxMenus = [];
+
+                    foreach (var vClass in Gcd.CCC)
+                    {
+                        Utils.MenuMakerPlus(fmain, vClass.gender, vClass.contextmenu + sMenuSnap + sMenuPost, Gcd.dirResources &/ "svg" &/ Config.IconFamily);
+                    }
+
+                }
 
 
 

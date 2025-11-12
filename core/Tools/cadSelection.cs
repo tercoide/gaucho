@@ -1,6 +1,6 @@
 namespace Gaucho;
 
-class cadSelection : IToolsBase
+public class cadSelection : ToolsBase
 {
  // Gambas class file
 
@@ -34,24 +34,24 @@ private string[] EntityType ;
 
 private Grip GripPoint ;         
 private Grip GripHovered ;         
-private bool GripCopying = False;
- //Public GripCopying As Boolean = False
+private bool GripCopying = false;
+ //Public GripCopying As Boolean = false
 
 private double dX ;         
 private double dY ;         
- //Public ToolActive As Boolean = False
-private bool PanActive = False;
-private bool GripActive = False;
-private bool RectActive = False;
+ //Public ToolActive As Boolean = false
+private bool PanActive = false;
+private bool GripActive = false;
+private bool RectActive = false;
 
  // nuevo, para integrar el resto de las tools con esta, que es la principal
-public bool AllowSingleSelection = True;
-public bool AllowRectSelection = True;
-public bool AllowPolySelection = True;
-public bool AllowGripEdit = True;
-public bool AllowTextInput = True;
+public bool AllowSingleSelection = true;
+public bool AllowRectSelection = true;
+public bool AllowPolySelection = true;
+public bool AllowGripEdit = true;
+public bool AllowTextInput = true;
 
-public bool ReturnOnFirstSelection = True;
+public bool ReturnOnFirstSelection = true;
 
  // mas nuevo
 public int SelectType = 1;
@@ -80,13 +80,13 @@ public double[] SelectionPoly ;
  // A.1.2 Estoy sobre una entidad
  // A.1.2.1 No esta seleccionada -> seleccionar
  // A.1.2.2 Esta seleccionada previamente
- // A.1.2.2.1 Estoy sobre un grip -> Inicio edicion por grip ActionActive = ActionGripActive (solo si ToolActive=False)
+ // A.1.2.2.1 Estoy sobre un grip -> Inicio edicion por grip ActionActive = ActionGripActive (solo si ToolActive=false)
  // A.1.2.2.2 No estoy sobre un grip -> deseleccionar
  // A.2 Derecho
- // A.2.1 ToolActive = False?
+ // A.2.1 ToolActive = false?
  // A.2.1.1 No tengo ninguna seleccion previa-> Repito el ultimo comando, independientemente de si estoy sobre una entidad o no
  // A.2.1.2 Tengo una seleccion previa -> Menu: Cortar, Copiar, Agrupar, Desagrupar, Llevar al layer actual, etc
- // A.2.2 ToolActive = True? -> Finalizo la seleccion y vuelvo a la Tool
+ // A.2.2 ToolActive = true? -> Finalizo la seleccion y vuelvo a la Tool
  // A.3 Medio -> Inicio el Paneo ActionActive = ActionPanActive
 
  // B MouseMove
@@ -111,30 +111,30 @@ public static bool Start(Variant ElemToBuild, int _Mode= 2)
      //       0 = Move, all points in the element must be selected, or click on it.
      //       1 = Stretch, selection may be partial, each element is called to see if the support stretching
 
-    this.Mode = _Mode;
+    Mode = _Mode;
 
-    this.Prompt = ("Selected") + " " + Str$(gcd.Drawing.Sheet.EntitiesSelected.Count) + " " + ("elements") + " " + ("New/Add(Ctrl)/Remove(Shft)/Previous selection");
+    Prompt = ("Selected") + " " + Str$(Gcd.Drawing.Sheet.EntitiesSelected.Count) + " " + ("elements") + " " + ("New/Add(Ctrl)/Remove(Shft)/Previous selection");
 
-     // If Me.Mode = ModeNewSelection Then
+     // If Mode = ModeNewSelection Then
      //     fMain.PopupMenu = ""                    // no hay menu contextual
-     //     Me.Prompt = "New selection"
-     //     If gcd.clsJobPrevious.gender = cadEntityBuilder.gender Then
+     //     Prompt = "New selection"
+     //     If Gcd.clsJobPrevious.gender = cadEntityBuilder.gender Then
      //         If cadEntityBuilder.LastEntity Then
-     //             Me.Prompt &= " or <rigth click> to repeat " & cadEntityBuilder.LastEntity.gender
+     //             Prompt &= " or <rigth click> to repeat " & cadEntityBuilder.LastEntity.gender
      //         End If
      //     End If
-     // Else If Me.Mode = ModeAddEntities Then
-     //     Me.Prompt = "Add entities to selection"
-     // Else If Me.Mode = ModeRemoveEntities Then
-     //     Me.Prompt = "Remove entities from selection"
+     // Else If Mode = ModeAddEntities Then
+     //     Prompt = "Add entities to selection"
+     // Else If Mode = ModeRemoveEntities Then
+     //     Prompt = "Remove entities from selection"
      //
      // Else
-     //     Utils.MenuMaker(fMain, "mToolsBase", Me.ContextMenu)
-     //     //gcd.Drawing.Sheet.GlSheet.PopupMenu = "mToolsBase"  // TODO: ver si damos soporte a menus
+     //     Utils.MenuMaker(fMain, "mToolsBase", ContextMenu)
+     //     //Gcd.Drawing.Sheet.GlSheet.PopupMenu = "mToolsBase"  // TODO: ver si damos soporte a menus
      // End If
-    gcd.Drawing.iEntity.Clear;
-    this.PoiChecking = True;
-    gcd.DrawHoveredEntity = True;
+    Gcd.Drawing.iEntity.Clear;
+    PoiChecking = true;
+    Gcd.DrawHoveredEntity = true;
     GripPoint = null;
 
 }
@@ -147,40 +147,40 @@ public static bool Start(Variant ElemToBuild, int _Mode= 2)
  //
  //
  //
- //     Me.EntityForEdit = clsMouseTracking.CheckAboveEntity(gcd.Xreal(Mouse.x), gcd.Yreal(Mouse.y))
+ //     EntityForEdit = clsMouseTracking.CheckAboveEntity(Gcd.Xreal(Mouse.x), Gcd.Yreal(Mouse.y))
  //     Return
  //
- //     If Not gcd.flgSearchingPOI Then
- //         gcd.Drawing.iEntity = clsMouseTracking.CheckBestPOI(gcd.Xreal(mouse.x), gcd.Yreal(mouse.Y))
+ //     If Not Gcd.flgSearchingPOI Then
+ //         Gcd.Drawing.iEntity = clsMouseTracking.CheckBestPOI(Gcd.Xreal(Mouse.x), Gcd.Yreal(Mouse.Y))
  //     Else    // estoy buscando, pero me movi, asi que me desengancho del POI anterior
  //
- //         gcd.Drawing.iEntity[0] = gcd.Xreal(mouse.x)
- //         gcd.Drawing.iEntity[1] = gcd.Yreal(mouse.y)
- //         gcd.Drawing.iEntity[2] = -1                 // POI type
+ //         Gcd.Drawing.iEntity[0] = Gcd.Xreal(Mouse.x)
+ //         Gcd.Drawing.iEntity[1] = Gcd.Yreal(Mouse.y)
+ //         Gcd.Drawing.iEntity[2] = -1                 // POI type
  //
  //     End If
  //
- //     If gcd.Drawing.iEntity[3] >= 0 Then
+ //     If Gcd.Drawing.iEntity[3] >= 0 Then
  //
  //         //Stop
  //         // I comment the abobe line because its stop my tool also. What is the idea whit stop?
  //         //  aca podes lanzar tu editor de texto u otras propiedades
- //         k = gcd.Drawing.iEntity[3]
- //         e = gcd.Drawing.Entities[k]
+ //         k = Gcd.Drawing.iEntity[3]
+ //         e = Gcd.Drawing.Entities[k]
  //
  //         // Select e.Gender
  //         //   Case "Text"
- //         //     If EditingText = False Then
+ //         //     If EditingText = false Then
  //         //       // Copying the entity for undo
  //         //       te = clsEntities.ClonEntity(e)
  //         //       te.Handle = e.Handle
  //         //       ftx = New FText([pnlDrawing.ScreenX + 7, pnlDrawing.ScreenY + pnlDrawing.H - 7], e)
  //         //       ftx.Run()
- //         //       While EditingText = False
+ //         //       While EditingText = false
  //         //         Wait 0.1
  //         //       Wend
- //         //       gcd.regen
- //         //       EditingText = False
+ //         //       Gcd.regen
+ //         //       EditingText = false
  //         //     Endif
  //         // End Select
  //     Endif
@@ -198,35 +198,35 @@ public static void MouseDown()
     if ( RectActive ) return;
 
      //GripPoint = -1
-    this.SelStartX = mouse.X;
-    this.SelStartY = mouse.Y;
-    this.SelStartXr = gcd.Xreal(Me.SelStartX);
-    this.SelStartYr = gcd.Yreal(Me.SelStartY);
+    SelStartX = Mouse.X;
+    SelStartY = Mouse.Y;
+    SelStartXr = Gcd.Xreal(SelStartX);
+    SelStartYr = Gcd.Yreal(SelStartY);
 
-    dX = this.SelStartXr;
-    dY = this.SelStartYr;
+    dX = SelStartXr;
+    dY = SelStartYr;
 
-    this.SelEndX = this.SelStartX;
-    this.SelEndy = this.SelStartY;
+    SelEndX = SelStartX;
+    SelEndy = SelStartY;
 
-    this.SelEndXr = this.SelStartXr;
-    this.SelEndyr = this.SelStartYr;
+    SelEndXr = SelStartXr;
+    SelEndYr = SelStartYr;
 
-    this.PoiChecking = False;
+    PoiChecking = false;
     if ( Mouse.Right ) return;
-    if ( gcd.clsJobCallBack ) return;
+    if ( Gcd.clsJobCallBack ) return;
     if ( RectActive ) return;
 
      // A.1 Izquierdo
     if ( Mouse.Left )
     {
 
-            // veo si esta en un grip(solo si ToolActive = False)
+            // veo si esta en un grip(solo si ToolActive = false)
 
             // chequeo si estoy sobre un grip
             if (AllowGripEdit) 
                 {
-                GripPoint = FindGrip(Me.SelStartXr, this.SelStartYr);
+                GripPoint = FindGrip(SelStartXr, SelStartYr);
                 }
             else
                 {
@@ -236,37 +236,37 @@ public static void MouseDown()
         {
 
              // creo una entidad al vuelo, clonada de la engripada
-            this.OriginalEntityForEdit = GripPoint.AsociatedEntity;
-            this.EntityForEdit = clsEntities.ClonEntity(GripPoint.AsociatedEntity, False);
-            GripPoint.AsociatedEntity = this.EntityForEdit;
-            gcd.Drawing.Sheet.SkipSearch = GripPoint.AsociatedEntity;
+            OriginalEntityForEdit = GripPoint.AsociatedEntity;
+            EntityForEdit = clsEntities.ClonEntity(GripPoint.AsociatedEntity, false);
+            GripPoint.AsociatedEntity = EntityForEdit;
+            Gcd.Drawing.Sheet.SkipSearch = GripPoint.AsociatedEntity;
 
              // rectifico la posicion del punto
-            this.SelStartXr = GripPoint.X;
-            this.SelStartYr = GripPoint.Y;
+            SelStartXr = GripPoint.X;
+            SelStartYr = GripPoint.Y;
 
             return;
-        } //Or Me.ModeRectSelection Then
-        else if ( gcd.Drawing.HoveredEntity )
+        } //Or ModeRectSelection Then
+        else if ( Gcd.Drawing.HoveredEntity )
         {
 
              // // A.1.2 Estoy sobre una entidad
              //
-             // If Not gcd.Drawing.Sheet.EntitiesSelected.ContainsKey(gcd.Drawing.HoveredEntity.Id) Then
+             // If Not Gcd.Drawing.Sheet.EntitiesSelected.ContainsKey(Gcd.Drawing.HoveredEntity.Id) Then
              //     // A.1.2.1 No esta seleccionada -> seleccionar
-             //     gcd.Drawing.Sheet.EntitiesSelected.add(gcd.Drawing.HoveredEntity, gcd.Drawing.HoveredEntity.Id)
-             //     gcd.Drawing.Sheet.Grips.Clear
-             //     gcd.CCC[gcd.Drawing.HoveredEntity.Gender].generategrips(gcd.Drawing.HoveredEntity)
+             //     Gcd.Drawing.Sheet.EntitiesSelected.add(Gcd.Drawing.HoveredEntity, Gcd.Drawing.HoveredEntity.Id)
+             //     Gcd.Drawing.Sheet.Grips.Clear
+             //     Gcd.CCC[Gcd.Drawing.HoveredEntity.Gender].generategrips(Gcd.Drawing.HoveredEntity)
              //     clsEntities.glGenDrawListSel
-             //     fProps.FillProperties(gcd.Drawing.Sheet.EntitiesSelected)
-             //     gcd.Redraw
+             //     fProps.FillProperties(Gcd.Drawing.Sheet.EntitiesSelected)
+             //     Gcd.Redraw
              // Else
              //     // A.1.2.2 Esta seleccionada previamente
              //     // A.1.2.2.2 No estoy sobre un grip -> deseleccionar
-             //     gcd.Drawing.Sheet.EntitiesSelected.Remove(gcd.Drawing.HoveredEntity.Id)
-             //     fprops.FillProperties(gcd.Drawing.Sheet.EntitiesSelected)
+             //     Gcd.Drawing.Sheet.EntitiesSelected.Remove(Gcd.Drawing.HoveredEntity.Id)
+             //     fprops.FillProperties(Gcd.Drawing.Sheet.EntitiesSelected)
              //     clsEntities.glGenDrawListSel
-             //     gcd.Redraw
+             //     Gcd.Redraw
              // End If
 
         }
@@ -281,34 +281,34 @@ public static void MouseDown()
         return; // este return es para evitar clicks simultaneos
     }
 
-     //         If gcd.Drawing.Sheet.Viewport Then
+     //         If Gcd.Drawing.Sheet.Viewport Then
      //
      //             // si el click esta fuera del viewport, lo desestimo
-     //             If Me.SelStartXr < gcd.Drawing.Sheet.Viewport.X0 Or Me.SelStartXr > gcd.Drawing.Sheet.Viewport.X1 Or Me.SelStartYr < gcd.Drawing.Sheet.Viewport.Y0 Or Me.SelStartYr > gcd.Drawing.Sheet.Viewport.Y1 Then
-     //                 gcd.Drawing.Sheet.Viewport = null // Desactivo el viewport
+     //             If SelStartXr < Gcd.Drawing.Sheet.Viewport.X0 Or SelStartXr > Gcd.Drawing.Sheet.Viewport.X1 Or SelStartYr < Gcd.Drawing.Sheet.Viewport.Y0 Or SelStartYr > Gcd.Drawing.Sheet.Viewport.Y1 Then
+     //                 Gcd.Drawing.Sheet.Viewport = null // Desactivo el viewport
      //             Else
      //
-     //                 gcd.Drawing.GLAreaInUse.Mouse = Mouse.SizeAll
-     //                 Me.active = True
+     //                 Gcd.Drawing.GLAreaInUse.Mouse = Mouse.SizeAll
+     //                 active = true
      //             End If
      //         Else
      //
      //
      //
-     //             If Me.Mode = Me.ModeRectSelection Then
-     //                 Me.Active = True
+     //             If Mode = ModeRectSelection Then
+     //                 Active = true
      //
      //             Else
      //
      //
-     //                 If gcd.Drawing.HoveredEntity.selected Then
+     //                 If Gcd.Drawing.HoveredEntity.selected Then
      //
      //
      //                 Else
-     //                     clsEntities.SelectElem(gcd.Drawing.HoveredEntity)                 //   -> la selecciono
+     //                     clsEntities.SelectElem(Gcd.Drawing.HoveredEntity)                 //   -> la selecciono
      //
      //                 Endif
-     //                 Me.Active = False
+     //                 Active = false
      //
      //                 clsEntities.GLGenDrawListSel(0)
      //
@@ -330,20 +330,20 @@ public static void MouseUp()
     Entity e ;         
     Dictionary<string, Entity> cSel =[] ;         
 
-    gcd.Drawing.iEntity.Clear;
-    gcd.Drawing.Sheet.SkipSearch = null;
-    gcd.Drawing.LastPoint.Clear;
-     // If gcd.Drawing.Sheet.Viewport Then
+    Gcd.Drawing.iEntity.Clear;
+    Gcd.Drawing.Sheet.SkipSearch = null;
+    Gcd.Drawing.LastPoint.Clear;
+     // If Gcd.Drawing.Sheet.Viewport Then
      //     //
-     //     gcd.Drawing.GLAreaInUse.Mouse = Mouse.Cross
-     //     gcd.flgNewPosition = True
-     //     Me.active = False
+     //     Gcd.Drawing.GLAreaInUse.Mouse = Mouse.Cross
+     //     Gcd.flgNewPosition = true
+     //     active = false
      //     Return
      // End If
 
     tipo = "new";
-    if ( Mouse.Shift || Me.SelectMode == Me.SelectModeRem ) tipo = "rem"; // estos elementos de la seleccion anterior
-    if ( Mouse.Control || Me.SelectMode == Me.SelectModeAdd ) tipo = "add"; // elementos a la seleccion anterior
+    if ( Mouse.Shift || SelectMode == SelectModeRem ) tipo = "rem"; // estos elementos de la seleccion anterior
+    if ( Mouse.Control || SelectMode == SelectModeAdd ) tipo = "add"; // elementos a la seleccion anterior
      //
 
     if ( Mouse.Left )
@@ -351,170 +351,170 @@ public static void MouseUp()
          // C.1 Izquierdo
 
          // determino que hacer con la seleccion
-        if ( gcd.clsJobCallBack && Me.ReturnOnFirstSelection && Me.SelectType == Me.SelectTypePoint )
+        if ( Gcd.clsJobCallBack && ReturnOnFirstSelection && SelectType == SelectTypePoint )
         {
-            gcd.clsJob = gcd.clsJobCallBack;
-            gcd.clsJobCallBack = null;
-            gcd.clsJob.run;
+            Gcd.clsJob = Gcd.clsJobCallBack;
+            Gcd.clsJobCallBack = null;
+            Gcd.clsJob.run;
             return;
         }
 
-        this.PoiChecking = True;
+        PoiChecking = true;
         if ( RectActive )
         {
 
-            if ( Me.SelectType == Me.SelectTypePoly )
+            if ( SelectType == SelectTypePoly )
             {
-                this.SelectionPoly.Add(gcd.Xreal(Mouse.x));
-                this.SelectionPoly.Add(gcd.Yreal(Mouse.y));
+                SelectionPoly.Add(Gcd.Xreal(Mouse.x));
+                SelectionPoly.Add(Gcd.Yreal(Mouse.y));
                 return; // porque esto requiere un RigthClick para terminar
             }
              // C.1.1 ActionActive = ActionRectActive -> Finalizo la seleccion por recuadro
-            RectActive = False;
-            gcd.flgSearchingAllowed = True;
+            RectActive = false;
+            Gcd.flgSearchingAllowed = true;
                 // corrijo para start<end  <- DEPRE
-                // If Me.SelStartX > Me.SelEndX Then
-                //     crossing = True <- DEPRE
-                //     Swap Me.SelStartX, Me.SelEndX
+                // If SelStartX > SelEndX Then
+                //     crossing = true <- DEPRE
+                //     Swap SelStartX, SelEndX
                 // Else
-                //     crossing = False  <- DEPRE
+                //     crossing = false  <- DEPRE
                 // End If
 
-            if (Me.SelStartX > Me.SelEndX) Utils.Swap(ref this.SelStartX, ref this.SelEndX);
-            if ( Me.SelStartY < Me.SelEndy ) Utils.Swap(ref this.SelStartY, ref this.SelEndy); // this is FLIPPED
+            if (SelStartX > SelEndX) Utils.Swap(ref SelStartX, ref SelEndX);
+            if ( SelStartY < SelEndy ) Utils.Swap(ref SelStartY, ref SelEndy); // this is FLIPPED
 
-            if ( Me.SelStartXr > Me.SelEndXr ) Utils.Swap(ref this.SelStartXr, ref this.SelEndXr);
-            if ( Me.SelStartYr > Me.SelEndyr ) Utils.Swap(ref this.SelStartYr, ref this.SelEndyr);
+            if ( SelStartXr > SelEndXr ) Utils.Swap(ref SelStartXr, ref SelEndXr);
+            if ( SelStartYr > SelEndYr ) Utils.Swap(ref SelStartYr, ref SelEndYr);
 
              // veo si el rectangulo es suficientemente grande como para representar una seleccion por rectangulo
-            if ( (Me.SelEndX - Me.SelStartX + (-Me.SelEndy + Me.SelStartY)) > 10 )
+            if ( (SelEndX - SelStartX + (-SelEndy + SelStartY)) > 10 )
             {
 
-                cSel = clsEntities.SelectionSquare(Me.SelStartXr, this.SelStartYr, this.SelEndXr, this.SelEndyr, this.SelectCrossing);
+                cSel = clsEntities.SelectionSquare(SelStartXr, SelStartYr, SelEndXr, SelEndYr, SelectCrossing);
 
                  // Else // TODO: ver si tengo que desseleccionar
                  //     clsEntities.DeSelection()
 
             }
-            gcd.Drawing.Sheet.EntitiesSelected = clsEntities.SelectionCombine(gcd.Drawing.Sheet.EntitiesSelected, cSel, tipo);
+            Gcd.Drawing.Sheet.EntitiesSelected = clsEntities.SelectionCombine(Gcd.Drawing.Sheet.EntitiesSelected, cSel, tipo);
 
              // determino que hacer con la seleccion
-            if ( gcd.clsJobCallBack && Me.ReturnOnFirstSelection )
+            if ( Gcd.clsJobCallBack && ReturnOnFirstSelection )
             {
-                gcd.clsJob = gcd.clsJobCallBack;
-                gcd.clsJobCallBack = null;
-                gcd.clsJob.run;
+                Gcd.clsJob = Gcd.clsJobCallBack;
+                Gcd.clsJobCallBack = null;
+                Gcd.clsJob.run;
                 return;
             }
-             // e = gcd.Drawing.Sheet.EntitiesSelected[gcd.Drawing.Sheet.EntitiesSelected.Last]
+             // e = Gcd.Drawing.Sheet.EntitiesSelected[Gcd.Drawing.Sheet.EntitiesSelected.Last]
              // If e Then
-             //     //gcd.Drawing.Sheet.Grips.Clear
-             //     gcd.CCC[e.Gender].generategrips(e)
+             //     //Gcd.Drawing.Sheet.Grips.Clear
+             //     Gcd.CCC[e.Gender].generategrips(e)
              // Endif
-            if ( gcd.Drawing.Sheet.EntitiesSelected.Count > 0 )
+            if ( Gcd.Drawing.Sheet.EntitiesSelected.Count > 0 )
             {
-                fMain.fp.FillProperties(gcd.Drawing.Sheet.EntitiesSelected);
+                fMain.fp.FillProperties(Gcd.Drawing.Sheet.EntitiesSelected);
             }
             else
             {
-                fMain.fp.FillGeneral(gcd.Drawing.Sheet);
+                fMain.fp.FillGeneral(Gcd.Drawing.Sheet);
             }
             clsEntities.GLGenDrawListSel();
 
-             //Try s = gcd.clsJobCallBack.gender
-            this.Prompt = ("Selected") + " " + gcd.Drawing.Sheet.EntitiesSelected.Count.ToString() + " " + ("elements") + " " + ("New/Add(Ctrl)/Remove(Shft)/Previous selection");
+             //Try s = Gcd.clsJobCallBack.gender
+            Prompt = ("Selected") + " " + Gcd.Drawing.Sheet.EntitiesSelected.Count.ToString() + " " + ("elements") + " " + ("New/Add(Ctrl)/Remove(Shft)/Previous selection");
 
-             // If gcd.clsJobCallBack Then
-             //     Try gcd.clsJobCallBack.run()
+             // If Gcd.clsJobCallBack Then
+             //     Try Gcd.clsJobCallBack.run()
              //     Return
              // Else
              //
              //     // vamos a darle mas funcionalidad
-             //     If gcd.Drawing.Sheet.EntitiesSelected.Count = 0 Then
+             //     If Gcd.Drawing.Sheet.EntitiesSelected.Count = 0 Then
              //
-             //     Else If gcd.Drawing.Sheet.EntitiesSelected.Count = 1 Then
+             //     Else If Gcd.Drawing.Sheet.EntitiesSelected.Count = 1 Then
              //
-             //         //gcd.Drawing.Sheet.GlSheet.PopupMenu = "mColors"
+             //         //Gcd.Drawing.Sheet.GlSheet.PopupMenu = "mColors"
              //
              //     Else // tenemos varias entidades
              //
-             //         //gcd.Drawing.Sheet.GlSheet.PopupMenu = "mEntities"
+             //         //Gcd.Drawing.Sheet.GlSheet.PopupMenu = "mEntities"
              //
              //     End If
              // Endif
 
         }
-        else if ( RectActive == False && ! GripPoint )
+        else if ( RectActive == false && ! GripPoint )
         {
 
              // A.1.2 Estoy sobre una entidad
-            if ( gcd.Drawing.HoveredEntity && AllowSingleSelection )
+            if ( Gcd.Drawing.HoveredEntity && AllowSingleSelection )
             {
-                if ( tipo == "new" ) gcd.Drawing.Sheet.EntitiesSelected.Clear;
+                if ( tipo == "new" ) Gcd.Drawing.Sheet.EntitiesSelected.Clear;
                 if ( AllowSingleSelection )
                 {
 
                      // A.1.2.1 No esta seleccionada -> seleccionar
-                    if ( ! gcd.Drawing.Sheet.EntitiesSelected.ContainsKey(gcd.Drawing.HoveredEntity.Id) )
+                    if ( ! Gcd.Drawing.Sheet.EntitiesSelected.ContainsKey(Gcd.Drawing.HoveredEntity.Id) )
                     {
                          // excepto que estos removiendo
                         if ( tipo != "rem" )
                         {
-                            gcd.Drawing.Sheet.EntitiesSelected.add(gcd.Drawing.HoveredEntity, gcd.Drawing.HoveredEntity.Id);
+                            Gcd.Drawing.Sheet.EntitiesSelected.add(Gcd.Drawing.HoveredEntity, Gcd.Drawing.HoveredEntity.Id);
                         }
                     } // esta en la seleccion
                     else
                     {
                         if ( tipo == "rem" )
                         {
-                            gcd.Drawing.Sheet.EntitiesSelected.Remove(gcd.Drawing.HoveredEntity.Id);
+                            Gcd.Drawing.Sheet.EntitiesSelected.Remove(Gcd.Drawing.HoveredEntity.Id);
                         }
                     }
-                    if ( gcd.clsJobCallBack && Me.ReturnOnFirstSelection )
+                    if ( Gcd.clsJobCallBack && ReturnOnFirstSelection )
                     {
-                        gcd.clsJob = gcd.clsJobCallBack;
-                        gcd.clsJobCallBack = null;
-                        gcd.clsJob.run;
+                        Gcd.clsJob = Gcd.clsJobCallBack;
+                        Gcd.clsJobCallBack = null;
+                        Gcd.clsJob.run;
                         return;
                     }
                 }
                 if ( AllowGripEdit )
                 {
 
-                    gcd.Drawing.Sheet.Grips.Clear;
-                    clsEntities.GenGrips(gcd.Drawing.HoveredEntity);
+                    Gcd.Drawing.Sheet.Grips.Clear;
+                    clsEntities.GenGrips(Gcd.Drawing.HoveredEntity);
 
                      // Else  // TODO: ver que pasa con esto
 
                      //     // A.1.2.2 Esta seleccionada previamente
                      //     // A.1.2.2.2 No estoy sobre un grip -> deseleccionar
-                     //     gcd.Drawing.Sheet.EntitiesSelected.Remove(gcd.Drawing.HoveredEntity.Id)
-                     //     fprops.FillProperties(gcd.Drawing.Sheet.EntitiesSelected)
+                     //     Gcd.Drawing.Sheet.EntitiesSelected.Remove(Gcd.Drawing.HoveredEntity.Id)
+                     //     fprops.FillProperties(Gcd.Drawing.Sheet.EntitiesSelected)
                      //     clsEntities.glGenDrawListSel
-                     //     gcd.Redraw
+                     //     Gcd.Redraw
                 }
-                fMain.fp.FillProperties(gcd.Drawing.Sheet.EntitiesSelected);
+                fMain.fp.FillProperties(Gcd.Drawing.Sheet.EntitiesSelected);
                 clsEntities.GLGenDrawListSel();
-                gcd.Redraw;
-                this.Prompt = ("Selected") + " " + (gcd.Drawing.Sheet.EntitiesSelected.Count.ToString()) + " " + ("elements");
+                Gcd.Redraw;
+                Prompt = ("Selected") + " " + (Gcd.Drawing.Sheet.EntitiesSelected.Count.ToString()) + " " + ("elements");
 
             } // inicio la seleccion por recuadro
             else
             {
 
-                if ( Me.SelectType > 0 ) RectActive = True;
-                gcd.flgSearchingAllowed = False;
-                this.SelStartX = mouse.x;
-                this.SelStartY = mouse.Y;
+                if ( SelectType > 0 ) RectActive = true;
+                Gcd.flgSearchingAllowed = false;
+                SelStartX = Mouse.x;
+                SelStartY = Mouse.Y;
                  // Paso a coordenadas reales
-                this.selStartXr = gcd.Xreal(Me.SelStartX);
-                this.selStartYr = gcd.Yreal(Me.SelStartY);
-                if ( Me.SelectType == Me.SelectTypePoly )
+                selStartXr = Gcd.Xreal(SelStartX);
+                selStartYr = Gcd.Yreal(SelStartY);
+                if ( SelectType == SelectTypePoly )
                 {
-                    this.SelectionPoly.Add(Me.SelStartXr);
-                    this.SelectionPoly.Add(Me.SelStartYr);
+                    SelectionPoly.Add(SelStartXr);
+                    SelectionPoly.Add(SelStartYr);
                 }
-                gcd.Drawing.Sheet.Grips.Clear;
+                Gcd.Drawing.Sheet.Grips.Clear;
 
             }
 
@@ -526,50 +526,50 @@ public static void MouseUp()
              // guardo todo
 
             GripEdit;
-            gcd.Drawing.Sheet.Grips.Clear;
+            Gcd.Drawing.Sheet.Grips.Clear;
             if ( ! GripCopying )
             {
-                this.EntityForEdit.id = this.OriginalEntityForEdit.id;
+                EntityForEdit.id = OriginalEntityForEdit.id;
                 s = GripPoint.ToolTip + (" in ") + GripPoint.AsociatedEntity.Gender;
-                gcd.Drawing.uUndo.OpenUndoStage(s, Undo.TypeModify);
-                gcd.Drawing.uUndo.AddUndoItem(Me.OriginalEntityForEdit);
+                Gcd.Drawing.uUndo.OpenUndoStage(s, Undo.TypeModify);
+                Gcd.Drawing.uUndo.AddUndoItem(OriginalEntityForEdit);
 
-                gcd.Drawing.Sheet.Entities.Remove(Me.OriginalEntityForEdit.id);
-                gcd.Drawing.Sheet.EntitiesVisibles.Remove(Me.OriginalEntityForEdit.id);
-                gcd.Drawing.Sheet.EntitiesSelected.Remove(Me.OriginalEntityForEdit.id);
+                Gcd.Drawing.Sheet.Entities.Remove(OriginalEntityForEdit.id);
+                Gcd.Drawing.Sheet.EntitiesVisibles.Remove(OriginalEntityForEdit.id);
+                Gcd.Drawing.Sheet.EntitiesSelected.Remove(OriginalEntityForEdit.id);
             }
             else
             {
-                this.EntityForEdit.id = gcd.NewId();
-                gcd.Drawing.uUndo.OpenUndoStage("Grip copy ", Undo.TypeCreate);
-                gcd.Drawing.uUndo.AddUndoItem(Me.EntityForEdit);
+                EntityForEdit.id = Gcd.NewId();
+                Gcd.Drawing.uUndo.OpenUndoStage("Grip copy ", Undo.TypeCreate);
+                Gcd.Drawing.uUndo.AddUndoItem(EntityForEdit);
 
             }
 
-            gcd.Drawing.uUndo.CloseUndoStage();
+            Gcd.Drawing.uUndo.CloseUndoStage();
 
-             //gcd.CCC[Me.EntityForEdit.Gender].finish(Me.EntityForEdit)
-            gcd.CCC[Me.EntityForEdit.Gender].generategrips(Me.EntityForEdit);
-            gcd.Drawing.Sheet.entities.Add(Me.EntityForEdit, this.EntityForEdit.id);
-            gcd.Drawing.Sheet.EntitiesVisibles.Add(Me.EntityForEdit, this.EntityForEdit.id);
-            gcd.Drawing.Sheet.EntitiesSelected.Add(Me.EntityForEdit, this.EntityForEdit.id);
+             //Gcd.CCC[EntityForEdit.Gender].finish(EntityForEdit)
+            Gcd.CCC[EntityForEdit.Gender].generategrips(EntityForEdit);
+            Gcd.Drawing.Sheet.entities.Add(EntityForEdit, EntityForEdit.id);
+            Gcd.Drawing.Sheet.EntitiesVisibles.Add(EntityForEdit, EntityForEdit.id);
+            Gcd.Drawing.Sheet.EntitiesSelected.Add(EntityForEdit, EntityForEdit.id);
 
-            clsEntities.glGenDrawList(Me.EntityForEdit);
+            clsEntities.glGenDrawList(EntityForEdit);
             clsEntities.glGenDrawListSel();
-            clsEntities.glGenDrawListLAyers(Me.EntityForEdit.pLayer);
-            this.EntityForEdit = null;
-            this.OriginalEntityForEdit = null;
+            clsEntities.glGenDrawListLAyers(EntityForEdit.pLayer);
+            EntityForEdit = null;
+            OriginalEntityForEdit = null;
             GripPoint = null;
-             //GripCopying = False
+             //GripCopying = false
 
         }
 
-        if ( Me.Mode == PanActive )
+        if ( Mode == PanActive )
         {
              // C.1.3 ActionActive = ActionPanActive -> nada
         }
 
-        if ( Me.Mode == False )
+        if ( Mode == false )
         {
              // C.1.4.1 Estoy sobre una entidad
 
@@ -583,72 +583,72 @@ public static void MouseUp()
     if ( Mouse.Right )
     {
 
-        if ( RectActive && Me.SelectType == Me.SelectTypePoly )
+        if ( RectActive && SelectType == SelectTypePoly )
         {
 
              // C.1.1 Finalizo la seleccion por POLY
-            RectActive = False;
-            this.SelectionPoly.Add(gcd.Xreal(Mouse.x));
-            this.SelectionPoly.Add(gcd.Yreal(Mouse.y));
+            RectActive = false;
+            SelectionPoly.Add(Gcd.Xreal(Mouse.x));
+            SelectionPoly.Add(Gcd.Yreal(Mouse.y));
 
-            cSel = clsEntities.SelectionPoly(Me.SelectionPoly, this.SelectCrossing);
-            this.SelectionPoly.Clear;
-            gcd.Drawing.Sheet.EntitiesSelected = clsEntities.SelectionCombine(gcd.Drawing.Sheet.EntitiesSelected, cSel, tipo);
+            cSel = clsEntities.SelectionPoly(SelectionPoly, SelectCrossing);
+            SelectionPoly.Clear;
+            Gcd.Drawing.Sheet.EntitiesSelected = clsEntities.SelectionCombine(Gcd.Drawing.Sheet.EntitiesSelected, cSel, tipo);
 
              // determino que hacer con la seleccion
-            if ( gcd.clsJobCallBack && Me.ReturnOnFirstSelection )
+            if ( Gcd.clsJobCallBack && ReturnOnFirstSelection )
             {
-                gcd.clsJob = gcd.clsJobCallBack;
-                gcd.clsJobCallBack = null;
-                gcd.clsJob.run;
+                Gcd.clsJob = Gcd.clsJobCallBack;
+                Gcd.clsJobCallBack = null;
+                Gcd.clsJob.run;
                 return;
             }
 
-            e = gcd.Drawing.Sheet.EntitiesSelected[gcd.Drawing.Sheet.EntitiesSelected.Last];
+            e = Gcd.Drawing.Sheet.EntitiesSelected[Gcd.Drawing.Sheet.EntitiesSelected.Last];
             if ( e )
             {
-                 //gcd.Drawing.Sheet.Grips.Clear
-                gcd.CCC[e.Gender].generategrips(e);
+                 //Gcd.Drawing.Sheet.Grips.Clear
+                Gcd.CCC[e.Gender].generategrips(e);
             }
-            fProps.FillProperties(gcd.Drawing.Sheet.EntitiesSelected);
+            fProps.FillProperties(Gcd.Drawing.Sheet.EntitiesSelected);
             clsEntities.GLGenDrawListSel();
 
-            this.Prompt = ("Selected") + " " + gcd.Drawing.Sheet.EntitiesSelected.Count.ToString() + " " + ("elements");
+            Prompt = ("Selected") + " " + Gcd.Drawing.Sheet.EntitiesSelected.Count.ToString() + " " + ("elements");
 
         }
-        else if ( ! gcd.clsJobCallBack )
+        else if ( ! Gcd.clsJobCallBack )
         {
              // Si estoy aca es porque:
              // -No estoy en un proceso de seleccion
              // -No estoy aplicando una herramienta
              // -No hay entidades selecionadas
 
-            if ( gcd.clsJobPrevious )
+            if ( Gcd.clsJobPrevious )
             {
-                if ( (gcd.Drawing.Sheet.EntitiesSelected.Count == 1) && (gcd.clsJobPrevious.gender == cadEntityBuilder.gender) )
+                if ( (Gcd.Drawing.Sheet.EntitiesSelected.Count == 1) && (Gcd.clsJobPrevious.gender == cadEntityBuilder.gender) )
                 {
                     if ( cadEntityBuilder.LastEntity )
                     {
 
-                        gcd.clsJob = gcd.clsJobPrevious;
-                        gcd.clsJob.Start();
+                        Gcd.clsJob = Gcd.clsJobPrevious;
+                        Gcd.clsJob.Start();
 
                     }
 
                 }
                 else
                 {
-                     //If gcd.Drawing.Sheet.EntitiesSelected.Count = 0 Then              //Sin entidades seleccionadas podria significar cancelar
+                     //If Gcd.Drawing.Sheet.EntitiesSelected.Count = 0 Then              //Sin entidades seleccionadas podria significar cancelar
                      //
-                     //                 gcd.clsJob = gcd.clsJobPrevious
-                     //                 gcd.clsJob.Cancel
-                     //             Else If gcd.Drawing.Sheet.EntitiesSelected.Count = 1 Then
-                     //                 gcd.clsJob = gcd.clsJobPrevious
-                     //                 gcd.clsJob.Start()
+                     //                 Gcd.clsJob = Gcd.clsJobPrevious
+                     //                 Gcd.clsJob.Cancel
+                     //             Else If Gcd.Drawing.Sheet.EntitiesSelected.Count = 1 Then
+                     //                 Gcd.clsJob = Gcd.clsJobPrevious
+                     //                 Gcd.clsJob.Start()
                      //
                      //             Else // tenemos varias entidades
-                    gcd.clsJob = gcd.clsJobPrevious;
-                    gcd.clsJob.Start();
+                    Gcd.clsJob = Gcd.clsJobPrevious;
+                    Gcd.clsJob.Start();
 
                 }
             }
@@ -656,28 +656,28 @@ public static void MouseUp()
              // Else
              //     // A.2.1.2 Tengo una seleccion previa -> Menu: Cortar, Copiar, Agrupar, Desagrupar, Llevar al layer actual, etc
              //     // Esto salta solo, pero debo configurarlo en algun lado
-             //     gcd.clsJob = gcd.clsJobCallBack
-             //     gcd.clsJob.run()
+             //     Gcd.clsJob = Gcd.clsJobCallBack
+             //     Gcd.clsJob.run()
              //
              //End If
              // FIXME: ver esta pafrte dudosa
-             // Else If gcd.Drawing.Sheet.EntitiesSelected.Count > 0 Then
+             // Else If Gcd.Drawing.Sheet.EntitiesSelected.Count > 0 Then
              //     // Si estoy aca es porque:
              //     // -No estoy en un proceso de seleccion
              //     // -No estoy aplicando una herramienta
              //     // -Hay entidades selecionadas
-             //     gcd.Drawing.Sheet.EntitiesSelected.Clear
+             //     Gcd.Drawing.Sheet.EntitiesSelected.Clear
              //     clsEntities.GLGenDrawListSel()
-             //     fProps.FillProperties(gcd.Drawing.Sheet.EntitiesSelected)
+             //     fProps.FillProperties(Gcd.Drawing.Sheet.EntitiesSelected)
 
         }
         else
         {
 
-             // A.2.2 ToolActive = True? -> Finalizo la seleccion y vuelvo a la Tool
-            gcd.Drawing.Sheet.EntitiesSelectedPrevious = gcd.Drawing.Sheet.EntitiesSelected.Copy();
-            gcd.clsJob = gcd.clsJobCallBack;
-            gcd.clsJob.run();
+             // A.2.2 ToolActive = true? -> Finalizo la seleccion y vuelvo a la Tool
+            Gcd.Drawing.Sheet.EntitiesSelectedPrevious = Gcd.Drawing.Sheet.EntitiesSelected.Copy();
+            Gcd.clsJob = Gcd.clsJobCallBack;
+            Gcd.clsJob.run();
 
         }
         return; // este return es para evitar clicks simultaneos
@@ -690,7 +690,7 @@ public static void MouseUp()
         return; // este return es para evitar clicks simultaneos
     }
 
-    gcd.Redraw;
+    Gcd.Redraw;
 
 }
 
@@ -701,59 +701,59 @@ public void MouseMove()
     Grip g ;         
     Entity e ;         
 
-    this.SelEndX = mouse.X;
-    this.SelEndy = mouse.Y;
-    this.SelEndXr = gcd.Xreal(Me.SelEndX);
-    this.SelEndyr = gcd.Yreal(Me.SelEndy);
-    this.SelEndXr = gcd.Near(Me.SelEndXr);
-    this.SelEndYr = gcd.Near(Me.SelEndYr);
+    SelEndX = Mouse.X;
+    SelEndy = Mouse.Y;
+    SelEndXr = Gcd.Xreal(SelEndX);
+    SelEndYr = Gcd.Yreal(SelEndy);
+    SelEndXr = Gcd.Near(SelEndXr);
+    SelEndYr = Gcd.Near(SelEndYr);
 
      // // yo soy el responsable de chequear POI
-     // If Not gcd.flgSearchingPOI Thenntity
+     // If Not Gcd.flgSearchingPOI Thenntity
 
      //End If
 
      //end If
-    if ( RectActive && Me.SelectType != Me.SelectTypeSingle )
+    if ( RectActive && SelectType != SelectTypeSingle )
     {
             // B.1 ActionActive = ActionRectActive: actualizo coordenadas del punto final del Rect
             // (se hace mas arriba)
 
-            if (Me.SelEndXr <= Me.SelStartXr)
+            if (SelEndXr <= SelStartXr)
             {
-                this.SelectCrossing = True;
+                SelectCrossing = true;
         }
             else
             {
-                this.SelectCrossing = False;
+                SelectCrossing = false;
             }
     }
     else if ( GripPoint )
     {
          // B.2 ActionActive = ActionGripActive: modifico la entidad con la nueva posicion del punto
-        gcd.Drawing.iEntity = clsMouseTracking.CheckBestPOI(Me.SelEndXr, this.SelEndYr);
+        Gcd.Drawing.iEntity = clsMouseTracking.CheckBestPOI(SelEndXr, SelEndYr);
 
-        if ( (gcd.Drawing.iEntity[2] > 0) )
+        if ( (Gcd.Drawing.iEntity[2] > 0) )
         {
 
-            this.SelEndXr = gcd.Drawing.iEntity[0];
-            this.SelEndYr = gcd.Drawing.iEntity[1];
+            SelEndXr = Gcd.Drawing.iEntity[0];
+            SelEndYr = Gcd.Drawing.iEntity[1];
 
              // Else
         } // puedo hacer ortogonal
         else
         {
-            if ( gcd.Orthogonal ) // hablame de operadores logicos
+            if ( Gcd.Orthogonal ) // hablame de operadores logicos
             {
 
-                if ( Abs(Me.SelEndX - Me.SelStartX) > Abs(Me.SelEndY - Me.SelStartY) ) // prevalece X
+                if ( Abs(SelEndX - SelStartX) > Abs(SelEndY - SelStartY) ) // prevalece X
                 {
-                    this.SelEndYr = this.SelStartYr;
+                    SelEndYr = SelStartYr;
 
                 }
                 else
                 {
-                    this.SelEndXr = this.SelStartXr;
+                    SelEndXr = SelStartXr;
                 }
 
             }
@@ -771,7 +771,7 @@ public void MouseMove()
         DrawingAids.txtFrom = GripPoint.ToolTip;
 
     }
-    else if ( Me.Active && PanActive )
+    else if ( Active && PanActive )
     {
          // B.3 ActionActive = ActionPanActive: mando la coordenada a cadPan
          // (ni siquiera deberiamos estar aca, deberiamos estar en cadPan.class)
@@ -779,12 +779,12 @@ public void MouseMove()
     else
     {
          // busco algun grip
-        GripHovered = FindGrip(Me.SelEndXr, this.SelEndYr);
+        GripHovered = FindGrip(SelEndXr, SelEndYr);
          // B.4 ActionActive = 0: nada
 
-        if ( gcd.Drawing.HoveredEntity )
+        if ( Gcd.Drawing.HoveredEntity )
         {
-            if ( Config.ShowEntityInspector ) FInspector.Run(gcd.Drawing.HoveredEntity);
+            if ( Config.ShowEntityInspector ) FInspector.Run(Gcd.Drawing.HoveredEntity);
         }
         else
         {
@@ -813,32 +813,32 @@ public void KeyText(string EnteredText)
     switch ( EnteredText)
     {
         case "_CANCEL":
-            this.Cancel;
+            Cancel;
         case "R":
-            this.SelectMode = this.SelectModeRem;
+            SelectMode = SelectModeRem;
         case "A":
-            this.SelectMode = this.SelectModeAdd;
+            SelectMode = SelectModeAdd;
         case "N": // seleccion previa
-            gcd.Drawing.Sheet.EntitiesSelected.Clear; // = gcd.Drawing.Sheet.EntitiesSelectedPrevious.Copy()
+            Gcd.Drawing.Sheet.EntitiesSelected.Clear; // = Gcd.Drawing.Sheet.EntitiesSelectedPrevious.Copy()
             clsEntities.GLGenDrawListSel();
-            gcd.redraw;
+            Gcd.redraw;
 
         case "P": // seleccion previa
-            gcd.Drawing.Sheet.EntitiesSelected = gcd.Drawing.Sheet.EntitiesSelectedPrevious.Copy();
+            Gcd.Drawing.Sheet.EntitiesSelected = Gcd.Drawing.Sheet.EntitiesSelectedPrevious.Copy();
             clsEntities.GLGenDrawListSel();
-            gcd.redraw;
+            Gcd.redraw;
 
         case "CENTER":
-            gcd.PanTo(0, 0);
-            gcd.Redraw;
-             //gcd.regen
+            Gcd.PanTo(0, 0);
+            Gcd.Redraw;
+             //Gcd.regen
         case "REGEN":
-            gcd.regen;
+            Gcd.regen;
         case "REGENALL":
-            gcd.PanToOrigin;
-            gcd.regen;
+            Gcd.PanToOrigin;
+            Gcd.regen;
         case "REDRAW":
-            gcd.Redraw;
+            Gcd.Redraw;
         case "STL":
             clsEntities.ExportSTL;
 
@@ -851,9 +851,9 @@ public void KeyText(string EnteredText)
                 EnteredText = Upper(Config.oAlias[Lower(EnteredText)]);
             }
 
-            if ( gcd.CCC.ContainsKey(EnteredText) )
+            if ( Gcd.CCC.ContainsKey(EnteredText) )
             {
-                o = gcd.CCC[EnteredText];
+                o = Gcd.CCC[EnteredText];
             }
             else
             {
@@ -865,21 +865,21 @@ public void KeyText(string EnteredText)
              // check if the class needs to be run trough other
             if ( o.usewith == "" ) // its a tool
             {
-                gcd.clsJobPrevious = gcd.clsJob;
-                gcd.clsJob = o;
-                gcd.clsJob.start;
+                Gcd.clsJobPrevious = Gcd.clsJob;
+                Gcd.clsJob = o;
+                Gcd.clsJob.start;
 
             } // its propably an eentity
             else
             {
-                gcd.clsJobPrevious = gcd.clsJob;
-                gcd.clsJob = gcd.CCC[o.usewith];
-                gcd.clsJob.start(o);
+                Gcd.clsJobPrevious = Gcd.clsJob;
+                Gcd.clsJob = Gcd.CCC[o.usewith];
+                Gcd.clsJob.start(o);
 
             }
 
     }
-    gcd.Drawing.iEntity.Clear;
+    Gcd.Drawing.iEntity.Clear;
     return;
 
      // TODO: dejar comentado mientras hagamos debug
@@ -900,7 +900,7 @@ public void Draw()
 
     Super.Draw();
 
-    if ( Me.SelectCrossing )
+    if ( SelectCrossing )
     {
         iColor = Color.Red;
     }
@@ -912,56 +912,56 @@ public void Draw()
     {
 
          // si estamos dentro un viewport no hay nada que dibujar, porque no estamos seleccionando nada
-        if ( gcd.Drawing.Sheet.Viewport ) return;
-        if ( Me.SelectType == Me.SelectTypeRect || Me.SelectType == Me.SelectTypeSingleAndRect )
+        if ( Gcd.Drawing.Sheet.Viewport ) return;
+        if ( SelectType == SelectTypeRect || SelectType == SelectTypeSingleAndRect )
         {
-            this.SelectionPoly.Clear; // aprovecho
+            SelectionPoly.Clear; // aprovecho
 
-            glx.Rectangle2D(Me.SelStartXr, this.SelStartYr, this.SelEndXr - this.SelStartXr, this.SelEndyr - this.SelStartYr, Color.RGB(224, 220, 207, 215),0,0,0, iColor, 1, gcd.stiDashedSmall, 2);
+            glx.Rectangle2D(SelStartXr, SelStartYr, SelEndXr - SelStartXr, SelEndYr - SelStartYr, Color.RGB(224, 220, 207, 215),0,0,0, iColor, 1, Gcd.stiDashedSmall, 2);
 
             return;
         }
-        else if ( Me.SelectType == Me.SelectTypePoly )
+        else if ( SelectType == SelectTypePoly )
         {
 
             fMain.PopupMenu = ""; // no hay menu contextual
 
              // como pude habver cambiado en este momento el modo de seleccion, chequeo
-            if ( Me.SelectionPoly.Count == 0 )
+            if ( SelectionPoly.Count == 0 )
             {
-                this.SelectionPoly.Add(Me.SelStartXr);
-                this.SelectionPoly.Add(Me.SelStartYr);
+                SelectionPoly.Add(SelStartXr);
+                SelectionPoly.Add(SelStartYr);
             }
             flxPoly.Clear;
-            flxPoly.Insert(Me.SelectionPoly.Copy());
-            flxPoly.Add(Me.SelEndXr);
-            flxPoly.Add(Me.SelEndyr);
-            flxPoly.Add(Me.SelectionPoly[0]);
-            flxPoly.Add(Me.SelectionPoly[1]);
-            glx.PolyLines(flxPoly, Color.red, 1, gcd.stiDashedSmall);
+            flxPoly.Insert(SelectionPoly.Copy());
+            flxPoly.Add(SelEndXr);
+            flxPoly.Add(SelEndYr);
+            flxPoly.Add(SelectionPoly[0]);
+            flxPoly.Add(SelectionPoly[1]);
+            glx.PolyLines(flxPoly, Color.red, 1, Gcd.stiDashedSmall);
         }
         else
         {
-            this.SelectionPoly.Clear;
+            SelectionPoly.Clear;
 
         }
 
     }
 
      // No vamos a dibujar nada relativo a los grips si estamsos selecionando para alguna Tool
-    if ( gcd.clsJobCallBack ) return;
+    if ( Gcd.clsJobCallBack ) return;
 
-    DrawingAids.DrawGrips(gcd.Drawing.Sheet.Grips);
+    DrawingAids.DrawGrips(Gcd.Drawing.Sheet.Grips);
 
-    if ( Me.EntityForEdit ) Gcd.CCC[Me.EntityForEdit.Gender].Draw(Me.EntityForEdit);
-    if ( Me.OriginalEntityForEdit )
+    if ( EntityForEdit ) Gcd.CCC[EntityForEdit.Gender].Draw(EntityForEdit);
+    if ( OriginalEntityForEdit )
     {
         if ( GripCopying )
         {
         }
         else
         {
-            Gcd.CCC[Me.OriginalEntityForEdit.Gender].DrawShadow(Me.OriginalEntityForEdit);
+            Gcd.CCC[OriginalEntityForEdit.Gender].DrawShadow(OriginalEntityForEdit);
         }
     }
     if ( GripPoint )
@@ -974,7 +974,7 @@ public void Draw()
         else
         {
 
-            Gcd.CCC[GripPoint.AsociatedEntity.Gender].DrawShadow(Me.EntityForEdit);
+            Gcd.CCC[GripPoint.AsociatedEntity.Gender].DrawShadow(EntityForEdit);
         }
         DrawingAids.DrawSnapText();
 
@@ -1002,17 +1002,17 @@ public void GripEdit()
     {
         if ( GripCopying )
         {
-             // GripPoint.X = Me.SelEndXr
-             // GripPoint.Y = Me.SelEndYr
-             // gcd.CCC[GripPoint.AsociatedEntity.Gender].translate(GripPoint.AsociatedEntity, Me.SelEndXr - Me.SelStartXr, Me.SelEndYr - Me.SelStartYr)
+             // GripPoint.X = SelEndXr
+             // GripPoint.Y = SelEndYr
+             // Gcd.CCC[GripPoint.AsociatedEntity.Gender].translate(GripPoint.AsociatedEntity, SelEndXr - SelStartXr, SelEndYr - SelStartYr)
 
         }
 
-        GripPoint.X = this.SelEndXr;
-        GripPoint.Y = this.SelEndYr;
-        gcd.CCC[GripPoint.AsociatedEntity.Gender].GripEdit(GripPoint);
-        gcd.CCC[GripPoint.AsociatedEntity.Gender].buildgeometry(GripPoint.AsociatedEntity);
-        gcd.redraw;
+        GripPoint.X = SelEndXr;
+        GripPoint.Y = SelEndYr;
+        Gcd.CCC[GripPoint.AsociatedEntity.Gender].GripEdit(GripPoint);
+        Gcd.CCC[GripPoint.AsociatedEntity.Gender].buildgeometry(GripPoint.AsociatedEntity);
+        Gcd.redraw;
 
     }
 
@@ -1024,9 +1024,9 @@ public  Grip FindGrip(double x, double y)
 
     Grip g;
 
-    foreach ( var g in gcd.Drawing.Sheet.Grips)
+    foreach ( var g in Gcd.Drawing.Sheet.Grips)
     {
-        if (puntos.Around(x, y, g.x, g.y, gcd.Metros(Config.GripProximityDistance)))
+        if (puntos.Around(x, y, g.x, g.y, Gcd.Metros(Config.GripProximityDistance)))
         {
 
             return g;
@@ -1044,20 +1044,20 @@ public void KeyDown(int iCode)
 
     if ( iCode == Key.ControlKey )
     {
-        GripCopying = True;
-        fMain.GLArea1.Cursor = gcd.CursorSelectAdd;
+        GripCopying = true;
+        fMain.GLArea1.Cursor = Gcd.CursorSelectAdd;
         SelectMode = SelectModeAdd;
     }
     else if ( iCode == Key.ShiftKey )
     {
-        GripCopying = False;
-        fMain.GLArea1.Cursor = gcd.CursorSelectRem;
+        GripCopying = false;
+        fMain.GLArea1.Cursor = Gcd.CursorSelectRem;
         SelectMode = SelectModeRem;
     }
     else if ( iCode == Key.AltKey )
     {
-        GripCopying = False;
-        fMain.GLArea1.Cursor = gcd.CursorSelectXchange;
+        GripCopying = false;
+        fMain.GLArea1.Cursor = Gcd.CursorSelectXchange;
     }
 
 }
@@ -1068,21 +1068,21 @@ public void KeyUp(int iCode)
 
     if ( iCode == Key.ControlKey )
     {
-        GripCopying = False;
-        fMain.GLArea1.Cursor = gcd.CursorCross;
+        GripCopying = false;
+        fMain.GLArea1.Cursor = Gcd.CursorCross;
         SelectMode = SelectModeNew;
     }
     else if ( iCode == Key.ShiftKey )
     {
-        GripCopying = False;
+        GripCopying = false;
         SelectMode = SelectModeNew;
-        fMain.GLArea1.Cursor = gcd.CursorCross;
+        fMain.GLArea1.Cursor = Gcd.CursorCross;
     }
     else if ( iCode == Key.AltKey )
     {
-        GripCopying = False;
+        GripCopying = false;
         SelectMode = SelectModeNew;
-        fMain.GLArea1.Cursor = gcd.CursorCross;
+        fMain.GLArea1.Cursor = Gcd.CursorCross;
     }
 
 }

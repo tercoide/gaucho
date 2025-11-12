@@ -5,7 +5,7 @@ using System.Globalization;
 
 namespace Gaucho;
 
- public partial class MainWindow
+ public partial class fMain
 // public static class Actions1
 {
     // private void OnPrimaryActionClicked(Button sender, EventArgs e)

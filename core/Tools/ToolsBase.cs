@@ -3,13 +3,14 @@
 //
 // Notes:
 // - This is a direct behavioral translation, not a full idiomatic rewrite.
-// - External globals and types referenced here (Gcd, gl, glx, Mouse, clsEntities, cadSelection, clsMouseTracking, Paint, Color, DrawingAIds, etc.)
+// - External globals and types referenced here (Gcd, gl, glx, Mouse, clsEntities, Gcd.Tools["SELECTION"], clsMouseTracking, Paint, Color, DrawingAIds, etc.)
 //   must exist in your project. Replace or adapt references to match your codebase.
 // - Gambas "Float" -> double. Collections -> List<T> or project-specific collection types.
 // - Some methods are left as thin wrappers/stubs (NewParameter, Run, KeyPress/KeyDown/KeyUp) because their behavior depends on other classes.
 using OpenTK.Graphics.OpenGL;
+using Gaucho;
 
-public interface ToolsBase
+public abstract class ToolsBase
     {
         public const string Gender = "TOOLSBASE";
         public const string USEWITH = "";
@@ -20,7 +21,7 @@ public interface ToolsBase
         public static int SelEndX = 0;
         public static int SelEndy = 0;
 
-        // Selection pan start (pixels)
+        // Selection pan start (Pixels)
         public static int SelStartPanX = 0;
         public static int SelStartPanY = 0;
 
@@ -99,14 +100,14 @@ public interface ToolsBase
             // Assumes 'gl' API exists with PushMatrix/PopMatrix/Translatef/Rotatef/Scalef/CallList methods.
             try
             {
-                GL.Translatef(Gcd.Drawing.Sheet.PanBaseRealX, Gcd.Drawing.Sheet.PanBaseRealY, 0.0f);
+                GL.Translate(Gcd.Drawing.Sheet.PanBaseRealX, Gcd.Drawing.Sheet.PanBaseRealY, 0.0f);
                 GL.PushMatrix();
-                GL.Translatef((float)glTranslate[0], (float)glTranslate[1], (float)glTranslate[2]);
-                GL.Rotatef((float)glAngle, (float)glRotate[0], (float)glRotate[1], (float)glRotate[2]);
-                GL.Scalef((float)glScale[0], (float)glScale[1], (float)glScale[2]);
+                GL.Translate((float)glTranslate[0], (float)glTranslate[1], (float)glTranslate[2]);
+                GL.Rotate((float)glAngle, (float)glRotate[0], (float)glRotate[1], (float)glRotate[2]);
+                GL.Scale((float)glScale[0], (float)glScale[1], (float)glScale[2]);
                 GL.CallList(Gcd.Drawing.GlListEntitiesSelected);
                 GL.PopMatrix();
-                GL.Translatef(-(float)Gcd.Drawing.Sheet.PanBaseRealX, -(float)Gcd.Drawing.Sheet.PanBaseRealY, 0.0f);
+                GL.Translate(-(float)Gcd.Drawing.Sheet.PanBaseRealX, -(float)Gcd.Drawing.Sheet.PanBaseRealY, 0.0f);
             }
             catch (Exception)
             {
@@ -122,7 +123,7 @@ public interface ToolsBase
         // Called when user submits text (Enter)
         public static void KeyText(string EnteredText)
         {
-            if (string.IsnullOrWhiteSpace(EnteredText)) return;
+            if (string.IsNullOrWhiteSpace(EnteredText)) return;
 
             EnteredText = EnteredText.Trim();
             var upper = EnteredText.ToUpperInvariant();
@@ -138,14 +139,14 @@ public interface ToolsBase
                     return;
                 case "_ADD":
                     Gcd.clsJobPrevious = Gcd.clsJob;
-                    Gcd.clsJob = cadSelection.Instance;
-                    cadSelection.Instance.Mode = cadSelection.ModeAddEntities;
+                    Gcd.clsJob = Gcd.Tools["SELECTION"];
+                    Gcd.Tools["SELECTION"].Mode = Gcd.Tools["SELECTION"].ModeAddEntities;
                     return;
                 case "_REM":
                 case "_REMOVE":
                     Gcd.clsJobPrevious = Gcd.clsJob;
-                    Gcd.clsJob = cadSelection.Instance;
-                    cadSelection.Instance.Mode = cadSelection.ModeRemoveEntities;
+                    Gcd.clsJob = Gcd.Tools["SELECTION"];
+                    Gcd.Tools["SELECTION"].Mode = Gcd.Tools["SELECTION"].ModeRemoveEntities;
                     return;
                 // Snap commands
                 case "_MIDPOINT":
@@ -214,8 +215,8 @@ public interface ToolsBase
                     LastY = yt;
 
                     // store last point in drawing
-                    Gcd.Drawing.LastPoint.Clear();
-                    Gcd.Drawing.LastPoint.Insert(new double[] { xt, yt });
+                    Gcd.Drawing.LastPoint[0] = xt;
+                    Gcd.Drawing.LastPoint[1] = yt;
 
                     NewParameter("point", Gcd.Drawing.LastPoint, true);
                 }
@@ -314,7 +315,7 @@ public interface ToolsBase
 
             NewParameter("point", new double[] { LastX, LastY }, true);
 
-            Gcd.redraw();
+            Gcd.Redraw();
         }
 
         // Mouse move: update preview parameter with current point
@@ -363,11 +364,11 @@ public interface ToolsBase
                 else if (Gcd.clsJob != null && Gcd.clsJob.Gender == "SELECT")
                 {
                     Gcd.clsJob = Gcd.clsJobPrevious;
-                    Gcd.clsJob?.Start();
+                    Gcd.clsJob.Start();
                 }
             }
             // Left and middle handled elsewhere in application
-            Gcd.redraw();
+            Gcd.Redraw();
         }
 
         // Mouse wheel for dynamic zoom, keeping mouse-point stationary in world coordinates
@@ -396,8 +397,8 @@ public interface ToolsBase
                 double dx = Gcd.Xreal(Mouse.X);
                 double dy = Gcd.Yreal(Mouse.Y);
 
-                Gcd.Drawing.Sheet.PanX += Gcd.pixels(dx - px);
-                Gcd.Drawing.Sheet.PanY += Gcd.pixels(dy - py);
+                Gcd.Drawing.Sheet.PanX += Gcd.Pixels(dx - px);
+                Gcd.Drawing.Sheet.PanY += Gcd.Pixels(dy - py);
 
                 Gcd.flgNewPosition = true;
             }
@@ -412,11 +413,11 @@ public interface ToolsBase
                 double dx = Gcd.Xreal(Mouse.X) - Gcd.Drawing.Sheet.Viewport.X0;
                 double dy = Gcd.Yreal(Mouse.Y) - Gcd.Drawing.Sheet.Viewport.Y0;
 
-                Gcd.Drawing.Sheet.Viewport.PanX += Gcd.pixels(dx - px);
-                Gcd.Drawing.Sheet.Viewport.PanY += Gcd.pixels(dy - py);
+                Gcd.Drawing.Sheet.Viewport.PanX += Gcd.Pixels(dx - px);
+                Gcd.Drawing.Sheet.Viewport.PanY += Gcd.Pixels(dy - py);
             }
 
-            Gcd.redraw();
+            Gcd.Redraw();
         }
 
         // Finish the tool: cleanup transforms, regenerate lists, reset job to selection
@@ -442,8 +443,8 @@ public interface ToolsBase
 
                 Gcd.clsJobPrevious = null;
                 Gcd.clsJobCallBack = null;
-                Gcd.clsJob = cadSelection.Instance;
-                cadSelection.Instance.AllowSingleSelection = true;
+                Gcd.clsJob = Gcd.Tools["SELECTION"];
+                Gcd.Tools["SELECTION"].AllowSingleSelection = true;
                 Gcd.clsJob.Start();
 
                 DrawingAIds.CleanTexts();
@@ -465,10 +466,10 @@ public interface ToolsBase
             Gcd.clsJobPrevious = null;
             Gcd.clsJobCallBack = null;
             clsEntities.DeSelection();
-            Gcd.clsJob = cadSelection.Instance;
+            Gcd.clsJob = Gcd.Tools["SELECTION"];
             Gcd.clsJob.Start();
             DrawingAIds.CleanTexts();
-            Gcd.redraw();
+            Gcd.Redraw();
         }
 
         // Callback placeholder
