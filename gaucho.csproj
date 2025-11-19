@@ -12,4 +12,8 @@
     <PackageReference Include="OpenTK" Version="4.9.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="core/clsMouseTracking.cs" />
+  </ItemGroup>
+
 </Project>

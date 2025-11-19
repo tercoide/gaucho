@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Linq;
 using OpenTK.Windowing.Common;
 
 namespace Gaucho
@@ -402,6 +404,79 @@ namespace Gaucho
         {
             System.Threading.Thread.Sleep(value);
         }
+
+        #region File System Functions
+
+        /// <summary>
+        /// Retrieves all files in a given path with a given filter (similar to VB.NET Dir function)
+        /// </summary>
+        /// <param name="path">The directory path to search in</param>
+        /// <param name="filter">File filter pattern (e.g., "*.txt", "*.cs", "*.*")</param>
+        /// <param name="includeSubdirectories">Whether to search subdirectories recursively (default: false)</param>
+        /// <returns>An array of file paths matching the filter</returns>
+        /// <exception cref="DirectoryNotFoundException">Thrown when the directory doesn't exist</exception>
+        /// <exception cref="UnauthorizedAccessException">Thrown when access to the directory is denied</exception>
+        public static string[] Dir(string path, string filter = "*.*", bool includeSubdirectories = false)
+        {
+            if (string.IsNullOrEmpty(path))
+                throw new ArgumentException("Path cannot be null or empty", nameof(path));
+
+            if (string.IsNullOrEmpty(filter))
+                filter = "*.*";
+
+            if (!Directory.Exists(path))
+                throw new DirectoryNotFoundException($"Directory '{path}' not found.");
+
+            try
+            {
+                SearchOption searchOption = includeSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+                
+                // Get files matching the filter
+                string[] files = Directory.GetFiles(path, filter, searchOption);
+                
+                // Return just the file names (without full path) for VB.NET Dir compatibility
+                // If you want full paths, change this to return files directly
+                return files.Select(file => Path.GetFileName(file)).ToArray();
+            }
+            catch (Exception ex) when (ex is UnauthorizedAccessException || ex is IOException)
+            {
+                // Re-throw specific exceptions that callers might want to handle
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Retrieves all files in a given path with a given filter, returning full paths
+        /// </summary>
+        /// <param name="path">The directory path to search in</param>
+        /// <param name="filter">File filter pattern (e.g., "*.txt", "*.cs", "*.*")</param>
+        /// <param name="includeSubdirectories">Whether to search subdirectories recursively (default: false)</param>
+        /// <returns>An array of full file paths matching the filter</returns>
+        /// <exception cref="DirectoryNotFoundException">Thrown when the directory doesn't exist</exception>
+        /// <exception cref="UnauthorizedAccessException">Thrown when access to the directory is denied</exception>
+        public static string[] DirFullPath(string path, string filter = "*.*", bool includeSubdirectories = false)
+        {
+            if (string.IsNullOrEmpty(path))
+                throw new ArgumentException("Path cannot be null or empty", nameof(path));
+
+            if (string.IsNullOrEmpty(filter))
+                filter = "*.*";
+
+            if (!Directory.Exists(path))
+                throw new DirectoryNotFoundException($"Directory '{path}' not found.");
+
+            try
+            {
+                SearchOption searchOption = includeSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+                return Directory.GetFiles(path, filter, searchOption);
+            }
+            catch (Exception ex) when (ex is UnauthorizedAccessException || ex is IOException)
+            {
+                throw;
+            }
+        }
+
+        #endregion
 
     }
 }

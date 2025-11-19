@@ -43,6 +43,8 @@ namespace Gaucho
         public static bool DebugMode = true;
         public static FileStream? MyLog;
 
+        public static string[] args;
+
         public static void main()
         {
             Config.Home = Environment.GetEnvironmentVariable("HOME") ??
@@ -94,9 +96,9 @@ namespace Gaucho
 
             
 
-            fSplash.Visible = true;
+            // fSplash.Visible = true;
 
-            fSplash.Show;
+            // fSplash.Show;
 
            
 
@@ -119,52 +121,52 @@ namespace Gaucho
             //TINCHO 2023.05.22 > Config.class implementation
             MyLog = new FileStream(Config.Log, FileMode.Create, FileAccess.Write);
 
-            Gcd.debugInfo("Init program - Version " + Application.Version, false, false, true);
-            Gcd.debugInfo("Debug mode = " + Str(DebugMode), false, false, true);
+            Gcd.debugInfo("Init program - Version 0.01" , false, false, true);
+            Gcd.debugInfo("Debug mode = " + DebugMode.ToString(), false, false, true);
 
             //fMain.tabFile.Index = 0
 
             // leo la configuracion inicial
             //Utils.LoadClass(Config, Config.ConfigFile) // Deshabilitado, con la nueva configuracion no es necesario.
-            InitColors; // CAD color init
-            InitClasses();
-            InitMenus(); // fMain menus
-            loadPrintStyles();
+            InitColors(); // CAD color init
+            //nitClasses();
+            // InitMenus(); // fMain menus
+            // loadPrintStyles();
             LoadPatterns();
-            LoadCursors();
+            // LoadCursors();
 
             // TODO: DATO INTERESANTE SI LLAMO A LA SIGUIENTE LINEA DESPUES DE Fmain.Run , los graficos se ven opacos
-            Gcd.Main(); // drawing specific init
+            Gcd.main(); // drawing specific init
 
             // armo el combo de colores
             // fLayersOnScreen.Run  // FIXME:
             Gcd.debugInfo("LayersOnScreen initialized OK", false, false, true);
 
-            fMain.Run();
-            //Wait
-            fMain.Refresh();
+            // fMain.Run();
+            // //Wait
+            // fMain.Refresh();
             //Gcd.debugInfo("FMain initialized OK",,, true)
 
-            fSplash.HIde;
+            // fSplash.HIde;
 
-            Wait;
+            // Wait;
 
-            if (Application.Args.Count > 1)
-            {
-                sFile = Args[1];
-                actions.FileOpen(sfile);
-            }
-            else
-            {
-                actions.FileNew;
-            }
-            Gcd.clsJob.start();
+            // if (args.Length  > 1)
+            // {
+            //     sFile = args[1];
+            //     actions.FileOpen(sfile);
+            // }
+            // else
+            // {
+            //     actions.FileNew;
+            // }
+            // Gcd.clsJob.start();
             // bloques common
-            Gcd.LoadCommon;
+            Gcd.LoadCommon();
 
             // glx.Resize(fmain.glarea1)
             // fmain.glarea1.Refresh
-            Gcd.redraw;
+            Gcd.Redraw();
 
         }
 
@@ -273,23 +275,23 @@ namespace Gaucho
 
 
             string[] s;
-            string sp;
+           
             string spd;
             HatchPattern p;
 
             spd = Config.dirPatterns;
-            s = Dir(spd, "*.pat");
-            if (S.Count == 0)
+            s = Gb.Dir(spd, "*.pat");
+            if (s.Length == 0)
             {
 
-                foreach (string sp in Directory.GetFiles(System.IO.Path.Combine(Application.path, "patterns"), "*.pat"))
+                foreach (string sp in Directory.GetFiles(System.IO.Path.Combine(Config.Root, "patterns"), "*.pat"))
                 {
                     // p = New HatchPattern
                     // Utils.LoadClass2(p, spd &/ sp)
                     // Gcd.HatchPatterns.Add(p, p.Name)
                     try
                     {
-                        File.Copy(System.IO.Path.Combine(Application.path + "/patterns", sp), System.IO.Path.Combine(spd, sp));
+                        File.Copy(System.IO.Path.Combine(Config.Root + "/patterns", sp), System.IO.Path.Combine(spd, sp));
                     }
                     catch (Exception ex)
                     {
@@ -381,43 +383,43 @@ namespace Gaucho
 
         // }
 
-        public void InitClasses()
-        {
+        // public void InitClasses()
+        // {
 
 
-            // Class cClass ;         
-            // string s ;         
-            // string sFinishedClasses ;         
-            // New String[] sSplit ;         
+        //     // Class cClass ;         
+        //     // string s ;         
+        //     // string sFinishedClasses ;         
+        //     // New String[] sSplit ;         
 
-            // sFinishedClasses = "LEADER HATCH POLYLINE ENDBLK SEQEND VERTEX POINT RECTANGLE POLYGON ATTDEF ATTRIB LINE LWPOLYLINE CIRCLE ELLIPSE ARC TEXT MTEXT SPLINE SOLID INSERT DIMENSION DIMENSION_LINEAR DIMENSION_DIAMETER DIMENSION_RADIUS DIMENSION_ANG3PT DIMENSION_ALIGNED DIMENSION_ORDINATE LARGE_RADIAL_DIMENSION ARC_DIMENSION VIEWPORT ARC3POINT";
+        //     // sFinishedClasses = "LEADER HATCH POLYLINE ENDBLK SEQEND VERTEX POINT RECTANGLE POLYGON ATTDEF ATTRIB LINE LWPOLYLINE CIRCLE ELLIPSE ARC TEXT MTEXT SPLINE SOLID INSERT DIMENSION DIMENSION_LINEAR DIMENSION_DIAMETER DIMENSION_RADIUS DIMENSION_ANG3PT DIMENSION_ALIGNED DIMENSION_ORDINATE LARGE_RADIAL_DIMENSION ARC_DIMENSION VIEWPORT ARC3POINT";
 
-            // sFinishedClasses &= " AREA ARRAY BLOCKS BREAK CHAMFER COPY DIVIDE EDIT ERASE EXPLODE FILLET HATCHBUILDER ENTITYBUILDER LAYERS MIRROR MOVE MTEXTBUILDER OFFSET PAN PROTRACTOR ROTATE RULER SCALE SELECTION STRETCH TRIM ZOOME ZOOMW";
-            // sFinishedClasses &= " MLINE";
-            //  // smart
-            // sFinishedClasses &= " SLAB BIMENTITYBUILDER";
+        //     // sFinishedClasses &= " AREA ARRAY BLOCKS BREAK CHAMFER COPY DIVIDE EDIT ERASE EXPLODE FILLET HATCHBUILDER ENTITYBUILDER LAYERS MIRROR MOVE MTEXTBUILDER OFFSET PAN PROTRACTOR ROTATE RULER SCALE SELECTION STRETCH TRIM ZOOME ZOOMW";
+        //     // sFinishedClasses &= " MLINE";
+        //     //  // smart
+        //     // sFinishedClasses &= " SLAB BIMENTITYBUILDER";
 
-            // sSplit = Split(sFinishedClasses, " ");
+        //     // sSplit = Split(sFinishedClasses, " ");
 
-            // foreach ( s in sSplit)
-            // {
-            //      // intento crearla
-            //     cClass = Null;
-            //     cClass = Class.Load("cad" + s);
-            //     if ( cClass )
-            //     {
-            //         Gcd.CCC.add(cClass.AutoCreate(), s);
+        //     // foreach ( s in sSplit)
+        //     // {
+        //     //      // intento crearla
+        //     //     cClass = Null;
+        //     //     cClass = Class.Load("cad" + s);
+        //     //     if ( cClass )
+        //     //     {
+        //     //         Gcd.CCC.add(cClass.AutoCreate(), s);
 
-            //         Debug s;
-            //     }
-            //     else
-            //     {
-            //         Console.WriteLine("WARNING: the Class " + s + " it + "\n"); //s not implemented."
-            //     }
+        //     //         Debug s;
+        //     //     }
+        //     //     else
+        //     //     {
+        //     //         Console.WriteLine("WARNING: the Class " + s + " it + "\n"); //s not implemented."
+        //     //     }
 
-            // }
+        //     // }
 
-        }
+        // }
 
         public static int RGB(int r, int g, int b)
         {
@@ -425,7 +427,7 @@ namespace Gaucho
             return (b << 16) | (g << 8) | r;
         }
 
-        private static void InitColors()
+        public static void InitColors()
         {
 
             // Load CAD color into Gambas colors
@@ -705,29 +707,29 @@ namespace Gaucho
         
 
  // carga los cursores desde SVG y los coloca en Gcd
-public static void LoadCursors()
-        {
+        // public static void LoadCursors()
+        // {
 
 
-            int c;
-            string sCursor;
+        //     int c;
+        //     string sCursor;
 
-            sCursor = dsk.Contrary(System.IO.Path.Combine(Application.Path, "svg", "Cursors", "cursor1.svg"), "#0066b3", Config.ModelBackgroundColor);
-            Gcd.CursorCross = new Cursor(Image.FromString(sCursor).Stretch(48, 48).Picture, 24, 24);
+        //     sCursor = dsk.Contrary(System.IO.Path.Combine(Application.Path, "svg", "Cursors", "cursor1.svg"), "#0066b3", Config.ModelBackgroundColor);
+        //     Gcd.CursorCross = new Cursor(Image.FromString(sCursor).Stretch(48, 48).Picture, 24, 24);
 
-            sCursor = dsk.Contrary(System.IO.Path.Combine(Application.Path, "svg", "Cursors", "cursor2.svg"), "#0066b3", Config.ModelBackgroundColor);
-            Gcd.CursorSelect = new Cursor(Image.FromString(sCursor).Stretch(48, 48).Picture, 24, 24);
+        //     sCursor = dsk.Contrary(System.IO.Path.Combine(Application.Path, "svg", "Cursors", "cursor2.svg"), "#0066b3", Config.ModelBackgroundColor);
+        //     Gcd.CursorSelect = new Cursor(Image.FromString(sCursor).Stretch(48, 48).Picture, 24, 24);
 
-            sCursor = dsk.Contrary(System.IO.Path.Combine(Application.Path, "svg", "Cursors", "cursor3.svg"), "#0066b3", Config.ModelBackgroundColor);
-            Gcd.CursorSelectAdd = new Cursor(Image.FromString(sCursor).Stretch(48, 48).Picture, 24, 24);
+        //     sCursor = dsk.Contrary(System.IO.Path.Combine(Application.Path, "svg", "Cursors", "cursor3.svg"), "#0066b3", Config.ModelBackgroundColor);
+        //     Gcd.CursorSelectAdd = new Cursor(Image.FromString(sCursor).Stretch(48, 48).Picture, 24, 24);
 
-            sCursor = dsk.Contrary(System.IO.Path.Combine(Application.Path, "svg", "Cursors", "cursor4.svg"), "#0066b3", Config.ModelBackgroundColor);
-            Gcd.CursorSelectRem = new Cursor(Image.FromString(sCursor).Stretch(48, 48).Picture, 24, 24);
+        //     sCursor = dsk.Contrary(System.IO.Path.Combine(Application.Path, "svg", "Cursors", "cursor4.svg"), "#0066b3", Config.ModelBackgroundColor);
+        //     Gcd.CursorSelectRem = new Cursor(Image.FromString(sCursor).Stretch(48, 48).Picture, 24, 24);
 
-            sCursor = dsk.Contrary(System.IO.Path.Combine(Application.Path, "svg", "Cursors", "cursor5.svg"), "#0066b3", Config.ModelBackgroundColor);
-            Gcd.CursorSelectXchange = new Cursor(Image.FromString(sCursor).Stretch(48, 48).Picture, 24, 24);
+        //     sCursor = dsk.Contrary(System.IO.Path.Combine(Application.Path, "svg", "Cursors", "cursor5.svg"), "#0066b3", Config.ModelBackgroundColor);
+        //     Gcd.CursorSelectXchange = new Cursor(Image.FromString(sCursor).Stretch(48, 48).Picture, 24, 24);
 
-        }
+        // }
 
     }
 }
