@@ -33,8 +33,8 @@ public partial class fMain : ApplicationWindow
         SetEventsControllers();
         
         // Log application startup
-        Gaucho.DebugWindow.LogInfo("Main window initialized");
-        Gaucho.DebugWindow.LogDebug("Application startup complete");
+        // Gaucho.DebugWindow.LogInfo("Main window initialized");
+        // Gaucho.DebugWindow.LogDebug("Application startup complete");
     }
 
     private void InitializeComponent()

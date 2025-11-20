@@ -1,5 +1,6 @@
 using Gaucho;
-public static class Glx
+using Gtk;
+public  class Glx
 {
  // Gambas module file
 
@@ -2916,7 +2917,7 @@ public static void Resize(Object drwContext) // only glArea for now
     gl.Enable(gl.TEXTURE_2D);
 
      // borramos lo que haya dibujado
-    gl.Clear(gl.DEPTH_BUFFER_BIT Or gl.COLOR_BUFFER_BIT);
+    gl.Clear(gl.DEPTH_BUFFER_BIT || gl.COLOR_BUFFER_BIT);
 
      // le decimos que queremos usar cosas 3D y lo que esta mas lejos quede tapado por lo que esta mas cerca, esto en 2D no es necesario
     gl.Enable(gl.DEPTH_TEST);
@@ -2959,10 +2960,10 @@ public static void Init(Object drwContext) // only glArea for now
 
     gbcolor = drwContext.background;
 
-    a = 1 - Color.GetAlpha(gbColor) / 255;
-    r = (Shr(gbColor, 16) And 255) / 255;
-    g = (Shr(gbColor, 8) And 255) / 255;
-    b = (gbColor And 255) / 255;
+    a = 1 - Colors.GetAlpha(gbColor) / 255;
+    r = (Shr(gbColor, 16) && 255) / 255;
+    g = (Shr(gbColor, 8) && 255) / 255;
+    b = (gbColor && 255) / 255;
 
     gl.ClearColor(r, g, b, a);
 
@@ -2970,11 +2971,11 @@ public static void Init(Object drwContext) // only glArea for now
 
     this.glFlush();
     Console.WriteLine( "libGL access: ok");
-    Console.WriteLine( "Support VBO: " + gl.CheckExtensions("GL_ARB_vertex_buffer_object");
-    Console.WriteLine( "Support GLSL: " + gl.CheckExtensions("GL_ARB_vertex_program");
-    Console.WriteLine( "Shading version: " + GL.GetString(gl.SHADING_LANGUAGE_VERSION);
-    Console.WriteLine( "GL version: " + GL.GetString(gl.VERSION);
-    Console.WriteLine( "Chipset vendor: " + GL.GetString(gl.VENDOR);
+    Console.WriteLine( "Support VBO: " + gl.CheckExtensions("GL_ARB_vertex_buffer_object"));
+    Console.WriteLine( "Support GLSL: " + gl.CheckExtensions("GL_ARB_vertex_program"));
+    Console.WriteLine( "Shading version: " + GL.GetString(gl.SHADING_LANGUAGE_VERSION));
+    Console.WriteLine( "GL version: " + GL.GetString(gl.VERSION));
+    Console.WriteLine( "Chipset vendor: " + GL.GetString(gl.VENDOR));
      //gcd.Console.WriteLine(info("Extensions" &  GL.GetString(gl.EXTENSIONS))
     this.Initialized = true;
 
@@ -2983,7 +2984,7 @@ public static void Init(Object drwContext) // only glArea for now
  // Puede dibujar un contorno del mismo de otro color->Bounding
  // Mode: 0=relleno, 1=relleno y recuadro, 2=solo recuadro
 
-public static void Rectangle2D(double x1, double y1, double w, double h, int colour1= Color.Blue, int colour2= -14, int colour3= -14, int colour4= -14, int BoundingColor= Color.Blue, int BoundingWIdth= 1, double[] Dashes= [], int mode= 0)
+public static void Rectangle2D(double x1, double y1, double w, double h, int colour1= Colors.Blue, int colour2= -14, int colour3= -14, int colour4= -14, int BoundingColor= Colors.Blue, int BoundingWIdth= 1, double[] Dashes = null, int mode= 0)
     {
 
 
@@ -2997,13 +2998,21 @@ public static void Rectangle2D(double x1, double y1, double w, double h, int col
 
             if (colour2 == -14)
             {
-                c2 = colour1 
+                c2 = colour1 ;
             } else {
-                 c2 = colour2
-                 };
-        if ( colour3 == -14 ) c3 = colour1 } else { c3 = colour3;
-        if ( colour4 == -14 ) c4 = colour1 } else { c4 = colour4;
-
+                 c2 = colour2;
+                 }
+        if ( colour3 == -14 )
+        {
+             c3 = colour1;
+              } else { 
+                c3 = colour3;
+                }
+            if (colour4 == -14){
+                 c4 = colour1;
+        } else         {
+            c4 = colour4;
+        }
         gl.begin(gl.TRIANGLES);
 
         Vertex2D(x1, y1, colour1);
@@ -3030,7 +3039,7 @@ public static void Rectangle2D(double x1, double y1, double w, double h, int col
  // Dibuja un rombo, relleno o vacio.
  // Puede dibujar un contorno del mismo de otro color->Bounding
  // Mode: 0=relleno, 1=relleno y recuadro, 2=solo recuadro
-public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Color.Blue, int ColorRigth= Color.Blue, int iDirection= 0, int BoundingColor= Color.Blue, int BoundingWIdth= 1, int mode= 0, double Rotation= 0)
+public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Colors.Blue, int ColorRigth= Colors.Blue, int iDirection= 0, int BoundingColor= Colors.Blue, int BoundingWIdth= 1, int mode= 0, double Rotation= 0)
     {
 
 
@@ -3074,37 +3083,13 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
     double[] Vertices ;         
 
      //If gbcolor > 0 Then Stop
-    r = (Shr(Colour, 16) And 255) / 256;
-    g = (Shr(Colour, 8) And 255) / 256;
-    b = (Colour And 255) / 256;
+    r = (Shr(Colour, 16) && 255) / 256;
+    g = (Shr(Colour, 8) && 255) / 256;
+    b = (Colour && 255) / 256;
 
     if ( fvertices.Count < 2 ) return;
 
-    if ( InmediateMode )
-    {
-
-        gl.LineWIdth(LineWIdth); // obsoleto en WebGL
-        if ( dashes.Count > 0 )
-        {
-            Vertices = puntos.DashedLineStrip(fvertices, dashes, 1);
-        }
-
-            Vertices = fvertices;
-
-        }
-
-        gl.Begin(gl.Lines);
-        gl.Color3f(r, g, b);
-        for ( i = 0; i <= vertices.Max; i + 2)
-        {
-
-             //glColorRGB(colour)
-            gl.Vertex2f(vertices[i], vertices[i + 1]);
-
-        }
-        gl.end;
-
-    } // we as writing to an array
+    
         for ( i = 0; i <= vertices.Max; i + 2)
         {
             VBO_vertex[VBO_Id].Add(vertices[i]); //X
@@ -3123,7 +3108,7 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 
     }
 
-}
+
 
  // Dibuja un seria de polilinea
  public static void PolygonFilled(float[] vertices,  int colour = 0, int FillColor = 0, double LineWIdth = 1, double[] dashes = null)
@@ -3138,7 +3123,7 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
     {
         gl.LineStipple(LineStippleScales[dashes], LineStipples[dashes]);
         gl.Enable(GL.LINE_STIPPLE);
-    }
+    } else {
 
         gl.Disable(GL.LINE_STIPPLE);
 
@@ -3157,7 +3142,7 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 }
 
  // Dibuja un seria de polilinea
- public  Polygon(vertices As Float[],  colour As int = 0, LineWIdth As double = 1, dashes As double[]);
+ public void Polygon(vertices As Float[],  colour As int = 0, LineWIdth As double = 1, dashes As double[]);
 
     int i ;         
 
@@ -3416,7 +3401,7 @@ public static void CIRCLE(double[] center, double radious, int colour= 0, bool F
     double b ;         
     double a ;         
 
-    a = alpha; // 1 - Color.GetAlpha(gbColor) / 255
+    a = alpha; // 1 - Colors.GetAlpha(gbColor) / 255
     r = (Shr(gbColor, 16) And 255) / 255;
     g = (Shr(gbColor, 8) And 255) / 255;
     b = (gbColor And 255) / 255;
@@ -3432,7 +3417,7 @@ public static void CIRCLE(double[] center, double radious, int colour= 0, bool F
     double b ;         
     double a ;         
 
-    a = 1 - Color.GetAlpha(gbColor) / 255;
+    a = 1 - Colors.GetAlpha(gbColor) / 255;
     r = (Shr(gbColor, 16) And 255) / 255;
     g = (Shr(gbColor, 8) And 255) / 255;
     b = (gbColor And 255) / 255;
@@ -3539,7 +3524,7 @@ public static void glMaterialConcreto(double Alpha= 0)
 
 }
 
- public void Vertex2D(x2d As Float, y2d As Float,  colour As int = Color.Red);
+ public void Vertex2D(x2d As Float, y2d As Float,  colour As int = Colors.Red);
      //
      //
      //     //2020 el color va primero
@@ -3556,7 +3541,7 @@ public static void glMaterialConcreto(double Alpha= 0)
 
 }
 
-public void Vertex3D(p As Punto3d,  colour As int = Color.blue);
+public void Vertex3D(p As Punto3d,  colour As int = Colors.blue);
      //
      //
      //     //2020 el color va primero
@@ -4498,7 +4483,7 @@ public static int LoadShader(string sVertexShaderFile, string sFragmentShaderFil
 
 }
 
-public static void txtRendering2D(string texto, double x, double y, float Altura= 12, long _color= Color.Blue, long _BackColor= -1, int centradoH= 0, int centradoV= 0)
+public static void txtRendering2D(string texto, double x, double y, float Altura= 12, long _color= Colors.Blue, long _BackColor= -1, int centradoH= 0, int centradoV= 0)
     {
 
 
@@ -4613,7 +4598,7 @@ public static void txtRendering2D(string texto, double x, double y, float Altura
 
 }
 
-public static void DrawText3D(string texto, Punto3d pr, float Altura= 12, long _color= Color.Blue, long _BackColor= -1, int centradoH= 0, int centradoV= 0)
+public static void DrawText3D(string texto, Punto3d pr, float Altura= 12, long _color= Colors.Blue, long _BackColor= -1, int centradoH= 0, int centradoV= 0)
     {
 
 
