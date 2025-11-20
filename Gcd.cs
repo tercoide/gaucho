@@ -189,6 +189,8 @@ public static class Gcd
 
         public static double PrintingScale  = 1;        
 
+        public static DebugWindow fDebug;
+
 
         public static void SetDashes()
         {
@@ -365,17 +367,20 @@ public static class Gcd
         {
 
 
-            switch ( Config.WindowBackColor)
-            {
-                case Colors.Black:
-                    //Case &1B2224
-                     Config.WhiteAndBlack = RGB(Colors.White);
-                    break;
-                default:
-                Config.WhiteAndBlack = RGB(Colors.Black);
+        switch (Config.WindowBackColor)
+        {
+            case Colors.Black:
+                //Case &1B2224
+                Config.WhiteAndBlack = Colors.White;
+                break;
+            default:
+                Config.WhiteAndBlack = Colors.Black;
                 break;
 
-            }
+        }
+            
+            fDebug = new DebugWindow();
+            fDebug.Show();
 
             //If WindowBackColor = 0 Then WhiteAndBlack = Color.White Else WhiteAndBlack = Color.Black
             // // armo el array de colores
@@ -385,9 +390,9 @@ public static class Gcd
             //FileName = User.Home &/ "autosaveV5.xml"
 
             debugInfo("Reading fonts from " + System.IO.Path.Combine(Gcd.dirResources, "fonts", "lff"), false, false, true);
-            FontList = glx.LoadFonts(System.IO.Path.Combine(Gcd.dirResources, "fonts", "lff"));
+            FontList = Glx.LoadFonts(System.IO.Path.Combine(Gcd.dirResources, "fonts", "lff"));
             //FontList = glx.LoadFonts(Gcd.sFonts)
-            glx.SelectFont("romans");
+            Glx.SelectFont("romans");
 
             // agrego la lista a los reemplazos
             foreach (string s in FontList)
@@ -396,8 +401,8 @@ public static class Gcd
             }
 
             FontReplacements.Add("kochigothic", "arial");
-
-            TextureList = glx.LoadTextures(System.IO.Path.Combine(Gcd.dirResources, "textures"));
+            // FIXME
+            // TextureList = glx.LoadTextures(System.IO.Path.Combine(Gcd.dirResources, "textures"));
             //texturelist = glx.LoadTextures(Gcd.sTextures)
 
             // otros recursos
@@ -446,8 +451,8 @@ public static class Gcd
             if ((sFiles.Length == 0)) return;
             foreach (string sBlocksFiles in sFiles)
             {
-                FBlocks.AddBlock(System.IO.Path.Combine(Gcd.dirResources, "common", sBlocksFiles), Utils.FileWithoutExtension(sBlocksFiles),Drawing.Blocks);
-
+                // FBlocks.AddBlock(System.IO.Path.Combine(Gcd.dirResources, "common", sBlocksFiles), Gb.FileWithoutExtension(sBlocksFiles),Drawing.Blocks);
+                // FIXME
             }
 
         }
@@ -746,8 +751,8 @@ public static class Gcd
 
             string s = "";
 
-            if (string.IsnullOrEmpty(s))
-            {
+            // if (s.i.IsnullOrEmpty(s))
+            // {
 
                 // Build a compact timestamp plus the drawings count to form a unique-ish id
                 s = DateTime.Now.ToString("yyyyMMddHHmmss") + Gcd.Drawings.Count.ToString();
@@ -756,7 +761,7 @@ public static class Gcd
                 s = s.Replace(" ", "-");
                 s = s.Replace(":", "");
                 s = s.Replace(".", "-");
-            }
+            //}
 
             //s = "{" & Gb.Trim(s) & "}"
             s = Gb.Trim(s);
@@ -854,7 +859,7 @@ public static class Gcd
         try
         {
 
-            filebase = Utils.FileFromPath(sDwgFile);
+            filebase = Gb.FileFromPath(sDwgFile);
 
             steps = 0; // elimino el archivo temporal que hubiese creado
 
@@ -865,16 +870,16 @@ public static class Gcd
 
             steps = 2; // Calling the converter
 
-            Utils.Shell("ODAFileConverter; //" + Config.dirDwgIn + "// //" + Config.dirDxfIn + "// //ACAD2018// //DXF// 0 0");
+            Gb.Shell("ODAFileConverter; //" + Config.dirDwgIn + "// //" + Config.dirDxfIn + "// //ACAD2018// //DXF// 0 0");
 
             steps = 3;
             // vacio el directorio de entrada
             File.Delete(System.IO.Path.Combine(Config.dirDwgIn, filebase));
 
-            if (File.Exists(System.IO.Path.Combine(Config.dirDxfIn, Utils.FileWithoutExtension(filebase) + ".dxf")))
+            if (File.Exists(System.IO.Path.Combine(Config.dirDxfIn, Gb.FileWithoutExtension(filebase) + ".dxf")))
             {
                 debugInfo("Conversion to DXF correct", false, false, true);
-                return System.IO.Path.Combine(Config.dirDxfIn, Utils.FileWithoutExtension(filebase) + ".dxf");
+                return System.IO.Path.Combine(Config.dirDxfIn, Gb.FileWithoutExtension(filebase) + ".dxf");
             }
             else
             {
@@ -919,7 +924,7 @@ public static class Gcd
         try
         {
 
-            filebase = Utils.FileFromPath(sDxfFile); // deberia estar en main.dirDxfIn
+            filebase = Gb.FileFromPath(sDxfFile); // deberia estar en main.dirDxfIn
 
             steps = 0; // elimino el archivo temporal que hubiese creado
             if (File.Exists(System.IO.Path.Combine(Config.dirDxfOut, filebase))) File.Delete(System.IO.Path.Combine(Config.dirDxfOut, filebase));
@@ -928,7 +933,7 @@ public static class Gcd
             if (sDxfFile != (System.IO.Path.Combine(Config.dirDxfOut, filebase))) File.Copy(sDxfFile, System.IO.Path.Combine(Config.dirDxfOut, filebase));
 
             steps = 2; // Calling the converter
-            Utils.Shell("ODAFileConverter; //" + Config.dirDxfOut + "// //" + Config.dirDwgOut + "// //ACAD2010// //DWG// 0 0");
+            Gb.Shell("ODAFileConverter; //" + Config.dirDxfOut + "// //" + Config.dirDwgOut + "// //ACAD2010// //DWG// 0 0");
 
 
             debugInfo(str);
@@ -937,7 +942,7 @@ public static class Gcd
             // vacio el directorio de entrada
             //Kill main.dirDxfOut &/ filebase //FIXME: descomentar esto despues del debug
 
-            return System.IO.Path.Combine(Config.dirDwgOut, Utils.FileWithoutExtension(filebase) + ".dwg");
+            return System.IO.Path.Combine(Config.dirDwgOut, Gb.FileWithoutExtension(filebase) + ".dwg");
         }
         catch
         {
@@ -1173,7 +1178,7 @@ public static class Gcd
         {
 
 
-            fmain.redraw();
+            // fmain.redraw();
 
         }
 
@@ -1352,7 +1357,7 @@ public static class Gcd
         try
         {
 
-            filebase = Utils.FileFromPath(sDwgFile);
+            filebase = Gb.FileFromPath(sDwgFile);
             //filebase = sDwgFile
             steps = 0; // elimino el archivo temporal que hubiese creado
 
@@ -1362,12 +1367,12 @@ public static class Gcd
             File.Copy(sDwgFile, System.IO.Path.Combine(Config.dirDwgIn, filebase));
 
             steps = 2; // Calling the converter
-            Utils.Shell("dwgread -O DXF -o \"" + System.IO.Path.Combine(Config.dirDxfOut, Utils.FileWithoutExtension(filebase) + ".dxf") + "\" \"" + System.IO.Path.Combine(Config.dirDwgIn, filebase) + "\"");
+            Gb.Shell("dwgread -O DXF -o \"" + System.IO.Path.Combine(Config.dirDxfOut, Gb.FileWithoutExtension(filebase) + ".dxf") + "\" \"" + System.IO.Path.Combine(Config.dirDwgIn, filebase) + "\"");
 
             steps = 3;
             // vacio el directorio de entrada
 
-            return System.IO.Path.Combine(Config.dirDxfOut, Utils.FileWithoutExtension(filebase) + ".dxf");
+            return System.IO.Path.Combine(Config.dirDxfOut, Gb.FileWithoutExtension(filebase) + ".dxf");
         }
         catch
         {
@@ -1609,13 +1614,13 @@ public static class Gcd
 
             if (LogToFile)
             {
-                System.IO.File.AppendAllText(main.MyLog,
+                System.IO.File.AppendAllText(Config.Log,
                     DateTime.Now.ToString("HH:mm:ss") + " -> " + txt + Environment.NewLine);
             }
 
     if (MismaLineaAnterior)
     {
-        fdebug.txtDebug.Undo;
+        // fDebug.txtDebug.Undo;
 
     } // no voy a loguear lineas repetidas
     else
@@ -1624,8 +1629,8 @@ public static class Gcd
         Chronos = DateTime.Now.Ticks;
     }
 
-    fdebug.txtDebug.Insert(txt);
-            fDebug.txtDebug.EnsureVisible;
+            fDebug.AddLogMessage(txt);
+           
 
             // txt = ": "
             // txtDebug.Insert(txt)
@@ -1639,11 +1644,11 @@ public static class Gcd
             //itsTime = false
             if (forzar)
             {
-                fdebug.txtDebug.Refresh;
+                // fdebug.txtDebug.Refresh;
                 // Wait 0;
             }
 
-            Utils.DoEvents();
+            Gb.DoEvents();
 
         }
 

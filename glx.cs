@@ -1,5 +1,5 @@
 using Gaucho;
-class glx
+public static class Glx
 {
  // Gambas module file
 
@@ -40,7 +40,7 @@ class glx
  //       |             ModelMatrix>Translate       |                                                 |
  //       |                                         |bottom                                           |gldrwArea.w,.h = Gl.Viewport = el area donde dibujo
  //       +-------------------------------------------------------------------------------------------+           = pixeles
- //Fast Unsafe
+ //Fast 
  // una lbreria de funciones para pasar de Paint a OpenGL
 public bool Initialized = false;
 public LFFFonts ActualFont ;          // the class
@@ -3064,7 +3064,8 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 }
 
  // Dibuja un serie de lineas
- public @ DrawLines(fVertices As Float[],  colour As int = 0, LineWIdth As double = 1, dashes As double[] = []);
+ public static void DrawLines(float[] fVertices,  int colour = 0, double LineWIdth = 1, double[] dashes = null)
+    {
 
     int i ;         
     double r ;         
@@ -3125,7 +3126,8 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 }
 
  // Dibuja un seria de polilinea
-Unsafe public @ PolygonFilled(vertices As Float[],  colour As int = 0, FillColor As int = 0, LineWIdth As double = 1, dashes As double[]);
+ public static void PolygonFilled(float[] vertices,  int colour = 0, int FillColor = 0, double LineWIdth = 1, double[] dashes = null)
+    {
 
     int i ;         
 
@@ -3155,7 +3157,7 @@ Unsafe public @ PolygonFilled(vertices As Float[],  colour As int = 0, FillColor
 }
 
  // Dibuja un seria de polilinea
-Unsafe public @ Polygon(vertices As Float[],  colour As int = 0, LineWIdth As double = 1, dashes As double[]);
+ public  Polygon(vertices As Float[],  colour As int = 0, LineWIdth As double = 1, dashes As double[]);
 
     int i ;         
 
@@ -3177,7 +3179,7 @@ Unsafe public @ Polygon(vertices As Float[],  colour As int = 0, LineWIdth As do
  // Siempre gira en sentido anti-horario
  // Las medidas de los angulo inicial y recorrido estan en RADIANES
 
-Unsafe public @ ARC(radio As Float, start_angle As Float, length As Float,  tramos As int = 36, colour As int = 0, LineWIdth As double = 1, dashes As double[] = []);
+ public  ARC(radio As Float, start_angle As Float, length As Float,  tramos As int = 36, colour As int = 0, LineWIdth As double = 1, dashes As double[] = []);
 
     GL.Begin(gl.LINE_STRIP);
     double theta ;         
@@ -3203,7 +3205,7 @@ Unsafe public @ ARC(radio As Float, start_angle As Float, length As Float,  tram
 
 }
 
-Unsafe public @ ArcPoly(xCenter As Float, yCenter As Float, radio As Float, start_angle As Float, length As Float,  angle_increment As double = Math.PI * 2 / 360) As double[];
+ public  ArcPoly(xCenter As Float, yCenter As Float, radio As Float, start_angle As Float, length As Float,  angle_increment As double = Math.PI * 2 / 360) As double[];
 
     double theta ;         
     double x0 ;         
@@ -3264,7 +3266,7 @@ Unsafe public @ ArcPoly(xCenter As Float, yCenter As Float, radio As Float, star
 
 }
 
-Unsafe public @ PolyLines(fVertices As Float[],  colour As int = 0, LineWIdth As double = 1, dashes As double[] = []);
+ public  PolyLines(fVertices As Float[],  colour As int = 0, LineWIdth As double = 1, dashes As double[] = []);
 
     int i ;         
     double[] vertices ;         
@@ -3309,7 +3311,7 @@ Unsafe public @ PolyLines(fVertices As Float[],  colour As int = 0, LineWIdth As
 
 }
 
-Unsafe public @ DrawTriangles(vertices As Float[],  colour As int = 0, FillColor As int = 0, LineWIdth As double = 1, dashes As double[] = []);
+ public  DrawTriangles(vertices As Float[],  colour As int = 0, FillColor As int = 0, LineWIdth As double = 1, dashes As double[] = []);
 
     int i ;         
 
@@ -3335,7 +3337,7 @@ Unsafe public @ DrawTriangles(vertices As Float[],  colour As int = 0, FillColor
 
 }
 
-Unsafe public @ DrawTriangles3D(vertices3D As Float[], faces As Float[],  colour As int = 0, FillColor As int = 0, LineWIdth As double = 1);
+ public  DrawTriangles3D(vertices3D As Float[], faces As Float[],  colour As int = 0, FillColor As int = 0, LineWIdth As double = 1);
 
     int i ;         
 
@@ -3406,7 +3408,7 @@ public static void CIRCLE(double[] center, double radious, int colour= 0, bool F
 
 }
 
-Unsafe public void glColorRGB(gbColor As int,  alpha As double = 1.0);
+ public void glColorRGB(gbColor As int,  alpha As double = 1.0);
      // set the color to GL
 
     double r ;         
@@ -3422,7 +3424,7 @@ Unsafe public void glColorRGB(gbColor As int,  alpha As double = 1.0);
 
 }
 
-Unsafe public @ GetColorRGBA(gbColor As int) As float[];
+ public  GetColorRGBA(gbColor As int) As float[];
      // set the color to GL
 
     double r ;         
@@ -3537,7 +3539,7 @@ public static void glMaterialConcreto(double Alpha= 0)
 
 }
 
-Unsafe public void Vertex2D(x2d As Float, y2d As Float,  colour As int = Color.Red);
+ public void Vertex2D(x2d As Float, y2d As Float,  colour As int = Color.Red);
      //
      //
      //     //2020 el color va primero
@@ -3717,7 +3719,7 @@ public static string[] LoadFonts(string DirPath)
      // #WordSpacing: 6.75
      // #LineSpacingFactor: 1
      // #Author: Hershey fonts
-     // #Author: Adam Radlowski < adamr@informatyka.gdansk.pl > (Polish)
+     // #Author: Adam Radlowski < adamrinformatyka.gdansk.pl > (Polish)
      // #License: Public domain
      //
      // [0021]!
@@ -3902,7 +3904,7 @@ public static string[] LoadFonts(string DirPath)
  // Grafica un texto en el contexto actual de acuerdo a los parametros pasados
  // Debe estar definida la Font con nombre y altura
  //
- //Fast Unsafe
+ //Fast 
 public static bool DrawText(string UTFstring, double posX, double posY, double angle= 0, double textH= 1, int colour= -14, double linewIdth= 1, double rectW= 0, double rectH= 0, int alignHoriz= 0, int alignVert= 0)
     {
 
@@ -4024,7 +4026,7 @@ public static bool DrawText(string UTFstring, double posX, double posY, double a
 
  // Devuelve una poly con el texto en el contexto actual de acuerdo a los parametros pasados
  // Debe estar definida la Font con nombre y altura
-Unsafe public @ DrawTextPoly(UTFstring As String,  textH As double = 1, sRotationRad As float = 0, sItalicAngle As float = 0, fScaleX As double = 1) As double[];
+ public  DrawTextPoly(UTFstring As String,  textH As double = 1, sRotationRad As float = 0, sItalicAngle As float = 0, fScaleX As double = 1) As double[];
 
     int i ;         
     int iii ;         
@@ -4288,7 +4290,7 @@ public static bool DrawText3(string UTFstring, double posX, double posY, double 
 
  // devuelve un rectangulo que contiene al texto
  // [ancho,alto]
-Unsafe public @ TextExtends(UTFstring As String,  textH As double = 1, sRotationRad As float = 0, sItalicAngle As float = 0) As double[];
+ public  TextExtends(UTFstring As String,  textH As double = 1, sRotationRad As float = 0, sItalicAngle As float = 0) As double[];
 
      Float[] flxText ;         
      Float[] tRect ;         

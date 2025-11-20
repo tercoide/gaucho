@@ -41,8 +41,7 @@ namespace Gaucho
         public static bool convODA;
         public static bool convOdaAppImage;
         public static bool DebugMode = true;
-        public static FileStream? MyLog;
-
+        
         public static string[] args;
 
         public static void main()
@@ -119,7 +118,7 @@ namespace Gaucho
 
             //MyLog = Open User.Home &/ ".config/gambascad/log.txt" For Write Create
             //TINCHO 2023.05.22 > Config.class implementation
-            MyLog = new FileStream(Config.Log, FileMode.Create, FileAccess.Write);
+            
 
             Gcd.debugInfo("Init program - Version 0.01" , false, false, true);
             Gcd.debugInfo("Debug mode = " + DebugMode.ToString(), false, false, true);

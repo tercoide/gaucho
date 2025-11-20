@@ -32,6 +32,9 @@ public partial class fMain : ApplicationWindow
         BuildUI();
         SetEventsControllers();
         
+        // Log application startup
+        Gaucho.DebugWindow.LogInfo("Main window initialized");
+        Gaucho.DebugWindow.LogDebug("Application startup complete");
     }
 
     private void InitializeComponent()
@@ -52,6 +55,7 @@ public partial class fMain : ApplicationWindow
         // Create simple menu model
         var menu = Gio.Menu.New();
         menu.Append("About", "app.about");
+        menu.Append("Show Debug Console", "app.debug");
         menu.Append("Quit", "app.quit");
 
         // Create popover menu
@@ -71,6 +75,10 @@ public partial class fMain : ApplicationWindow
         var aboutAction = Gio.SimpleAction.New("about", null);
         // aboutAction.OnActivate += OnAboutActivated;
         app.AddAction(Gio.SimpleAction.New("about", null));
+        
+        var debugAction = Gio.SimpleAction.New("debug", null);
+        debugAction.OnActivate += OnDebugActivated;
+        app.AddAction(debugAction);
         
         var quitAction = Gio.SimpleAction.New("quit", null);
         // quitAction.OnActivate += OnQuitActivated;
@@ -186,9 +194,16 @@ public partial class fMain : ApplicationWindow
         int x = (int)e.X;
         int y = (int)e.Y;
         Console.WriteLine($"Mouse pressed at ({x}, {y}) with button {b} ");
+        
+        // Also log to debug window
+        DebugWindow.LogInfo($"Mouse pressed at ({x}, {y}) with button {b}");
     }
 
-  
+    private void OnDebugActivated(object? sender, EventArgs e)
+    {
+        DebugWindow.ShowDebugWindow();
+        DebugWindow.LogInfo("Debug console opened from menu");
+    }
 
     private IReadOnlyList<string> LoadRecentFiles()
     {

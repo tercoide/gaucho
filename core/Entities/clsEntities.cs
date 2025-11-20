@@ -671,7 +671,7 @@
         }
 
         // Compute limits of a set of entities (returns [minX, minY, maxX, maxY])
-        public static double[] ComputeLimits(Dictionary<string, IEnumerable<Entity>> entities = null, bool onlyVisibles = true, bool ignorePoints = true, bool onlyModel = true)
+        public static double[] ComputeLimits(Dictionary<string, Entity> entities = null, bool onlyVisibles = true, bool ignorePoints = true, bool onlyModel = true)
         {
             var newLimits = new double[] { 1e100, 1e100, -1e100, -1e100 };
 
