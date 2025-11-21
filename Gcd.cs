@@ -723,7 +723,7 @@ public static class Gcd
             else
             {
 
-                if (iColor ==  Config.WhiteAndBlack) iColor = Color.Invert(icolor);
+                if (iColor ==  Config.WhiteAndBlack) iColor = Colors.Invert(iColor);
 
                 if (Drawing.Sheet.pPrintStyle.ColorStyle == 2)
                 {

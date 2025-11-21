@@ -15,6 +15,13 @@
         public double y;
     }
 
+    public struct Punto3d
+    {
+        public double x;
+        public double y;
+        public double z;
+    }
+
     public static class Puntos
     {
         public static int HookSize = 16;

@@ -21,6 +21,65 @@ namespace Gaucho;
         public const int LightYellow = 13;
         public const int LightMagenta = 14;
         public const int LightCyan = 15;
+
+
+        public static int ToRgb(int color)
+        {
+            return color switch
+            {
+                Black => 0x000000,
+                White => 0xFFFFFF,
+                Red => 0xFF0000,
+                Green => 0x00FF00,
+                Blue => 0x0000FF,
+                Yellow => 0xFFFF00,
+                Magenta => 0xFF00FF,
+                Cyan => 0x00FFFF,
+                Gray => 0x808080,
+                DarkGray => 0x404040,
+                LightRed => 0xFF8080,
+                LightGreen => 0x80FF80,
+                LightBlue => 0x8080FF,
+                LightYellow => 0xFFFF80,
+                LightMagenta => 0xFF80FF,
+                LightCyan => 0x80FFFF,
+                _ => throw new ArgumentOutOfRangeException(nameof(color), "Invalid color value"),
+            };
+        }
+
+        public static int Desaturate(int color)
+        {
+            int r = (color >> 16) & 0xFF;
+            int g = (color >> 8) & 0xFF;
+            int b = color & 0xFF;
+            int gray = (r + g + b) / 3;
+            return (gray << 16) | (gray << 8) | gray;
+        }
+
+        public static int Blend(int color1, int color2, float ratio)
+        {
+            int r1 = (color1 >> 16) & 0xFF;
+            int g1 = (color1 >> 8) & 0xFF;
+            int b1 = color1 & 0xFF;
+
+            int r2 = (color2 >> 16) & 0xFF;
+            int g2 = (color2 >> 8) & 0xFF;
+            int b2 = color2 & 0xFF;
+
+            int r = (int)(r1 * (1 - ratio) + r2 * ratio);
+            int g = (int)(g1 * (1 - ratio) + g2 * ratio);
+            int b = (int)(b1 * (1 - ratio) + b2 * ratio);
+
+            return (r << 16) | (g << 8) | b;
+        }   
+        public static int Invert(int color)
+        {
+            int r = 255 - ((color >> 16) & 0xFF);
+            int g = 255 - ((color >> 8) & 0xFF);
+            int b = 255 - (color & 0xFF);
+            return (r << 16) | (g << 8) | b;
+        }   
+        
     }
 
 

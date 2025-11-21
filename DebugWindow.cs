@@ -1,6 +1,8 @@
 using Gtk;
 using System;
+using System.Linq;
 
+namespace Gaucho;
 
 public class DebugWindow : Window
 {
@@ -31,7 +33,7 @@ public class DebugWindow : Window
         // Create header bar
         _headerBar = HeaderBar.New();
         _headerBar.ShowTitleButtons = true;
-        _headerBar.TitleWidget.SetTooltipText("Debug Console");
+        _headerBar.SetTooltipText("Debug Console");
         SetTitlebar(_headerBar);
     }
 
@@ -127,6 +129,7 @@ public class DebugWindow : Window
     private void OnClearClicked(object sender, EventArgs e)
     {
         _textBuffer.SetText("", 0);
+        _currentText = string.Empty;
         AddLogMessage("Debug log cleared", LogLevel.Info);
     }
 
@@ -171,11 +174,11 @@ public class DebugWindow : Window
 
         string formattedMessage = $"[{timestamp}] [{levelStr}] {message}\n";
         
-        // Get end iterator
-        TextIter endIter = _textBuffer.GetEndIter();
+        // Update our text tracking
+        _currentText += formattedMessage;
         
-        // Insert the new message
-        _textBuffer.Insert(ref endIter, formattedMessage, -1);
+        // Insert the new message at the end
+        _textBuffer.InsertAtCursor(formattedMessage, -1);
         
         // Auto-scroll to bottom
         var mark = _textBuffer.GetInsert();
@@ -190,9 +193,18 @@ public class DebugWindow : Window
         int lineCount = _textBuffer.GetLineCount();
         if (lineCount > maxLines)
         {
-            var startIter = _textBuffer.GetStartIter();
-            var deleteEndIter = _textBuffer.GetIterAtLine(lineCount - maxLines);
-            _textBuffer.Delete(ref startIter, ref deleteEndIter);
+            // For simplicity, just clear the buffer when it gets too large
+            // In a production app, you might want to keep only the last N lines
+            if (lineCount > maxLines * 2)
+            {
+                string[] lines = _currentText.Split('\n');
+                if (lines.Length > maxLines)
+                {
+                    string trimmedText = string.Join('\n', lines.Skip(lines.Length - maxLines));
+                    _textBuffer.SetText(trimmedText, -1);
+                    _currentText = trimmedText;
+                }
+            }
         }
     }
 
@@ -203,14 +215,16 @@ public class DebugWindow : Window
 
     public string GetAllText()
     {
-        var startIter = _textBuffer.GetStartIter();
-        var endIter = _textBuffer.GetEndIter();
-        return _textBuffer.GetText(startIter, endIter, false);
+        // Store text in a private field and return it
+        return _currentText ?? string.Empty;
     }
+    
+    private string _currentText = string.Empty;
 
     public void ClearLog()
     {
         _textBuffer.SetText("", 0);
+        _currentText = string.Empty;
     }
 
     public TextView GetTextView()

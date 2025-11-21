@@ -390,6 +390,53 @@ namespace Gaucho
             return value ^ (1 << bitPosition);
         }
 
+        /// <summary>
+        /// Performs a right bit shift operation (similar to VB.NET Shr function)
+        /// </summary>
+        /// <param name="value">The integer value to shift</param>
+        /// <param name="positions">The number of positions to shift right</param>
+        /// <returns>The result of the right shift operation</returns>
+        public static int Shr(int value, int positions)
+        {
+            if (positions < 0)
+                throw new ArgumentException("Shift positions cannot be negative", nameof(positions));
+                
+            // Perform logical right shift (unsigned)
+            return (int)((uint)value >> positions);
+        }
+
+        /// <summary>
+        /// Performs a right bit shift operation on a long value
+        /// </summary>
+        /// <param name="value">The long value to shift</param>
+        /// <param name="positions">The number of positions to shift right</param>
+        /// <returns>The result of the right shift operation</returns>
+        public static long Shr(long value, int positions)
+        {
+            if (positions < 0)
+                throw new ArgumentException("Shift positions cannot be negative", nameof(positions));
+                
+            // Perform logical right shift (unsigned)
+            return (long)((ulong)value >> positions);
+        }
+
+        /// <summary>
+        /// Performs a right bit shift operation on a byte value
+        /// </summary>
+        /// <param name="value">The byte value to shift</param>
+        /// <param name="positions">The number of positions to shift right</param>
+        /// <returns>The result of the right shift operation</returns>
+        public static byte Shr(byte value, int positions)
+        {
+            if (positions < 0)
+                throw new ArgumentException("Shift positions cannot be negative", nameof(positions));
+                
+            if (positions >= 8)
+                return 0; // All bits shifted out
+                
+            return (byte)(value >> positions);
+        }
+
         #endregion
         public static double ToRadians(double degrees)
         {

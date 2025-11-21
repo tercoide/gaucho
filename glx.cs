@@ -1,5 +1,6 @@
 using Gaucho;
 using Gtk;
+using OpenTK.Graphics.OpenGL4;
 public  class Glx
 {
  // Gambas module file
@@ -39,7 +40,7 @@ public  class Glx
  //       |                                         |                                                 |
  //       |                     |<------------------|                                                 |
  //       |             ModelMatrix>Translate       |                                                 |
- //       |                                         |bottom                                           |gldrwArea.w,.h = Gl.Viewport = el area donde dibujo
+ //       |                                         |bottom                                           |gldrwArea.w,.h = GL.Viewport = el area donde dibujo
  //       +-------------------------------------------------------------------------------------------+           = pixeles
  //Fast 
  // una lbreria de funciones para pasar de Paint a OpenGL
@@ -107,10 +108,10 @@ public bool VBO_present = false;    // si tenemos VBO que dibujar
 
  // VBO
 public int VBO_Id ;          //Current VBO buffer
-public  float[][] VBO_vertex ;         
-public  float[][] VBO_colors ;         
-public  float[][] VBO_normals ;         
-public  float[][] VBO_pixels ;         
+public  double[][] VBO_vertex ;         
+public  double[][] VBO_colors ;         
+public  double[][] VBO_normals ;         
+public  double[][] VBO_pixels ;         
 public  int[] VBO_Primitive ;         
  //
  // Copyright (C) Ing Martin P Cristia
@@ -131,8 +132,8 @@ public  int[] VBO_Primitive ;
  // Boston, MA  02110-1301  USA
 
 
- // WARNING: FLOAT en Gambas = DOUBLE en GL
- //          SINGLE en Gambas = FLOAT en GL
+ // WARNING: double en Gambas = DOUBLE en GL
+ //          SINGLE en Gambas = double en GL
 
 const int DEPTH_BUFFER_BIT = 0x000000000100;
 const int STENCIL_BUFFER_BIT = 0x000000000400;
@@ -254,7 +255,7 @@ const int SHORT = 0x00001402;
 const int UNSIGNED_SHORT = 0x00001403;
 const int INT = 0x00001404;
 const int UNSIGNED_INT = 0x00001405;
-const int FLOAT = 0x00001406;
+const int double = 0x00001406;
 const int STACK_OVERFLOW = 0x00000503;
 const int STACK_UNDERFLOW = 0x00000504;
 const int CLEAR = 0x00001500;
@@ -1585,10 +1586,10 @@ const int VERTEX_ARRAY_BINDING = 0x000085B5;
 // public static void glHint(int iTarget, int Mode)
 //     {
 
-// public static void glLineWIdth(float fWIdth)
+// public static void glLineWIdth(double fWIdth)
 //     {
 
-// public static void glPointSize(float fSize)
+// public static void glPointSize(double fSize)
 //     {
 
 // public static void glPolygonMode(int face, int Mode)
@@ -1597,7 +1598,7 @@ const int VERTEX_ARRAY_BINDING = 0x000085B5;
 // public static void glScissor(int x, int y, int iWIdth, int iHeight)
 //     {
 
-// public static void glTexParameterf(int iTarget, int iPname, float fParam)
+// public static void glTexParameterf(int iTarget, int iPname, double fParam)
 //     {
 
 // public static void glTexParameterfv(int iTarget, int iPname, double[] slxParams)
@@ -1621,7 +1622,7 @@ const int VERTEX_ARRAY_BINDING = 0x000085B5;
 // public static void glClear(int GiMaskBitField)
 //     {
 
-// public static void glClearColor(float red, float green, float blue, float alpha)
+// public static void glClearColor(double red, double green, double blue, double alpha)
 //     {
 
 // public static void glClearStencil(int s)
@@ -1666,7 +1667,7 @@ const int VERTEX_ARRAY_BINDING = 0x000085B5;
 // public static void glDepthFunc(int func)
 //     {
 
-// public static void glPixelStoref(int iPname, float fParam)
+// public static void glPixelStoref(int iPname, double fParam)
 //     {
 
 // public static void glPixelStorei(int iPname, int iParam)
@@ -1687,7 +1688,7 @@ const int VERTEX_ARRAY_BINDING = 0x000085B5;
 // public static int glGetError()
 //     {
 
-// public static void glGetsinglev(int iPname, float[] data)
+// public static void glGetsinglev(int iPname, double[] data)
 //     {
 
 // public static void glGetintv(int iPname, int[] data)
@@ -1699,13 +1700,13 @@ const int VERTEX_ARRAY_BINDING = 0x000085B5;
 // public static void glGetTexImage(int iTarget, int iLevel, int iFormat, int iType, Byte pixels)
 //     {
 
-// public static void glGetTexParameterfv(int iTarget, int iPname, float[] params)
+// public static void glGetTexParameterfv(int iTarget, int iPname, double[] params)
 //     {
 
 // public static void glGetTexParameteriv(int iTarget, int iPname, int[] params)
 //     {
 
-// public static void glGetTexLevelParameterfv(int iTarget, int iLevel, int iPname, float[] params)
+// public static void glGetTexLevelParameterfv(int iTarget, int iLevel, int iPname, double[] params)
 //     {
 
 // public static void glGetTexLevelParameteriv(int iTarget, int iLevel, int iPname, int[] params)
@@ -1730,7 +1731,7 @@ const int VERTEX_ARRAY_BINDING = 0x000085B5;
 // public static void glGetPointerv(int iPname, Pointer params)
 //     {
 
-// public static void glPolygonOffset(float factor, float units)
+// public static void glPolygonOffset(double factor, double units)
 //     {
 
 // public static void glCopyTexImage1D(int iTarget, int iLevel, int internalformat, int x, int y, int iWIdth, int iBorder)
@@ -1780,7 +1781,7 @@ const int VERTEX_ARRAY_BINDING = 0x000085B5;
 // public static void glActiveTexture(int texture)
 //     {
 
-// public static void glSampleCoverage(float value, Byte invert)
+// public static void glSampleCoverage(double value, Byte invert)
 //     {
 
 // public static void glCompressedTexImage3D(int iTarget, int iLevel, int internalformat, int iWIdth, int iHeight, int iDepth, int iBorder, int imagesize, Byte[] data)
@@ -1814,10 +1815,10 @@ const int VERTEX_ARRAY_BINDING = 0x000085B5;
 // public static void glMultiDrawElements(int Mode, int[] count, int iType, int[][] indices, int drawcount)
 //     {
 
-// public static void glPointParameterf(int iPname, float fParam)
+// public static void glPointParameterf(int iPname, double fParam)
 //     {
 
-// public static void glPointParameterfv(int iPname, float[] flxParams)
+// public static void glPointParameterfv(int iPname, double[] flxParams)
 //     {
 
 // public static void glPointParameteri(int iPname, int iParam)
@@ -1826,7 +1827,7 @@ const int VERTEX_ARRAY_BINDING = 0x000085B5;
 // public static void glPointParameteriv(int iPname, int[] inxParams)
 //     {
 
-// public static void glBlendColor(float red, float green, float blue, float alpha)
+// public static void glBlendColor(double red, double green, double blue, double alpha)
 //     {
 
 // public static void glBlendEquation(int Mode)
@@ -1968,7 +1969,7 @@ const int VERTEX_ARRAY_BINDING = 0x000085B5;
 // public static void glGetUniformLocation(int program, string name)
 //     {
 
-// public static void glGetUniformfv(int program, int location, float[] params)
+// public static void glGetUniformfv(int program, int location, double[] params)
 //     {
 
 // public static void glGetUniformiv(int program, int location, int[] params)
@@ -1977,7 +1978,7 @@ const int VERTEX_ARRAY_BINDING = 0x000085B5;
 // public static void glGetVertexAttribdv(int iIndex, int iPname, double[] params)
 //     {
 
-// public static void glGetVertexAttribfv(int iIndex, int iPname, float[] params)
+// public static void glGetVertexAttribfv(int iIndex, int iPname, double[] params)
 //     {
 
 // public static void glGetVertexAttribiv(int iIndex, int iPname, int[] params)
@@ -2001,16 +2002,16 @@ const int VERTEX_ARRAY_BINDING = 0x000085B5;
 // public static void glUseProgram(int program)
 //     {
 
-// public static void glUniform1f(int location, float v0)
+// public static void glUniform1f(int location, double v0)
 //     {
 
-// public static void glUniform2f(int location, float v0, float v1)
+// public static void glUniform2f(int location, double v0, double v1)
 //     {
 
-// public static void glUniform3f(int location, float v0, float v1, float v2)
+// public static void glUniform3f(int location, double v0, double v1, double v2)
 //     {
 
-// public static void glUniform4f(int location, float v0, float v1, float v2, float v3)
+// public static void glUniform4f(int location, double v0, double v1, double v2, double v3)
 //     {
 
 // public static void glUniform1i(int location, int v0)
@@ -2025,16 +2026,16 @@ const int VERTEX_ARRAY_BINDING = 0x000085B5;
 // public static void glUniform4i(int location, int v0, int v1, int v2, int v3)
 //     {
 
-// public static void glUniform1fv(int location, int iSize, float[] value)
+// public static void glUniform1fv(int location, int iSize, double[] value)
 //     {
 
-// public static void glUniform2fv(int location, int iSize, float[] value)
+// public static void glUniform2fv(int location, int iSize, double[] value)
 //     {
 
-// public static void glUniform3fv(int location, int iSize, float[] value)
+// public static void glUniform3fv(int location, int iSize, double[] value)
 //     {
 
-// public static void glUniform4fv(int location, int iSize, float[] value)
+// public static void glUniform4fv(int location, int iSize, double[] value)
 //     {
 
 // public static void glUniform1iv(int location, int iSize, int[] value)
@@ -2055,20 +2056,20 @@ const int VERTEX_ARRAY_BINDING = 0x000085B5;
 // public static void glValIdateProgram(int program)
 //     {
 
- // Public Extern glVertexAttrib1d(iIndex As int, x As Float)
- // Public Extern glVertexAttrib1dv(iIndex As int, const As Float * v)
+ // Public Extern glVertexAttrib1d(iIndex As int, x As double)
+ // Public Extern glVertexAttrib1dv(iIndex As int, const As double * v)
  // Public Extern glVertexAttrib1f(iIndex As int, GLsingle x)
  // Public Extern glVertexAttrib1fv(iIndex As int, const GLsingle * v)
  // Public Extern glVertexAttrib1s(iIndex As int, GLshort x)
  // Public Extern glVertexAttrib1sv(iIndex As int, const GLshort * v)
- // Public Extern glVertexAttrib2d(iIndex As int, x As Float, As Float y)
- // Public Extern glVertexAttrib2dv(iIndex As int, const As Float * v)
+ // Public Extern glVertexAttrib2d(iIndex As int, x As double, As double y)
+ // Public Extern glVertexAttrib2dv(iIndex As int, const As double * v)
  // Public Extern glVertexAttrib2f(iIndex As int, GLsingle x, GLsingle y)
  // Public Extern glVertexAttrib2fv(iIndex As int, const GLsingle * v)
  // Public Extern glVertexAttrib2s(iIndex As int, GLshort x, GLshort y)
  // Public Extern glVertexAttrib2sv(iIndex As int, const GLshort * v)
- // Public Extern glVertexAttrib3d(iIndex As int, x As Float, As Float y, As Float z)
- // Public Extern glVertexAttrib3dv(iIndex As int, const As Float * v)
+ // Public Extern glVertexAttrib3d(iIndex As int, x As double, As double y, As double z)
+ // Public Extern glVertexAttrib3dv(iIndex As int, const As double * v)
  // Public Extern glVertexAttrib3f(iIndex As int, GLsingle x, GLsingle y, GLsingle z)
  // Public Extern glVertexAttrib3fv(iIndex As int, const GLsingle * v)
  // Public Extern glVertexAttrib3s(iIndex As int, GLshort x, GLshort y, GLshort z)
@@ -2081,8 +2082,8 @@ const int VERTEX_ARRAY_BINDING = 0x000085B5;
  // Public Extern glVertexAttrib4Nuiv(iIndex As int, const GLuint * v)
  // Public Extern glVertexAttrib4Nusv(iIndex As int, const GLushort * v)
  // Public Extern glVertexAttrib4bv(iIndex As int, const GLbyte * v)
- // Public Extern glVertexAttrib4d(iIndex As int, x As Float, As Float y, As Float z, As Float w)
- // Public Extern glVertexAttrib4dv(iIndex As int, const As Float * v)
+ // Public Extern glVertexAttrib4d(iIndex As int, x As double, As double y, As double z, As double w)
+ // Public Extern glVertexAttrib4dv(iIndex As int, const As double * v)
  // Public Extern glVertexAttrib4f(iIndex As int, GLsingle x, GLsingle y, GLsingle z, GLsingle w)
  // Public Extern glVertexAttrib4fv(iIndex As int, const GLsingle * v)
  // Public Extern glVertexAttrib4iv(iIndex As int, const GLint * v)
@@ -2256,24 +2257,24 @@ const int VERTEX_ARRAY_BINDING = 0x000085B5;
  // Public Extern glBlendFuncSeparatei(GLuint buf, as int srcRGB, as int dstRGB, as int srcAlpha, as int dstAlpha)
  // Public Extern glDrawArraysIndirect(Mode As int, const * indirect)
  // Public Extern glDrawElementsIndirect(Mode As int, iType As int, const * indirect)
- // Public Extern glUniform1d(location as int, x as float)
- // Public Extern glUniform2d(location as int, x as float, as float y)
- // Public Extern glUniform3d(location as int, x as float, as float y, as float z)
- // Public Extern glUniform4d(location as int, x as float, as float y, as float z, as float w)
- // Public Extern glUniform1dv(location as int, iSize as int, const as float * value)
- // Public Extern glUniform2dv(location as int, iSize as int, const as float * value)
- // Public Extern glUniform3dv(location as int, iSize as int, const as float * value)
- // Public Extern glUniform4dv(location as int, iSize as int, const as float * value)
- // Public Extern glUniformMatrix2dv(location as int, iSize as int, as byte transpose, const as float * value)
- // Public Extern glUniformMatrix3dv(location as int, iSize as int, as byte transpose, const as float * value)
- // Public Extern glUniformMatrix4dv(location as int, iSize as int, as byte transpose, const as float * value)
- // Public Extern glUniformMatrix2x3dv(location as int, iSize as int, as byte transpose, const as float * value)
- // Public Extern glUniformMatrix2x4dv(location as int, iSize as int, as byte transpose, const as float * value)
- // Public Extern glUniformMatrix3x2dv(location as int, iSize as int, as byte transpose, const as float * value)
- // Public Extern glUniformMatrix3x4dv(location as int, iSize as int, as byte transpose, const as float * value)
- // Public Extern glUniformMatrix4x2dv(location as int, iSize as int, as byte transpose, const as float * value)
- // Public Extern glUniformMatrix4x3dv(location as int, iSize as int, as byte transpose, const as float * value)
- // Public Extern glGetUniformdv(program As int, location as int, as float * params)
+ // Public Extern glUniform1d(location as int, x as double)
+ // Public Extern glUniform2d(location as int, x as double, as double y)
+ // Public Extern glUniform3d(location as int, x as double, as double y, as double z)
+ // Public Extern glUniform4d(location as int, x as double, as double y, as double z, as double w)
+ // Public Extern glUniform1dv(location as int, iSize as int, const as double * value)
+ // Public Extern glUniform2dv(location as int, iSize as int, const as double * value)
+ // Public Extern glUniform3dv(location as int, iSize as int, const as double * value)
+ // Public Extern glUniform4dv(location as int, iSize as int, const as double * value)
+ // Public Extern glUniformMatrix2dv(location as int, iSize as int, as byte transpose, const as double * value)
+ // Public Extern glUniformMatrix3dv(location as int, iSize as int, as byte transpose, const as double * value)
+ // Public Extern glUniformMatrix4dv(location as int, iSize as int, as byte transpose, const as double * value)
+ // Public Extern glUniformMatrix2x3dv(location as int, iSize as int, as byte transpose, const as double * value)
+ // Public Extern glUniformMatrix2x4dv(location as int, iSize as int, as byte transpose, const as double * value)
+ // Public Extern glUniformMatrix3x2dv(location as int, iSize as int, as byte transpose, const as double * value)
+ // Public Extern glUniformMatrix3x4dv(location as int, iSize as int, as byte transpose, const as double * value)
+ // Public Extern glUniformMatrix4x2dv(location as int, iSize as int, as byte transpose, const as double * value)
+ // Public Extern glUniformMatrix4x3dv(location as int, iSize as int, as byte transpose, const as double * value)
+ // Public Extern glGetUniformdv(program As int, location as int, as double * params)
  // Public Extern Function glGetSubroutineUniformLocation(program As int, as int shadertype, const name as string)
  // GLAPI GLuint APIENTRY glGetSubroutineIndex(program As int, as int shadertype, const name as string)
  // Public Extern glGetActiveSubroutineUniformiv(program As int, as int shadertype, iIndex As int, iPname As int, GLint * values)
@@ -2317,74 +2318,74 @@ const int VERTEX_ARRAY_BINDING = 0x000085B5;
  // Public Extern glProgramUniform1iv(program As int, location as int, iSize as int, value as int[])
  // Public Extern glProgramUniform1f(program As int, location as int, v0 as single)
  // Public Extern glProgramUniform1fv(program As int, location as int, iSize as int, const GLsingle * value)
- // Public Extern glProgramUniform1d(program As int, location as int, as float v0)
- // Public Extern glProgramUniform1dv(program As int, location as int, iSize as int, const as float * value)
+ // Public Extern glProgramUniform1d(program As int, location as int, as double v0)
+ // Public Extern glProgramUniform1dv(program As int, location as int, iSize as int, const as double * value)
  // Public Extern glProgramUniform1ui(program As int, location as int, GLuint v0)
  // Public Extern glProgramUniform1uiv(program As int, location as int, iSize as int, const GLuint * value)
  // Public Extern glProgramUniform2i(program As int, location as int, v0 as int, v1 as int)
  // Public Extern glProgramUniform2iv(program As int, location as int, iSize as int, value as int[])
  // Public Extern glProgramUniform2f(program As int, location as int, v0 as single, v1 as single)
  // Public Extern glProgramUniform2fv(program As int, location as int, iSize as int, const GLsingle * value)
- // Public Extern glProgramUniform2d(program As int, location as int, as float v0, as float v1)
- // Public Extern glProgramUniform2dv(program As int, location as int, iSize as int, const as float * value)
+ // Public Extern glProgramUniform2d(program As int, location as int, as double v0, as double v1)
+ // Public Extern glProgramUniform2dv(program As int, location as int, iSize as int, const as double * value)
  // Public Extern glProgramUniform2ui(program As int, location as int, GLuint v0, GLuint v1)
  // Public Extern glProgramUniform2uiv(program As int, location as int, iSize as int, const GLuint * value)
  // Public Extern glProgramUniform3i(program As int, location as int, v0 as int, v1 as int, v2 as int)
  // Public Extern glProgramUniform3iv(program As int, location as int, iSize as int, value as int[])
  // Public Extern glProgramUniform3f(program As int, location as int, v0 as single, v1 as single, v2 as single)
  // Public Extern glProgramUniform3fv(program As int, location as int, iSize as int, const GLsingle * value)
- // Public Extern glProgramUniform3d(program As int, location as int, as float v0, as float v1, as float v2)
- // Public Extern glProgramUniform3dv(program As int, location as int, iSize as int, const as float * value)
+ // Public Extern glProgramUniform3d(program As int, location as int, as double v0, as double v1, as double v2)
+ // Public Extern glProgramUniform3dv(program As int, location as int, iSize as int, const as double * value)
  // Public Extern glProgramUniform3ui(program As int, location as int, GLuint v0, GLuint v1, GLuint v2)
  // Public Extern glProgramUniform3uiv(program As int, location as int, iSize as int, const GLuint * value)
  // Public Extern glProgramUniform4i(program As int, location as int, v0 as int, v1 as int, v2 as int, v3 as int)
  // Public Extern glProgramUniform4iv(program As int, location as int, iSize as int, value as int[])
  // Public Extern glProgramUniform4f(program As int, location as int, v0 as single, v1 as single, v2 as single, v3 as single)
  // Public Extern glProgramUniform4fv(program As int, location as int, iSize as int, const GLsingle * value)
- // Public Extern glProgramUniform4d(program As int, location as int, as float v0, as float v1, as float v2, as float v3)
- // Public Extern glProgramUniform4dv(program As int, location as int, iSize as int, const as float * value)
+ // Public Extern glProgramUniform4d(program As int, location as int, as double v0, as double v1, as double v2, as double v3)
+ // Public Extern glProgramUniform4dv(program As int, location as int, iSize as int, const as double * value)
  // Public Extern glProgramUniform4ui(program As int, location as int, GLuint v0, GLuint v1, GLuint v2, GLuint v3)
  // Public Extern glProgramUniform4uiv(program As int, location as int, iSize as int, const GLuint * value)
  // Public Extern glProgramUniformMatrix2fv(program As int, location as int, iSize as int, as byte transpose, const GLsingle * value)
  // Public Extern glProgramUniformMatrix3fv(program As int, location as int, iSize as int, as byte transpose, const GLsingle * value)
  // Public Extern glProgramUniformMatrix4fv(program As int, location as int, iSize as int, as byte transpose, const GLsingle * value)
- // Public Extern glProgramUniformMatrix2dv(program As int, location as int, iSize as int, as byte transpose, const as float * value)
- // Public Extern glProgramUniformMatrix3dv(program As int, location as int, iSize as int, as byte transpose, const as float * value)
- // Public Extern glProgramUniformMatrix4dv(program As int, location as int, iSize as int, as byte transpose, const as float * value)
+ // Public Extern glProgramUniformMatrix2dv(program As int, location as int, iSize as int, as byte transpose, const as double * value)
+ // Public Extern glProgramUniformMatrix3dv(program As int, location as int, iSize as int, as byte transpose, const as double * value)
+ // Public Extern glProgramUniformMatrix4dv(program As int, location as int, iSize as int, as byte transpose, const as double * value)
  // Public Extern glProgramUniformMatrix2x3fv(program As int, location as int, iSize as int, as byte transpose, const GLsingle * value)
  // Public Extern glProgramUniformMatrix3x2fv(program As int, location as int, iSize as int, as byte transpose, const GLsingle * value)
  // Public Extern glProgramUniformMatrix2x4fv(program As int, location as int, iSize as int, as byte transpose, const GLsingle * value)
  // Public Extern glProgramUniformMatrix4x2fv(program As int, location as int, iSize as int, as byte transpose, const GLsingle * value)
  // Public Extern glProgramUniformMatrix3x4fv(program As int, location as int, iSize as int, as byte transpose, const GLsingle * value)
  // Public Extern glProgramUniformMatrix4x3fv(program As int, location as int, iSize as int, as byte transpose, const GLsingle * value)
- // Public Extern glProgramUniformMatrix2x3dv(program As int, location as int, iSize as int, as byte transpose, const as float * value)
- // Public Extern glProgramUniformMatrix3x2dv(program As int, location as int, iSize as int, as byte transpose, const as float * value)
- // Public Extern glProgramUniformMatrix2x4dv(program As int, location as int, iSize as int, as byte transpose, const as float * value)
- // Public Extern glProgramUniformMatrix4x2dv(program As int, location as int, iSize as int, as byte transpose, const as float * value)
- // Public Extern glProgramUniformMatrix3x4dv(program As int, location as int, iSize as int, as byte transpose, const as float * value)
- // Public Extern glProgramUniformMatrix4x3dv(program As int, location as int, iSize as int, as byte transpose, const as float * value)
+ // Public Extern glProgramUniformMatrix2x3dv(program As int, location as int, iSize as int, as byte transpose, const as double * value)
+ // Public Extern glProgramUniformMatrix3x2dv(program As int, location as int, iSize as int, as byte transpose, const as double * value)
+ // Public Extern glProgramUniformMatrix2x4dv(program As int, location as int, iSize as int, as byte transpose, const as double * value)
+ // Public Extern glProgramUniformMatrix4x2dv(program As int, location as int, iSize as int, as byte transpose, const as double * value)
+ // Public Extern glProgramUniformMatrix3x4dv(program As int, location as int, iSize as int, as byte transpose, const as double * value)
+ // Public Extern glProgramUniformMatrix4x3dv(program As int, location as int, iSize as int, as byte transpose, const as double * value)
  // Public Extern glValidateProgramPipeline(GLuint pipeline)
  // Public Extern glGetProgramPipelineInfoLog(GLuint pipeline, BufSize As int, legth as int[], GLchar * infoLog)
- // Public Extern glVertexAttribL1d(iIndex As int, x as float)
- // Public Extern glVertexAttribL2d(iIndex As int, x as float, as float y)
- // Public Extern glVertexAttribL3d(iIndex As int, x as float, as float y, as float z)
- // Public Extern glVertexAttribL4d(iIndex As int, x as float, as float y, as float z, as float w)
- // Public Extern glVertexAttribL1dv(iIndex As int, const as float * v)
- // Public Extern glVertexAttribL2dv(iIndex As int, const as float * v)
- // Public Extern glVertexAttribL3dv(iIndex As int, const as float * v)
- // Public Extern glVertexAttribL4dv(iIndex As int, const as float * v)
+ // Public Extern glVertexAttribL1d(iIndex As int, x as double)
+ // Public Extern glVertexAttribL2d(iIndex As int, x as double, as double y)
+ // Public Extern glVertexAttribL3d(iIndex As int, x as double, as double y, as double z)
+ // Public Extern glVertexAttribL4d(iIndex As int, x as double, as double y, as double z, as double w)
+ // Public Extern glVertexAttribL1dv(iIndex As int, const as double * v)
+ // Public Extern glVertexAttribL2dv(iIndex As int, const as double * v)
+ // Public Extern glVertexAttribL3dv(iIndex As int, const as double * v)
+ // Public Extern glVertexAttribL4dv(iIndex As int, const as double * v)
  // Public Extern glVertexAttribLPointer(iIndex As int, size as int, iType As int, stride as int, const * pointer)
- // Public Extern glGetVertexAttribLdv(iIndex As int, iPname As int, as float * params)
+ // Public Extern glGetVertexAttribLdv(iIndex As int, iPname As int, as double * params)
  // Public Extern glViewportArrayv(GLuint first, iSize as int, const GLsingle * v)
  // Public Extern glViewportIndexedf(iIndex As int, GLsingle x, GLsingle y, GLsingle w, GLsingle h)
  // Public Extern glViewportIndexedfv(iIndex As int, const GLsingle * v)
  // Public Extern glScissorArrayv(GLuint first, iSize as int, const GLint * v)
  // Public Extern glScissorIndexed(iIndex As int, GLint left, GLint bottom, iWidth As int, iHeight As int)
  // Public Extern glScissorIndexedv(iIndex As int, const GLint * v)
- // Public Extern glDepthRangeArrayv(GLuint first, iSize as int, const as float * v)
- // Public Extern glDepthRangeIndexed(iIndex As int, as float n, as float f)
+ // Public Extern glDepthRangeArrayv(GLuint first, iSize as int, const as double * v)
+ // Public Extern glDepthRangeIndexed(iIndex As int, as double n, as double f)
  // Public Extern glGetsinglei_v(iTarget As int, iIndex As int, GLsingle data as byte[])
- // Public Extern glGetDoublei_v(iTarget As int, iIndex As int, as float data as byte[])
+ // Public Extern glGetDoublei_v(iTarget As int, iIndex As int, as double data as byte[])
  //
 
  // Public Extern glDrawArraysInstancedBaseInstance(Mode As int, first as int, iSize as int, GLsizei instancecount, GLuint baseinstance)
@@ -2558,7 +2559,7 @@ const int VERTEX_ARRAY_BINDING = 0x000085B5;
  // GLAPI as int APIENTRY glGetGraphicsResetStatus()
  // Public Extern glGetnCompressedTexImage(iTarget As int, GLint lod, BufSize As int, * pixels)
  // Public Extern glGetnTexImage(iTarget As int, iLevel as int, iFormat as int, iType As int, BufSize As int, * pixels)
- // Public Extern glGetnUniformdv(program As int, location as int, BufSize As int, as float * params)
+ // Public Extern glGetnUniformdv(program As int, location as int, BufSize As int, as double * params)
  // Public Extern glGetnUniformfv(program As int, location as int, BufSize As int, params as single[])
  // Public Extern glGetnUniformiv(program As int, location as int, BufSize As int, params as int[])
  // Public Extern glGetnUniformuiv(program As int, location as int, BufSize As int, params as int[])
@@ -2745,7 +2746,7 @@ const int VERTEX_ARRAY_BINDING = 0x000085B5;
  // Public Extern glGetnUniformfvARB(program As int, location as int, BufSize As int, params as single[])
  // Public Extern glGetnUniformivARB(program As int, location as int, BufSize As int, params as int[])
  // Public Extern glGetnUniformuivARB(program As int, location as int, BufSize As int, params as int[])
- // Public Extern glGetnUniformdvARB(program As int, location as int, BufSize As int, as float * params)
+ // Public Extern glGetnUniformdvARB(program As int, location as int, BufSize As int, as double * params)
  //
  // Public Const GL_ARB_sample_locations 1
  // Public Const GL_SAMPLE_LOCATION_SUBPIXEL_BITS_ARB As int = 0x933D
@@ -2878,15 +2879,15 @@ public static void VBOFlushAll()
     {
 
 
-    VBO_vertex.Clear;
-    VBO_colors.Clear;
-    VBO_normals.Clear;
-    VBO_pixels.Clear;
+    Array.Clear(VBO_vertex);
+    Array.Clear(VBO_colors);
+    Array.Clear(VBO_normals);
+    Array.Clear(VBO_pixels);
 
-    VBO_vertex = new float[][];
-    VBO_colors = new float[][];
-    VBO_normals = new float[][];
-    VBO_pixels = new float[][];
+    VBO_vertex = new double[][];
+    VBO_colors = new double[][];
+    VBO_normals = new double[][];
+    VBO_pixels = new double[][];
 
 }
 
@@ -2909,39 +2910,39 @@ public static void Resize(Object drwContext) // only glArea for now
      // establecemos adonde vamos a dibujar, porque puede ser en algun lugar mas chico de la misma glDrawingArea
      // pero en general sera en todo el control
      // 2022 la siguiente linea parece estar deprecada, pongo cualquiera o simplemente la comento y funciona igual
-     //gl.Viewport(100, 100, drwContext.W / 2, drwContext.h / 2)
+     //GL.Viewport(100, 100, drwContext.W / 2, drwContext.h / 2)
 
     if ( ! Me.Initialized ) return; //Me.Init(drwContext)
      //    Console.WriteLine( "New GL Sheet Init:", drwContext.w, drwContext.H
      // le avisamos a GL que queremos usar texturas
-    gl.Enable(gl.TEXTURE_2D);
+    GL.Enable(GL.TEXTURE_2D);
 
      // borramos lo que haya dibujado
-    gl.Clear(gl.DEPTH_BUFFER_BIT || gl.COLOR_BUFFER_BIT);
+    GL.Clear(GL.DEPTH_BUFFER_BIT || GL.COLOR_BUFFER_BIT);
 
      // le decimos que queremos usar cosas 3D y lo que esta mas lejos quede tapado por lo que esta mas cerca, esto en 2D no es necesario
-    gl.Enable(gl.DEPTH_TEST);
+    GL.Enable(GL.DEPTH_TEST);
 
      // no tengo idea, debe ser algo de AntiAlias
-    gl.Enable(gl.SMOOTH);
-    gl.Enable(gl.BLEND);
-    gl.BlendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
+    GL.Enable(GL.SMOOTH);
+    GL.Enable(GL.BLEND);
+    GL.BlendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
      // usaremos luces
-     // Gl.Enable(Gl.LIGHTING)
-     // Gl.Enable(Gl.LIGHT0)
+     // GL.Enable(GL.LIGHTING)
+     // GL.Enable(GL.LIGHT0)
      // esto le dice que las normales las tiene que normalizar a 1
-    Gl.Enable(Gl.NORMALIZE);
+    GL.Enable(GL.NORMALIZE);
 
      // las coordenadas que le pasemos deberan estar entre -1 y 1
      // todo lo que sea > 1 NO SE MOSTRARA
 
-    gl.MatrixMode(gl.PROJECTION);
-    gl.LoadIdentity;
+    GL.MatrixMode(GL.PROJECTION);
+    GL.LoadIdentity;
      //Glu.Ortho2D(-drwContext.w / 2, drwContext.w / 2, -drwContext.h / 2, drwContext.h / 2)
-    Gl.Ortho(-drwContext.w / 2, drwContext.w / 2, -drwContext.h / 2, drwContext.h / 2, 1, -1);
+    GL.Ortho(-drwContext.w / 2, drwContext.w / 2, -drwContext.h / 2, drwContext.h / 2, 1, -1);
 
-    gl.MatrixMode(gl.MODELVIEW);
-    gl.LoadIdentity;
+    GL.MatrixMode(GL.MODELVIEW);
+    GL.LoadIdentity;
 
 }
 
@@ -2961,23 +2962,23 @@ public static void Init(Object drwContext) // only glArea for now
     gbcolor = drwContext.background;
 
     a = 1 - Colors.GetAlpha(gbColor) / 255;
-    r = (Shr(gbColor, 16) && 255) / 255;
-    g = (Shr(gbColor, 8) && 255) / 255;
-    b = (gbColor && 255) / 255;
+    r = (Shr(gbColor, 16) & 255) / 255;
+    g = (Shr(gbColor, 8) & 255) / 255;
+    b = (gbColor & 255) / 255;
 
-    gl.ClearColor(r, g, b, a);
+    GL.ClearColor(r, g, b, a);
 
      // line stipples
 
-    this.glFlush();
+    glFlush();
     Console.WriteLine( "libGL access: ok");
-    Console.WriteLine( "Support VBO: " + gl.CheckExtensions("GL_ARB_vertex_buffer_object"));
-    Console.WriteLine( "Support GLSL: " + gl.CheckExtensions("GL_ARB_vertex_program"));
-    Console.WriteLine( "Shading version: " + GL.GetString(gl.SHADING_LANGUAGE_VERSION));
-    Console.WriteLine( "GL version: " + GL.GetString(gl.VERSION));
-    Console.WriteLine( "Chipset vendor: " + GL.GetString(gl.VENDOR));
-     //gcd.Console.WriteLine(info("Extensions" &  GL.GetString(gl.EXTENSIONS))
-    this.Initialized = true;
+    Console.WriteLine( "Support VBO: " + GL.CheckExtensions("GL_ARB_vertex_buffer_object"));
+    Console.WriteLine( "Support GLSL: " + GL.CheckExtensions("GL_ARB_vertex_program"));
+    Console.WriteLine( "Shading version: " + GL.GetString(GL.SHADING_LANGUAGE_VERSION));
+    Console.WriteLine( "GL version: " + GL.GetString(GL.VERSION));
+    Console.WriteLine( "Chipset vendor: " + GL.GetString(GL.VENDOR));
+     //gcd.Console.WriteLine(info("Extensions" &  GL.GetString(GL.EXTENSIONS))
+    Initialized = true;
 
 }
  // Dibuja un rectangulo, relleno o vacio.
@@ -2991,7 +2992,7 @@ public static void Rectangle2D(double x1, double y1, double w, double h, int col
     int c2 ;         
     int c3 ;         
     int c4 ;         
-     Float[] flxVertex ;
+     double[] flxVertex ;
         // Quad esta obsoleto , reemplazo por dos triangulos
         if (mode == 0 || mode == 1)
         {
@@ -3013,7 +3014,7 @@ public static void Rectangle2D(double x1, double y1, double w, double h, int col
         } else         {
             c4 = colour4;
         }
-        gl.begin(gl.TRIANGLES);
+        GL.begin(GL.TRIANGLES);
 
         Vertex2D(x1, y1, colour1);
         Vertex2D(x1 + w, y1, c2);
@@ -3023,7 +3024,7 @@ public static void Rectangle2D(double x1, double y1, double w, double h, int col
         Vertex2D(x1 + w, y1 + h, c4);
         Vertex2D(x1, y1 + h, c3);
 
-        gl.end;
+        GL.end;
 
     }
 
@@ -3043,13 +3044,13 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
     {
 
 
-     Float[] flxVertex ;         
+     double[] flxVertex ;         
      // Quad esta obsoleto , reemplazo por dos triangulos
     side /= 2;
     if ( mode == 0 || mode == 1 )
     {
 
-        gl.begin(gl.TRIANGLES);
+        GL.begin(GL.TRIANGLES);
 
         Vertex2D(x1 - side, y1, ColorLeft);
         Vertex2D(x1, y1 + side, ColorLeft);
@@ -3059,7 +3060,7 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
         Vertex2D(x1, y1 + side, ColorRigth);
         Vertex2D(x1, y1 - side, ColorRigth);
 
-        gl.end;
+        GL.end;
 
     }
 
@@ -3073,24 +3074,24 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 }
 
  // Dibuja un serie de lineas
- public static void DrawLines(float[] fVertices,  int colour = 0, double LineWIdth = 1, double[] dashes = null)
+ public static void DrawLines(double[] fVertices,  int colour = 0, double LineWIdth = 1, double[] dashes = null)
     {
 
     int i ;         
     double r ;         
     double g ;         
     double b ;         
-    double[] Vertices ;         
+    double[] vertices ;         
 
      //If gbcolor > 0 Then Stop
-    r = (Shr(Colour, 16) && 255) / 256;
-    g = (Shr(Colour, 8) && 255) / 256;
-    b = (Colour && 255) / 256;
+    r = (Gb.Shr(colour, 16) & 255) / 256;
+    g = (Gb.Shr(colour, 8) & 255) / 256;
+    b = (colour & 255) / 256;
 
-    if ( fvertices.Count < 2 ) return;
+    if ( fVertices.Length < 2 ) return;
 
     
-        for ( i = 0; i <= vertices.Max; i + 2)
+        for ( i = 0; i < vertices.Length; i + 2)
         {
             VBO_vertex[VBO_Id].Add(vertices[i]); //X
             VBO_vertex[VBO_Id].Add(vertices[i + 1]); //Y
@@ -3111,62 +3112,64 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 
 
  // Dibuja un seria de polilinea
- public static void PolygonFilled(float[] vertices,  int colour = 0, int FillColor = 0, double LineWIdth = 1, double[] dashes = null)
+ public static void PolygonFilled(double[] vertices,  int colour = 0, int FillColor = 0, double LineWIdth = 1, double[] dashes = null)
     {
 
     int i ;         
 
      //glColorRGB(colour)
-    gl.LineWIdth(LineWIdth); // obsoleto en WebGL
+    GL.LineWIdth(LineWIdth); // obsoleto en WebGL
 
     if ( dashes )
     {
-        gl.LineStipple(LineStippleScales[dashes], LineStipples[dashes]);
-        gl.Enable(GL.LINE_STIPPLE);
+        GL.LineStipple(LineStippleScales[dashes], LineStipples[dashes]);
+        GL.Enable(GL.LINE_STIPPLE);
     } else {
 
-        gl.Disable(GL.LINE_STIPPLE);
+        GL.Disable(GL.LINE_STIPPLE);
 
     }
 
-    gl.Begin(gl.POLYGON);
+    GL.Begin(GL.POLYGON);
 
     for ( i = 0; i <= vertices.Max; i + 2)
     {
         glColorRGB(colour);
-        gl.Vertex2f(vertices[i], vertices[i + 1]);
+        GL.Vertex2f(vertices[i], vertices[i + 1]);
 
     }
-    gl.end;
+    GL.end;
 
 }
 
  // Dibuja un seria de polilinea
- public void Polygon(vertices As Float[],  colour As int = 0, LineWIdth As double = 1, dashes As double[]);
+ public static void Polygon(double[] vertices,  int colour = 0, double LineWIdth = 1, double[] dashes = null)
+    {
 
     int i ;         
 
      //glColorRGB(colour)
-    gl.LineWIdth(LineWIdth); // obsoleto en WebGL
+    GL.LineWIdth(LineWIdth); // obsoleto en WebGL
 
-    gl.Begin(gl.LINE_LOOP);
+    GL.Begin(GL.LINE_LOOP);
 
     for ( i = 0; i <= vertices.Max; i + 2)
     {
         glColorRGB(colour);
-        gl.Vertex2f(vertices[i], vertices[i + 1]);
+        GL.Vertex2f(vertices[i], vertices[i + 1]);
 
     }
-    gl.end;
+    GL.end;
 
 }
  // Dibuja un arco, suponiendo que el centro esta en 0,0 (despues de un Translate())
  // Siempre gira en sentido anti-horario
  // Las medidas de los angulo inicial y recorrido estan en RADIANES
 
- public  ARC(radio As Float, start_angle As Float, length As Float,  tramos As int = 36, colour As int = 0, LineWIdth As double = 1, dashes As double[] = []);
+ public static void ARC(double radio, double start_angle, double length,  int tramos = 36, int colour = 0, double LineWIdth = 1, double[] dashes = null)
+    {
 
-    GL.Begin(gl.LINE_STRIP);
+    GL.Begin(GL.LINE_STRIP);
     double theta ;         
     double angle_increment ;         
 
@@ -3190,12 +3193,12 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 
 }
 
- public  ArcPoly(xCenter As Float, yCenter As Float, radio As Float, start_angle As Float, length As Float,  angle_increment As double = Math.PI * 2 / 360) As double[];
-
+ public static double[] ArcPoly(double xCenter, double yCenter, double radio, double start_angle, double length,  double angle_increment = Math.PI * 2 / 360)
+{
     double theta ;         
     double x0 ;         
     double y0 ;         
-     Float[] flxPoly ;         
+     double[] flxPoly ;         
     int i ;         
      //double max_angle = 2 * Math.PI
      //double angle_increment = Math.PI / 1000
@@ -3251,8 +3254,8 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 
 }
 
- public  PolyLines(fVertices As Float[],  colour As int = 0, LineWIdth As double = 1, dashes As double[] = []);
-
+ public static void PolyLines(double[] fVertices,  int colour = 0, double LineWIdth = 1, double[] dashes = null)
+{
     int i ;         
     double[] vertices ;         
     double[] vertices2 ;         
@@ -3260,48 +3263,48 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
     double g ;         
     double b ;         
 
-    r = (Shr(Colour, 16) And 255) / 256;
-    g = (Shr(Colour, 8) And 255) / 256;
-    b = (Colour And 255) / 256;
+    r = (Shr(colour, 16) & 255) / 256;
+    g = (Shr(colour, 8) & 255) / 256;
+    b = (colour & 255) / 256;
 
     if ( fvertices.Count < 2 ) return;
-    gl.LineWIdth(LineWIdth); // obsoleto en WebGL
+    GL.LineWIdth(LineWIdth); // obsoleto en WebGL
 
     if ( dashes.count > 0 )
     {
         Vertices = puntos.DashedLineStrip(fvertices, dashes, 1);
 
-        gl.Begin(gl.LINES);
-        gl.Color3f(r, g, b);
+        GL.Begin(GL.LINES);
+        GL.Color3f(r, g, b);
         for ( i = 0; i <= vertices.Max; i + 2)
         {
              //    glColorRGB(colour)
-            gl.Vertex2f(vertices[i], vertices[i + 1]);
+            GL.Vertex2f(vertices[i], vertices[i + 1]);
         }
 
-    }
+    } else {
 
         Vertices = fvertices;
-        gl.Begin(gl.LINE_STRIP);
-        gl.Color3f(r, g, b);
+        GL.Begin(GL.LINE_STRIP);
+        GL.Color3f(r, g, b);
         for ( i = 0; i <= vertices.Max; i + 2)
         {
              //glColorRGB(colour)
-            gl.Vertex2f(vertices[i], vertices[i + 1]);
+            GL.Vertex2f(vertices[i], vertices[i + 1]);
         }
 
     }
 
-    gl.end;
+    GL.End();
 
 }
 
- public  DrawTriangles(vertices As Float[],  colour As int = 0, FillColor As int = 0, LineWIdth As double = 1, dashes As double[] = []);
-
+ public static void DrawTriangles(double[] vertices,  int colour = 0, int FillColor = 0, double LineWIdth = 1, double[] dashes = null)
+{
     int i ;         
 
      //glColorRGB(colour)
-    gl.LineWIdth(LineWIdth); // obsoleto en WebGL
+    GL.LineWIdth(LineWIdth); // obsoleto en WebGL
 
     if ( dashes.Count > 0 )
     {
@@ -3310,41 +3313,41 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 
     }
 
-    gl.Begin(gl.TRIANGLES);
+    GL.Begin(GL.TRIANGLES);
 
     for ( i = 0; i <= vertices.Max; i + 2)
     {
         glColorRGB(colour);
-        gl.Vertex3f(vertices[i], vertices[i + 1], zLevel);
+        GL.Vertex3f(vertices[i], vertices[i + 1], zLevel);
 
     }
-    gl.end;
+    GL.end;
 
 }
 
- public  DrawTriangles3D(vertices3D As Float[], faces As Float[],  colour As int = 0, FillColor As int = 0, LineWIdth As double = 1);
-
+ public static void DrawTriangles3D(double[] vertices3D, double[] faces,  int colour = 0, int FillColor = 0, double LineWIdth = 1)
+{
     int i ;         
 
      //glColorRGB(colour)
-    gl.LineWIdth(LineWIdth); // obsoleto en WebGL
+    GL.LineWIdth(LineWIdth); // obsoleto en WebGL
 
-    gl.Begin(gl.TRIANGLES);
+    GL.Begin(GL.TRIANGLES);
 
     for ( i = 0; i <= faces.max; i + 3)
     {
 
         glColorRGB(colour);
-        gl.Vertex3f(vertices3d[faces[i]], vertices3d[faces[i + 1]], vertices3d[faces[i + 2]]);
+        GL.Vertex3f(vertices3d[faces[i]], vertices3d[faces[i + 1]], vertices3d[faces[i + 2]]);
 
     }
-    gl.end;
+    GL.end;
 
 }
 
  // Dibuja un circulo
 
-public static void CIRCLE(double[] center, double radious, int colour= 0, bool Filled= false, double LineWIdth= 1, double[] dashes= [])
+public static void CIRCLE(double[] center, double radious, int colour= 0, bool Filled= false, double LineWIdth= 1, double[] dashes= null)
     {
 
 
@@ -3353,14 +3356,14 @@ public static void CIRCLE(double[] center, double radious, int colour= 0, bool F
     double theta ;         
     double angle_increment ;         
     int StepFactor = 2;
-     Float[] vertices ;         
-     Float[] fVertices ;         
+     double[] vertices ;         
+     double[] fVertices ;         
 
-    gl.LineWIdth(LineWIdth); // obsoleto en WebGL
+    GL.LineWIdth(LineWIdth); // obsoleto en WebGL
 
     if ( filled )
     {
-        GL.Begin(gl.POLYGON);
+        GL.Begin(GL.POLYGON);
         angle_increment = Math.PI * 2 / 360; // esto va de a un grado, que puede ser exagerado
 
         angle_increment *= StepFactor;
@@ -3369,10 +3372,10 @@ public static void CIRCLE(double[] center, double radious, int colour= 0, bool F
              // el punto considerando 0,0 al centro
             x = center[0] + radious * Math.Cos(theta);
             y = center[1] + radious * Math.Sin(theta);
-            Vertex2D(x, y, Colour);
+            Vertex2D(x, y, colour);
         }
-        gl.End;
-    }
+        GL.End();
+    } else {
 
         angle_increment = Math.PI * 2 / 360; // esto va de a un grado, que puede ser exagerado
 
@@ -3393,34 +3396,34 @@ public static void CIRCLE(double[] center, double radious, int colour= 0, bool F
 
 }
 
- public void glColorRGB(gbColor As int,  alpha As double = 1.0);
+ public static void glColorRGB(int gbColor,  double alpha = 1.0)
      // set the color to GL
-
+{
     double r ;         
     double g ;         
     double b ;         
     double a ;         
 
     a = alpha; // 1 - Colors.GetAlpha(gbColor) / 255
-    r = (Shr(gbColor, 16) And 255) / 255;
-    g = (Shr(gbColor, 8) And 255) / 255;
-    b = (gbColor And 255) / 255;
-    gl.Color4f(r, g, b, a);
+    r = (Shr(gbColor, 16) & 255) / 255;
+    g = (Shr(gbColor, 8) & 255) / 255;
+    b = (gbColor & 255) / 255;
+    GL.Color4f(r, g, b, a);
 
 }
 
- public  GetColorRGBA(gbColor As int) As float[];
+ public static double[] GetColorRGBA(int gbColor)
      // set the color to GL
-
+{
     double r ;         
     double g ;         
     double b ;         
     double a ;         
 
     a = 1 - Colors.GetAlpha(gbColor) / 255;
-    r = (Shr(gbColor, 16) And 255) / 255;
-    g = (Shr(gbColor, 8) And 255) / 255;
-    b = (gbColor And 255) / 255;
+    r = (Shr(gbColor, 16) & 255) / 255;
+    g = (Shr(gbColor, 8) & 255) / 255;
+    b = (gbColor & 255) / 255;
 
     return [r, g, b, a];
 
@@ -3430,10 +3433,10 @@ public static void ClearColor(int iColor)
     {
 
 
-    float[] rgba ;         
+    double[] rgba ;         
 
     rgba = GetColorRGBA(iColor);
-    gl.ClearColor(rgba[0], rgba[1], rgba[2], rgba[3]);
+    GL.ClearColor(rgba[0], rgba[1], rgba[2], rgba[3]);
 
 }
  // Define un ColorMaterial: rgba ambient , rgba diffuse, rgba specular, shininess (13 valores en total)
@@ -3442,10 +3445,10 @@ public static void glMaterial(double[] fMaterial)
     {
 
 
-    gl.Materialfv(gl.FRONT_AND_BACK, gl.AMBIENT, fMaterial.Copy(0, 4));
-    gl.Materialfv(gl.FRONT_AND_BACK, gl.DIFFUSE, fMaterial.Copy(4, 4));
-    gl.Materialfv(gl.FRONT_AND_BACK, gl.SPECULAR, fMaterial.Copy(8, 4));
-    gl.Materiali(gl.FRONT_AND_BACK, gl.SHININESS, CInt(fMaterial[12]));
+    GL.Materialfv(GL.FRONT_AND_BACK, GL.AMBIENT, fMaterial.Copy(0, 4));
+    GL.Materialfv(GL.FRONT_AND_BACK, GL.DIFFUSE, fMaterial.Copy(4, 4));
+    GL.Materialfv(GL.FRONT_AND_BACK, GL.SPECULAR, fMaterial.Copy(8, 4));
+    GL.Materiali(GL.FRONT_AND_BACK, GL.SHININESS, CInt(fMaterial[12]));
 
 }
 
@@ -3457,21 +3460,21 @@ public static void glMaterialHierro(double Alpha= 0)
     double r ;         
     double g ;         
     double b ;         
-     Float[] MyColor ;         
+     double[] MyColor ;         
 
     MyColor = [0.05375, 0.05, 0.06625, 1.0];
 
-    gl.Materialfv(gl.FRONT_AND_BACK, gl.AMBIENT, MyColor);
+    GL.Materialfv(GL.FRONT_AND_BACK, GL.AMBIENT, MyColor);
 
     MyColor = [0.18275, 0.17, 0.22525];
 
-    gl.Materialfv(gl.FRONT_AND_BACK, gl.DIFFUSE, MyColor);
+    GL.Materialfv(GL.FRONT_AND_BACK, GL.DIFFUSE, MyColor);
 
     MyColor = [0.332741, 0.328634, 0.346435];
 
-    gl.Materialfv(gl.FRONT_AND_BACK, gl.SPECULAR, MyColor);
+    GL.Materialfv(GL.FRONT_AND_BACK, GL.SPECULAR, MyColor);
 
-    gl.Materialf(gl.FRONT_AND_BACK, gl.SHININESS, 0.3 * 128);
+    GL.Materialf(GL.FRONT_AND_BACK, GL.SHININESS, 0.3 * 128);
 
 }
 
@@ -3483,21 +3486,21 @@ public static void glMaterialMadera(double Alpha= 0)
     double r ;         
     double g ;         
     double b ;         
-     Float[] MyColor ;         
+     double[] MyColor ;         
 
     MyColor = [0.05, 0.05, 0.0, 1.0];
 
-    gl.Materialfv(gl.FRONT_AND_BACK, gl.AMBIENT, MyColor);
+    GL.Materialfv(GL.FRONT_AND_BACK, GL.AMBIENT, MyColor);
 
     MyColor = [0.5, 0.5, 0.4];
 
-    gl.Materialfv(gl.FRONT_AND_BACK, gl.DIFFUSE, MyColor);
+    GL.Materialfv(GL.FRONT_AND_BACK, GL.DIFFUSE, MyColor);
 
     MyColor = [0.7, 0.7, 0.04];
 
-    gl.Materialfv(gl.FRONT_AND_BACK, gl.SPECULAR, MyColor);
+    GL.Materialfv(GL.FRONT_AND_BACK, GL.SPECULAR, MyColor);
 
-    gl.Materialf(gl.FRONT_AND_BACK, gl.SHININESS, 0.07815 * 128);
+    GL.Materialf(GL.FRONT_AND_BACK, GL.SHININESS, 0.07815 * 128);
 
 }
 
@@ -3506,50 +3509,50 @@ public static void glMaterialConcreto(double Alpha= 0)
 
      // set the color to GL
 
-     Float[] MyColor ;         
+     double[] MyColor ;         
 
     MyColor = [0.2, 0.2, 0.2, 1.0];
 
-    gl.Materialfv(gl.FRONT_AND_BACK, gl.AMBIENT, MyColor);
+    GL.Materialfv(GL.FRONT_AND_BACK, GL.AMBIENT, MyColor);
 
     MyColor = [0.6, 0.6, 0.6];
 
-    gl.Materialfv(gl.FRONT_AND_BACK, gl.DIFFUSE, MyColor);
+    GL.Materialfv(GL.FRONT_AND_BACK, GL.DIFFUSE, MyColor);
 
     MyColor = [1, 1, 1];
 
-    gl.Materialfv(gl.FRONT_AND_BACK, gl.SPECULAR, MyColor);
+    GL.Materialfv(GL.FRONT_AND_BACK, GL.SPECULAR, MyColor);
 
-    gl.Materialf(gl.FRONT_AND_BACK, gl.SHININESS, 64);
+    GL.Materialf(GL.FRONT_AND_BACK, GL.SHININESS, 64);
 
 }
 
- public void Vertex2D(x2d As Float, y2d As Float,  colour As int = Colors.Red);
+ public static void Vertex2D(double x2d, double y2d,  int colour = Colors.Red)
      //
      //
      //     //2020 el color va primero
      // //
-
+{
     if ( colour )
     {
-        this.glColorRGB(colour);
+        glColorRGB(colour);
 
     }
 
-    gl.Vertex2f(x2d, y2d);
+    GL.Vertex2f(x2d, y2d);
      //
 
 }
 
-public void Vertex3D(p As Punto3d,  colour As int = Colors.blue);
+public static void Vertex3D(Punto3d p,  int colour = Colors.Blue)
      //
      //
      //     //2020 el color va primero
      //
+{
+    glColorRGB(colour);
 
-    glx.glColorRGB(colour);
-
-    gl.Vertex3f(p.x, p.y, p.z);
+    GL.Vertex3f(p.x, p.y, p.z);
      //
 
 }
@@ -3559,26 +3562,26 @@ public static void Normal3D(Punto3d p)
     {
 
      //
-     //     gl.Normal3f(p.x, p.y, p.z)
+     //     GL.Normal3f(p.x, p.y, p.z)
      // //
 
 }
 
-public static void Get2DpointFrom3Dworld(Punto3d p1, double ByRef x2, double ByRef y2, double ByRef z2)
+public static void Get2DpointFrom3Dworld(Punto3d p1, ref double  x2, ref double  y2, ref double  z2)
     {
 
 
-     Float[16] modelmatrix ;         
-     Float[16] projMatrix ;         
-     Float[16] miMatrix ;         
+     double[16] modelmatrix ;         
+     double[16] projMatrix ;         
+     double[16] miMatrix ;         
 
      int[4] vp ;         
 
-     Float[3] p2 ;         
+     double[3] p2 ;         
 
-    modelMatrix = gl.GetFloatv(GL.MODELVIEW_MATRIX);
-    projMatrix = gl.GetFloatv(GL.PROJECTION_MATRIX);
-    vp = gl.Getintv(GL.VIEWPORT_);
+    modelMatrix = GL.Getdoublev(GL.MODELVIEW_MATRIX);
+    projMatrix = GL.Getdoublev(GL.PROJECTION_MATRIX);
+    vp = GL.Getintv(GL.VIEWPORT_);
 
     p2 = glu.Project(p1.x, p1.y, p1.z, modelMatrix, projMatrix, vp);
 
@@ -3592,21 +3595,21 @@ public static void Get2DpointFrom3Dworld(Punto3d p1, double ByRef x2, double ByR
 
 }
 
-public static void Get2DpointFrom3Dworld2(double x, double y, double z, double ByRef x2, double ByRef y2, double ByRef z2)
+public static void Get2DpointFrom3Dworld2(double x, double y, double z, ref double  x2, ref double  y2, ref double  z2)
     {
 
 
-     Float[16] modelmatrix ;         
-     Float[16] projMatrix ;         
-     Float[16] miMatrix ;         
+     double[16] modelmatrix ;         
+     double[16] projMatrix ;         
+     double[16] miMatrix ;         
 
      int[4] vp ;         
 
-     Float[3] p2 ;         
+     double[3] p2 ;         
 
-    modelMatrix = gl.GetFloatv(GL.MODELVIEW_MATRIX);
-    projMatrix = gl.GetFloatv(GL.PROJECTION_MATRIX);
-    vp = gl.Getintv(GL.VIEWPORT_);
+    modelMatrix = GL.Getdoublev(GL.MODELVIEW_MATRIX);
+    projMatrix = GL.Getdoublev(GL.PROJECTION_MATRIX);
+    vp = GL.Getintv(GL.VIEWPORT_);
 
     p2 = glu.Project(x, y, z, modelMatrix, projMatrix, vp);
 
@@ -3621,11 +3624,11 @@ public static void Get2DpointFrom3Dworld2(double x, double y, double z, double B
 }
 
  // Proveo las matrices de trnasformacion porque en cada cambio deben guardarse para que esta funcion se corresponda con lo que se muestra
-public static void Get2DpointFrom3Dworld3(double x, double y, double z, double[] ModelMatrix, double[] projMatrix, int[] iViewPort, double ByRef x2, double ByRef y2, double ByRef z2)
+public static void Get2DpointFrom3Dworld3(double x, double y, double z, double[] ModelMatrix, double[] projMatrix, int[] iViewPort, ref double x2, ref double y2, ref double z2)
     {
 
 
-     Float[3] p2 ;         
+     double[3] p2 ;         
 
     p2 = glu.Project(x, y, z, modelMatrix, projMatrix, iViewPort);
 
@@ -3645,17 +3648,16 @@ public static double[] Get3DpointFromScreen(int Xscreen, int Yscreen)
     {
 
 
-     Float[16] modelmatrix ;         
-     Float[16] projMatrix ;         
-     Float[16] miMatrix ;         
+     double[16] modelmatrix ;         
+     double[16] projMatrix ;         
+     double[16] miMatrix ;         
 
      int[4] vp ;         
 
-     Float[3] p2 ;         
-
-    modelMatrix = gl.GetFloatv(GL.MODELVIEW_MATRIX);
-    projMatrix = gl.GetFloatv(GL.PROJECTION_MATRIX);
-    vp = gl.Getintv(GL.VIEWPORT_);
+     double[3] p2 ;         
+    modelMatrix = GL.Getdoublev(GL.MODELVIEW_MATRIX);
+    projMatrix = GL.Getdoublev(GL.PROJECTION_MATRIX);
+    vp = GL.Getintv(GL.VIEWPORT_);
 
     p2 = glu.UnProject(Xscreen, Yscreen, 0, modelMatrix, projMatrix, vp);
 
@@ -3758,12 +3760,12 @@ public static string[] LoadFonts(string DirPath)
     int p1 ;         
     bool BulgeAdded ;         
     string[] sVert ;         
-    float[] fltb ;         
-    float[] flt1 ;         
-    float[] flt3 ;         
-    float flt2 ;         
+    double[] fltb ;         
+    double[] flt1 ;         
+    double[] flt3 ;         
+    double flt2 ;         
 
-    foreach ( sFilename in Dir(DirPath, "*.lff"))
+    foreach ( var sFilename in Gb.DirFullPath(DirPath, "*.lff"))
     {
 
          LFFFonts fntNuevas ;         
@@ -3772,75 +3774,80 @@ public static string[] LoadFonts(string DirPath)
         fntNuevas.WordSpacing = 6.75;
         fntNuevas.LetterSpacing = 1; //.25
         fntNuevas.LineSpacingFactor = 1;
-        fntNuevas.Letter = new Dictionary<string, string>;
-
-        ffile = Open DirPath &/ sFilename for ( Input;
-        do {
-            Line Input #fFile, sDAta;
-            if ( Left$(sData, 1) == "[" ) // nueva letra
+        fntNuevas.Letter = new Dictionary<string, string>();
+        var ffile = File.Open( sFilename,FileMode.Open);
+        
+        while ( ! ffile.EOF )
+        {
+            ffile.Read( sData) ;
+             //Console.WriteLine( sData);
+            if ( Gb.Left(sData, 1) == "[" ) // nueva letra
             {
-                Dim Letra As new Letters;
+                var Letra = new Letters();
                 sCode = Replace(sData, "#", "");
                 sCode = Replace(sCode, "[[", "[");
                 sCode = Mid(sCode, 2, 4);
                 letra.Code = Val("0x0000" + sCode); // [0021]!
-                letra.FontGlyps = new float[][];
-                letra.FontBulges = new float[][];
+                letra.FontGlyps = new double[][];
+                letra.FontBulges = new double[][];
 
-                While sdata <> "");
-                    Line Input #fFile, sDAta; // 0.428572, 0.857143; 0, 0.428572
-                    if ( Left(sData, 1) == "C" ) // Copio datos de otra letra
+                while ( sdata != "")
+                {
+                    ffile.Read( sData) ;
+                     //Console.WriteLine( sData);
+                    // Input #fFile, sDAta; // 0.428572, 0.857143; 0, 0.428572
+                    if ( Gb.Left(sData, 1) == "C" ) // Copio datos de otra letra
                     {
-                        Dim CopyCode As int;
+                        int CopyCode = 0;
                         CopyCode = Val("0x0000" + Mid(sData, 2, 4)); // C0021
                          //CopyCode = GetCodeIndex(fntNuevas, CopyCode)
-                        flt1 = new float[];
-                        flt3 = new float[];
+                        flt1 = new double[];
+                        flt3 = new double[];
 
-                        foreach ( flt1 in fntNuevas.Letter[CopyCode].FontGlyps)
+                        foreach ( var flt1 in fntNuevas.Letter[CopyCode].FontGlyps)
                         {
                             letra.FontGlyps.Add(flt3);
-                            foreach ( flt2 in flt1)
+                            foreach ( var flt2 in flt1)
                             {
                                 flt3.Add(flt2);
                             }
                         }
-                        flt3 = new float[];
-                        foreach ( flt1 in fntNuevas.Letter[CopyCode].FontBulges)
+                        flt3 = new double[];
+                        foreach ( var flt1 in fntNuevas.Letter[CopyCode].FontBulges)
                         {
                             letra.FontBulges.Add(flt3);
-                            foreach ( flt2 in flt1)
+                            foreach ( var flt2 in flt1)
                             {
                                 flt3.Add(flt2);
                             }
                         }
 
-                    }
-                        flt1 = new float[];
-                        fltb = new float[];
+                    } else {
+                        flt1 = new double[];
+                        fltb = new double[];
 
                         letra.FontGlyps.Add(flt1);
                         letra.FontBulges.Add(fltb);
 
                         sPuntos = Split(sDAta, ");");
 
-                        foreach ( sCoord in sPuntos)
+                        foreach ( var sCoord in sPuntos)
                         {
                             sVert = Split(sCoord, ",");
                             BulgeAdded = false;
-                            foreach ( aVert in sVert)
+                            foreach ( var aVert in sVert)
                             {
                                 p1 = InStr(avert, "A");
                                 if ( p1 > 0 )
                                 {
 
-                                     // Try letra.FontBulges.Add(CFloat(Mid$(aVert, p1 + 1)))
-                                    Try fltb.Add(CSingle(Mid$(aVert, p1 + 1)));
+                                     // Try letra.FontBulges.Add(Cdouble(Mid$(aVert, p1 + 1)))
+                                    fltb.Add(CSingle(Gb.Mid(aVert, p1 + 1)));
                                     BulgeAdded = true;
 
-                                }
+                                } else {
 
-                                     // Try letra.FontGlyps.Add(CFloat(aVert))
+                                     // Try letra.FontGlyps.Add(Cdouble(aVert))
                                     flt1.Add(CSingle(aVert));
 
                                 }
@@ -3848,7 +3855,7 @@ public static string[] LoadFonts(string DirPath)
                             if ( ! BulgeAdded ) fltb.Add(0);
                         }
                     }
-                Wend; // fin de la letra
+                } // fin de la letra
                 fntNuevas.Letter.Add(letra, letra.Code);
 
             } // ignoro todos los comentarios
@@ -3859,7 +3866,7 @@ public static string[] LoadFonts(string DirPath)
         ActualFont = fntNuevas;
         if ( fntNuevas.FontName == "unicode" ) UnicodeFont = fntNuevas;
 
-        Console.WriteLine( ("LeIdas " + fntNuevas.Letter.Count + " letras en " + sFilename);
+        Console.WriteLine( "LeIdas " + fntNuevas.Letter.Count + " letras en " + sFilename);
         lista.Add(fntNuevas.FontName);
 
     }
@@ -3900,36 +3907,36 @@ public static bool DrawText(string UTFstring, double posX, double posY, double a
     int UTFcode ;         
     int LetterIndex ;         
     double Xadvance ;         
-     float[] fArcParams ;         
-     float[] Glyps ;         
-     float[] Bulges ;         
-    float[][] TGlyps ;         
-    float[][] TBulges ;         
-    float Ang ;         
-    float m1 ;         
-    float m2 ;         
-    float b ;         
-    float bx ;         
-    float by ;         
-    float mx ;         
-    float my ;         
-    float ang1 ;         
-    float lt ;         
-    float alpha ;         
+     double[] fArcParams ;         
+     double[] Glyps ;         
+     double[] Bulges ;         
+    double[][] TGlyps ;         
+    double[][] TBulges ;         
+    double Ang ;         
+    double m1 ;         
+    double m2 ;         
+    double b ;         
+    double bx ;         
+    double by ;         
+    double mx ;         
+    double my ;         
+    double ang1 ;         
+    double lt ;         
+    double alpha ;         
     int iBulge ;         
 
-    gl.PushMatrix; // para evitar peleas, guardo la matriz de trnasformacion
-    gl.Translatef(posX, posY, 0);
-    gl.Rotatef(angle, 0, 0, 1); // en grados
-    gl.Scalef(textH * FontScale, textH * FontScale, 1);
-    if ( colour != -14 ) this.glColorRGB(colour);
+    GL.PushMatrix; // para evitar peleas, guardo la matriz de trnasformacion
+    GL.Translatef(posX, posY, 0);
+    GL.Rotatef(angle, 0, 0, 1); // en grados
+    GL.Scalef(textH * FontScale, textH * FontScale, 1);
+    if ( colour != -14 ) glColorRGB(colour);
     for ( i = 1; i <= String.Len(UTFstring); i + 1) // para cada letra
     {
         UTFcode = String.Code(UTFstring, i); // obtengo el UTF code
         if ( UTFcode == 32 ) // es un espacio
         {
-            gl.Translatef(ActualFont.WordSpacing, 0, 0); // muevo el puntero a la siguiente posicion
-        }
+            GL.Translatef(ActualFont.WordSpacing, 0, 0); // muevo el puntero a la siguiente posicion
+        } else {
              // DEPRE LetterIndex = GetCodeIndex(ActualFont, UTFcode)                     // obtengo el indice de la letra
             if ( ActualFont.Letter.Exist(UTFcode) )
             {
@@ -3942,9 +3949,9 @@ public static bool DrawText(string UTFstring, double posX, double posY, double a
                 TGlyps = UnicodeFont.Letter[UTFcode].FontGlyps;
                 TBulges = UnicodeFont.Letter[UTFcode].FontBulges;
 
-            }
+            } else {
                  // descarto la letra
-                Continue;
+                continue;
 
             }
 
@@ -3952,7 +3959,7 @@ public static bool DrawText(string UTFstring, double posX, double posY, double a
              //============================================================================
             iBulge = 0;
 
-            foreach ( Glyps in TGlyps)
+            foreach ( var Glyps in TGlyps)
             {
                 Bulges = TBulges[iBulge];
 
@@ -3970,24 +3977,29 @@ public static bool DrawText(string UTFstring, double posX, double posY, double a
                         mx = (Glyps[(i2 + 1) * 2] + Glyps[i2 * 2]) / 2; // punto medio del tramo
                         my = (Glyps[(i2 + 1) * 2 + 1] + Glyps[i2 * 2 + 1]) / 2;
                         B = Bulges[i2 + 1] * Lt / 2;
-                        if ( Bulges[i2 + 1] < 0 ) alpha = Math.PI / 2 } else { alpha = -Pi / 2;
-                        bx = mx + B * Cos(ang1 + alpha); // Tercer punto del Bulge
-                        by = my + B * Sin(ang1 + alpha);
+                        if ( Bulges[i2 + 1] < 0 ) 
+                        {
+                            alpha = Math.PI / 2; 
+                        } else { 
+                            alpha = -Math.PI / 2;
+                        }
+                        bx = mx + B * Math.Cos(ang1 + alpha); // Tercer punto del Bulge
+                        by = my + B * Math.Sin(ang1 + alpha);
 
                          // aqui podria usar una rutina de arco entre 3 puntos
                         fArcParams = puntos.Arc3Point(Glyps[i2 * 2], Glyps[i2 * 2 + 1], bx, by, Glyps[(i2 + 1) * 2], Glyps[(i2 + 1) * 2 + 1]);
                          // traslado el centro
                          //If (Bulges[i2 + 1] > 0) Then Swap fArcParams[3], fArcParams[4]
 
-                        gl.Translatef(fArcParams[0], fArcParams[1], 0);
+                        GL.Translatef(fArcParams[0], fArcParams[1], 0);
 
-                        ARC(fArcParams[2], fArcParams[3], fArcParams[4],, colour);
-                        gl.Translatef(-fArcParams[0], -fArcParams[1], 0);
+                        ARC(fArcParams[2], fArcParams[3], fArcParams[4],1, colour);
+                        GL.Translatef(-fArcParams[0], -fArcParams[1], 0);
                         fArcParams = Null;
 
-                    } // dibujo la linea normalmente
+                    } else { // dibujo la linea normalmente
 
-                        drawLines([Glyps[i2 * 2], Glyps[i2 * 2 + 1], Glyps[(i2 + 1) * 2], Glyps[(i2 + 1) * 2 + 1]], Colour);
+                        drawLines([Glyps[i2 * 2], Glyps[i2 * 2 + 1], Glyps[(i2 + 1) * 2], Glyps[(i2 + 1) * 2 + 1]], colour);
                     }
 
                 }
@@ -3996,23 +4008,23 @@ public static bool DrawText(string UTFstring, double posX, double posY, double a
                     if ( Glyps[iii] > Xadvance ) Xadvance = Glyps[iii];
                 }
 
-                Inc iBulge;
+                iBulge++;
             }
-            gl.Translatef(Xadvance + ActualFont.LetterSpacing, 0, 0); // muevo el puntero a la siguiente posicion
+            GL.Translate(Xadvance + ActualFont.LetterSpacing, 0, 0); // muevo el puntero a la siguiente posicion
              //Console.WriteLine( Xadvance
             Xadvance = 0;
              //================================================================================
 
         }
     }
-    gl.PopMatrix;
+    GL.PopMatrix;
 
 }
 
  // Devuelve una poly con el texto en el contexto actual de acuerdo a los parametros pasados
  // Debe estar definida la Font con nombre y altura
- public  DrawTextPoly(UTFstring As String,  textH As double = 1, sRotationRad As float = 0, sItalicAngle As float = 0, fScaleX As double = 1) As double[];
-
+ public static double[] DrawTextPoly(string UTFstring, double textH = 1, double sRotationRad = 0, double sItalicAngle = 0, double fScaleX = 1)
+{
     int i ;         
     int iii ;         
     int i2 ;         
@@ -4020,32 +4032,32 @@ public static bool DrawText(string UTFstring, double posX, double posY, double a
     int LetterIndex ;         
     double Xadvance ;         
     double xMax ;         
-     float[] fArcParams ;         
-     float[] Glyps ;         
-     float[] Bulges ;         
-    float[][] TGlyps ;         
-    float[][] TBulges ;         
-    float Ang ;         
-    float m1 ;         
-    float m2 ;         
-    float b ;         
-    float bx ;         
-    float by ;         
-    float mx ;         
-    float my ;         
-    float ang1 ;         
-    float lt ;         
+     double[] fArcParams ;         
+     double[] Glyps ;         
+     double[] Bulges ;         
+    double[][] TGlyps ;         
+    double[][] TBulges ;         
+    double Ang ;         
+    double m1 ;         
+    double m2 ;         
+    double b ;         
+    double bx ;         
+    double by ;         
+    double mx ;         
+    double my ;         
+    double ang1 ;         
+    double lt ;         
     int iBulge ;         
 
     double dX ;          // donde tengo el cursor
     double dY ;         
     double alpha ;         
-     Float[] flxArc ;         
-     Float[] flxGlyps ;         
-     Float[] flxAnswer ;         
+     double[] flxArc ;         
+     double[] flxGlyps ;         
+     double[] flxAnswer ;         
 
      //SelectFont("romant")
-     // gl.Scalef(textH * FontScale, textH * FontScale, 1)
+     // GL.Scalef(textH * FontScale, textH * FontScale, 1)
     for ( i = 1; i <= String.Len(UTFstring); i + 1) // para cada letra
     {
         UTFcode = String.Code(UTFstring, i); // obtengo el UTF code
@@ -4054,7 +4066,7 @@ public static bool DrawText(string UTFstring, double posX, double posY, double a
         {
             Xadvance += ActualFont.WordSpacing; // muevo el puntero a la siguiente posicion
 
-        }
+        } else {
              // DEPRE LetterIndex = GetCodeIndex(ActualFont, UTFcode)                     // obtengo el indice de la letra
             if ( ActualFont.Letter.Exist(UTFcode) )
             {
@@ -4067,9 +4079,9 @@ public static bool DrawText(string UTFstring, double posX, double posY, double a
                 TGlyps = UnicodeFont.Letter[UTFcode].FontGlyps;
                 TBulges = UnicodeFont.Letter[UTFcode].FontBulges;
 
-            }
+            } else {
                  // descarto la letra
-                Continue;
+                continue;
 
             }
 
@@ -4077,7 +4089,7 @@ public static bool DrawText(string UTFstring, double posX, double posY, double a
              //============================================================================
             iBulge = 0;
 
-            foreach ( Glyps in TGlyps)
+            foreach ( var Glyps in TGlyps)
             {
                 Bulges = TBulges[iBulge];
 
@@ -4091,13 +4103,13 @@ public static bool DrawText(string UTFstring, double posX, double posY, double a
                          // Continue
                         ang1 = Ang(Glyps[(i2 + 1) * 2] - Glyps[i2 * 2], Glyps[(i2 + 1) * 2 + 1] - Glyps[i2 * 2 + 1]); // angulo del tramo
                         Lt = puntos.distancia(Glyps[i2 * 2], Glyps[i2 * 2 + 1], Glyps[(i2 + 1) * 2], Glyps[(i2 + 1) * 2 + 1]);
-                        if ( Lt == 0 ) Continue;
+                        if ( Lt == 0 ) continue;
                         mx = (Glyps[(i2 + 1) * 2] + Glyps[i2 * 2]) / 2; // punto medio del tramo
                         my = (Glyps[(i2 + 1) * 2 + 1] + Glyps[i2 * 2 + 1]) / 2;
                         B = Bulges[i2 + 1] * Lt / 2;
-                        if ( Bulges[i2 + 1] < 0 ) alpha = Math.PI / 2 } else { alpha = -Pi / 2;
-                        bx = mx + B * Cos(ang1 + alpha); // Tercer punto del Bulge
-                        by = my + B * Sin(ang1 + alpha);
+                        if ( Bulges[i2 + 1] < 0 ) {alpha = Math.PI / 2; } else { alpha = -Math.PI / 2; }
+                        bx = mx + B * Math.Cos(ang1 + alpha); // Tercer punto del Bulge
+                        by = my + B * Math.Sin(ang1 + alpha);
 
                          // aqui podria usar una rutina de arco entre 3 puntos
 
@@ -4110,7 +4122,7 @@ public static bool DrawText(string UTFstring, double posX, double posY, double a
                         fArcParams.Clear;
                         flxArc.Clear;
 
-                    } // dibujo la linea normalmente
+                    } else { // dibujo la linea normalmente
 
                         flxAnswer.Insert([Glyps[i2 * 2] + Xadvance, Glyps[i2 * 2 + 1], Glyps[(i2 + 1) * 2] + Xadvance, Glyps[(i2 + 1) * 2 + 1]]);
                     }
@@ -4121,7 +4133,7 @@ public static bool DrawText(string UTFstring, double posX, double posY, double a
                     if ( Glyps[iii] > xMax ) xMax = Glyps[iii];
                 }
 
-                Inc iBulge;
+                iBulge++;
             }
             Xadvance += xMax + ActualFont.LetterSpacing; // muevo el puntero a la siguiente posicion
 
@@ -4149,13 +4161,13 @@ public static bool DrawText(string UTFstring, double posX, double posY, double a
 
  // AlingHoriz : 0=Rigth, 1=Center, 2=Left
  // AlingVert: 0=Top, 1=Center, 2=Bottom
-public static bool DrawText2(string UTFstring, double posX, double posY, double angle= 0, double textH= 1, int colour= -14, int BackColour= -1, double linewIdth= 1, bool italic= false, double rectW= 0, double rectH= 0, int alignHoriz= 0, int alignVert= 0)
+public static bool DrawText2(string UTFstring, double posX, double posY, double angle= 0, double textH= 1, int colour= -14, int Backcolour= -1, double linewIdth= 1, bool italic= false, double rectW= 0, double rectH= 0, int alignHoriz= 0, int alignVert= 0)
     {
 
 
-     Float[] flxText ;         
-     Float[] tRect ;         
-    float sItalicAngle ;         
+     double[] flxText ;         
+     double[] tRect ;         
+    double sItalicAngle ;         
     double tX ;         
     double tY ;         
     double factorX ;         
@@ -4168,7 +4180,7 @@ public static bool DrawText2(string UTFstring, double posX, double posY, double 
     tRect = puntos.Limits(flxText);
 
      // veo si tengo que comprimir en un ractangulo
-    if ( (rectH > 0) && (rectW > 0) )
+    if ( (rectH > 0) & (rectW > 0) )
     {
 
         factorX = rectW / (tRect[2] - tRect[0]);
@@ -4176,7 +4188,7 @@ public static bool DrawText2(string UTFstring, double posX, double posY, double 
 
         puntos.Scale(flxText, factorX, factorY);
 
-    }
+    } else {
 
         rectH = tRect[3] - tRect[1];
         rectW = tRect[2] - tRect[0];
@@ -4190,35 +4202,35 @@ public static bool DrawText2(string UTFstring, double posX, double posY, double 
 
     puntos.Translate(flxText, tx, ty);
 
-    gl.MatrixMode(gl.PROJECTION);
-    gl.PushMatrix;
+    GL.MatrixMode(GL.PROJECTION);
+    GL.PushMatrix;
 
-    gl.LoadIdentity();
+    GL.LoadIdentity();
 
-    Gl.Ortho(0, fmain.gestru.w, 0, fmain.gestru.h, 0, 1);
+    GL.Ortho(0, fmain.gestru.w, 0, fmain.gestru.h, 0, 1);
 
-    gl.MatrixMode(gl.MODELVIEW);
-    gl.PushMatrix;
-    gl.LoadIdentity();
-    gl.Translatef(posX, posY, 0);
+    GL.MatrixMode(GL.MODELVIEW);
+    GL.PushMatrix;
+    GL.LoadIdentity();
+    GL.Translatef(posX, posY, 0);
     DrawLines(flxText, colour, linewIdth);
-    Rectangle2D(tx - fBorderExtension, ty - fBorderExtension, rectW + fBorderExtension * 2, rectH + fBorderExtension * 2, BackColour,,,,,,, 0);
+    Rectangle2D(tx - fBorderExtension, ty - fBorderExtension, rectW + fBorderExtension * 2, rectH + fBorderExtension * 2, Backcolour,,,,,,, 0);
 
-    gl.PopMatrix;
-    gl.MatrixMode(gl.PROJECTION);
-    gl.PopMatrix;
+    GL.PopMatrix;
+    GL.MatrixMode(GL.PROJECTION);
+    GL.PopMatrix;
 
 }
 
  // AlingHoriz : 0=Rigth, 1=Center, 2=Left
  // AlingVert: 0=Top, 1=Center, 2=Bottom
-public static bool DrawText3(string UTFstring, double posX, double posY, double posZ, double angle= 0, double textH= 1, int colour= -14, int BackColour= -1, double linewIdth= 1, bool italic= false, double rectW= 0, double rectH= 0, int alignHoriz= 0, int alignVert= 0)
+public static bool DrawText3(string UTFstring, double posX, double posY, double posZ, double angle= 0, double textH= 1, int colour= -14, int Backcolour= -1, double linewIdth= 1, bool italic= false, double rectW= 0, double rectH= 0, int alignHoriz= 0, int alignVert= 0)
     {
 
 
-     Float[] flxText ;         
-     Float[] tRect ;         
-    float sItalicAngle ;         
+     double[] flxText ;         
+     double[] tRect ;         
+    double sItalicAngle ;         
     double tX ;         
     double tY ;         
     double factorX ;         
@@ -4231,7 +4243,7 @@ public static bool DrawText3(string UTFstring, double posX, double posY, double 
     tRect = puntos.Limits(flxText);
 
      // veo si tengo que comprimir en un ractangulo
-    if ( (rectH > 0) && (rectW > 0) )
+    if ( (rectH > 0) & (rectW > 0) )
     {
 
         factorX = rectW / (tRect[2] - tRect[0]);
@@ -4239,7 +4251,7 @@ public static bool DrawText3(string UTFstring, double posX, double posY, double 
 
         puntos.Scale(flxText, factorX, factorY);
 
-    }
+    } else {
 
         rectH = tRect[3] - tRect[1];
         rectW = tRect[2] - tRect[0];
@@ -4253,32 +4265,33 @@ public static bool DrawText3(string UTFstring, double posX, double posY, double 
 
     puntos.Translate(flxText, tx, ty);
 
-     // gl.MatrixMode(gl.PROJECTION)
-     // gl.PushMatrix
+     // GL.MatrixMode(GL.PROJECTION)
+     // GL.PushMatrix
      //
-     // gl.LoadIdentity()
+     // GL.LoadIdentity()
      //
-     // Gl.Ortho(0, fmain.gestru.w, 0, fmain.gestru.h, 0, 1)
+     // GL.Ortho(0, fmain.gestru.w, 0, fmain.gestru.h, 0, 1)
      //
-     // gl.MatrixMode(gl.MODELVIEW)
-     // gl.PushMatrix
-     // gl.LoadIdentity()
-    gl.Translatef(posX, posY, 0);
+     // GL.MatrixMode(GL.MODELVIEW)
+     // GL.PushMatrix
+     // GL.LoadIdentity()
+    GL.Translatef(posX, posY, 0);
     DrawLines(flxText, colour, linewIdth);
-    Rectangle2D(tx - fBorderExtension, ty - fBorderExtension, rectW + fBorderExtension * 2, rectH + fBorderExtension * 2, BackColour,,,,,,, 0);
+    Rectangle2D(tx - fBorderExtension, ty - fBorderExtension, rectW + fBorderExtension * 2, rectH + fBorderExtension * 2, Backcolour, Backcolour , Backcolour, Backcolour, Backcolour, 0,0, 0);
 
-     // gl.PopMatrix
-     // gl.MatrixMode(gl.PROJECTION)
-     // gl.PopMatrix
+     // GL.PopMatrix
+     // GL.MatrixMode(GL.PROJECTION)
+     // GL.PopMatrix
 
 }
 
  // devuelve un rectangulo que contiene al texto
  // [ancho,alto]
- public  TextExtends(UTFstring As String,  textH As double = 1, sRotationRad As float = 0, sItalicAngle As float = 0) As double[];
+ public static double[] TextExtends(string UTFstring, double textH = 1, double sRotationRad = 0, double sItalicAngle = 0)
+    {
 
-     Float[] flxText ;         
-     Float[] tRect ;         
+     double[] flxText ;         
+     double[] tRect ;         
 
     flxText = DrawTextPoly(UTFstring, textH, sRotationRad, sItalicAngle);
     tRect = puntos.Limits(flxText);
@@ -4301,28 +4314,28 @@ public static string[] LoadTextures(string DirPath)
     int iTexture = 0;
     TextureSt newTexture ;         
 
-    hText = Gl.GenTextures(1);
+    hText = GL.GenTextures(1);
 
-    foreach ( sFilename in Dir(DirPath, "*.png"))
+    foreach ( var sFilename in Gb.Dir(DirPath, "*.png"))
     {
 
-        newTexture = new TextureSt;
+        newTexture = new TextureSt();
 
         glTextures.Add(newTexture);
 
-        newTexture.FileName = Left$(sFilename, -4); // agrego el nombre de la textura a la lista que voy a retornar
+        newTexture.FileName = Gb.Left(sFilename, -4); // agrego el nombre de la textura a la lista que voy a retornar
 
         lista.Add(newTexture.FileName);
 
-        newTexture.hImage = Image.Load(DirPath &/ sFilename); // cargo la imagen en memoria
+        newTexture.hImage = Image.Load( DirPath + sFilename); // cargo la imagen en memoria
 
-        Gl.TexImage2D(newTexture.hImage); // genero un objeto OpenGL
+        GL.TexImage2D(newTexture.hImage); // genero un objeto OpenGL
 
-        Gl.TexParameteri(Gl.TEXTURE_2D, Gl.TEXTURE_MIN_FILTER, Gl.NEAREST); // parametros basicos opengl
+        GL.TexParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST); // parametros basicos opengl
 
-        Gl.TexParameteri(Gl.TEXTURE_2D, Gl.TEXTURE_MAG_FILTER, Gl.NEAREST); // parametros basicos opengl
+        GL.TexParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST); // parametros basicos opengl
 
-        gl.BindTexture(gl.TEXTURE_2D, hText[iTexture]); // enlazo la textura a una handle
+        GL.BindTexture(GL.TEXTURE_2D, hText[iTexture]); // enlazo la textura a una handle
 
         newTexture.Id = hText[iTexture];
 
@@ -4330,7 +4343,7 @@ public static string[] LoadTextures(string DirPath)
         Break;
     }
 
-    Console.WriteLine( ("LeIdas " + iTexture + " texturas en " + sFilename);
+    Console.WriteLine( "LeIdas " + iTexture + " texturas en " + sFilename);
 
     return lista;
 
@@ -4342,23 +4355,23 @@ public static void TexturedTriangle2D(double x1, double y1, double x2, double y2
     {
 
 
-    Gl.TexImage2D(glTextures[TextureId].hImage); // genero un objeto OpenGL
-    gl.BindTexture(gl.TEXTURE_2D, hText[TextureId]); // enlazo la textura a una handle
-    gl.begin(gl.TRIANGLES);
+    GL.TexImage2D(glTextures[TextureId].hImage); // genero un objeto OpenGL
+    GL.BindTexture(GL.TEXTURE_2D, hText[TextureId]); // enlazo la textura a una handle
+    GL.begin(GL.TRIANGLES);
 
-    gl.TexCoord2f(0, 0);
+    GL.TexCoord2f(0, 0);
 
-    gl.Vertex2f(x1, y1);
+    GL.Vertex2f(x1, y1);
 
-    gl.TexCoord2f((x2 - x1) / scale / 1000, (y2 - y1) / scale / 1000);
+    GL.TexCoord2f((x2 - x1) / scale / 1000, (y2 - y1) / scale / 1000);
 
-    gl.Vertex2f(x2, y2);
+    GL.Vertex2f(x2, y2);
 
-    gl.TexCoord2f((x3 - x1) / scale / 1000, (y3 - y1) / scale / 1000);
+    GL.TexCoord2f((x3 - x1) / scale / 1000, (y3 - y1) / scale / 1000);
 
-    gl.Vertex2f(x3, y3);
+    GL.Vertex2f(x3, y3);
 
-    gl.End;
+    GL.End;
 
 }
 
@@ -4400,205 +4413,10 @@ public static bool CheckExtension(string sExtension)
 
 }
 
- //El contexto debe estar creado para poder usar los Shaders
-public static int LoadShader(string sVertexShaderFile, string sFragmentShaderFile)
-    {
 
 
-    string sShader ;         
-    string sInput ;         
-    File f ;         
-    int iShaderProgram ;         
-    int iVerShaderID ;         
-    int iFraShaderID ;         
-     // verificamos si el sistema soporta shaders
-     // If Not gl.CheckExtensions("GL_ARB_vertex_program") Then
-     //   Console.WriteLine( "No se pueden cargar Shaders"
-     //
-     //   Return 0
-     // End If
 
-    if ( ! Exist(sVertexShaderFile) )
-    {
-        Console .WriteLine( "No existe el Vertex Shader");
-
-        return 0;
-    }
-    if ( ! Exist(sFragmentShaderFile) )
-    {
-        Console .WriteLine( "No existe el Vertex Shader");
-
-        return 0;
-    }
-    f = Open sVertexShaderFile for ( Input;
-    do {
-        #f, sInput= Console.ReadLine();
-  
-        sShader &= sInput + gb.CrLf;
-
-    }
-
-    Close #f;
-
-     // La siguiente linea cuelga el programa si no hay contexto
-    iVerShaderID = gl.CreateShader(gl.VERTEX_SHADER);
-    if ( iVerShaderID == 0 ) Stop;
-     // // set the source code
-    Gl.ShaderSource(iVerShaderID, sShader);
-     // // compile
-    gl.CompileShader(iVerShaderID);
-
-    sShader = "");
-    f = Open sFragmentShaderFile for ( Input;
-    do {
-        #f, sInput= Console.ReadLine();
-
-        sShader &= sInput + gb.CrLf;
-
-    }
-
-    Close #f;
-
-    iFraShaderID = gl.CreateShader(gl.FRAGMENT_SHADER);
-    if ( iFRaShaderID == 0 ) Stop;
-     // // set the source code
-    Gl.ShaderSource(iFraShaderID, sShader);
-     // // compile
-    gl.CompileShader(iFraShaderID);
-
-    ishaderProgram = gl.CreateProgram();
-    gl.AttachShader(ishaderProgram, iVerShaderID);
-    gl.AttachShader(ishaderProgram, iFraShaderID);
-    gl.LinkProgram(ishaderProgram);
-
-     //
-    Console.WriteLine( gl.GetShaderInfoLog(ishaderProgram));
-     //
-     // // una vez complilados, no se necesitan mas
-     //
-    gl.DeleteShader(iVerShaderID);
-    gl.DeleteShader(iFraShaderID);
-
-    return iShaderProgram;
-
-}
-
-public static void txtRendering2D(string texto, double x, double y, float Altura= 12, long _color= Colors.Blue, long _BackColor= -1, int centradoH= 0, int centradoV= 0)
-    {
-
-
-     // this works in a Orthogonal projection
-
-    RectF rectangulo ;         
-
-     Image imagen ;         
-     Punto3d p ;         
-
-    imagen.Resize(200, 200); //so Paint.Begin gives no error
-
-    Paint.Begin(imagen);
-
-    Paint.Font.Size = Altura;
-
-    Paint.Brush = Paint.Color(_color);
-
-    rectangulo = Paint.TextSize(texto);
-
-    Paint.End;
-
-    rectangulo.Height /= 1.25; // correct the innecesary extra height
-
-     //this can//t go into the Paint loop
-
-    imagen.resize(rectangulo.Width, rectangulo.Height);
-
-    if ( _backcolor > 0 )
-    {
-
-        imagen.Fill(_BackColor);
-
-    }
-
-         // until I know how to make it transparente, it goes like this
-
-        imagen.Fill(Color.White);
-
-    }
-
-    EscalaGL = 1;
-
-    Paint.Begin(imagen);
-
-    Paint.Font.Size = Altura;
-
-    Paint.Brush = Paint.Color(_color);
-
-    Paint.Text(texto, 0, rectangulo.Height * 0.85); //locate the text at the bottom + 15% so it//s vertically centered in the box
-
-    Paint.Fill;
-
-    Paint.End;
-
-     //imagen.Save("imagen.png")  // this is to check the Paint worked (and works!) (re checckeado 02/06/16)
-
-     // allignment to the 3D point p
-
-    if ( centradoH == 1 ) x -= rectangulo.Width * EscalaGL;
-
-    if ( centradoH == 2 ) x -= rectangulo.Width / 2 * EscalaGL;
-
-    if ( centradoV == 1 ) y -= rectangulo.Height * EscalaGL;
-
-    if ( centradoV == 2 ) y -= rectangulo.Height / 2 * EscalaGL;
-
-    gl.MatrixMode(gl.PROJECTION);
-    gl.PushMatrix;
-
-    gl.LoadIdentity();
-
-    Gl.Ortho(0, fmain.gestru.w, 0, fmain.gestru.h, 0, 1);
-
-    gl.MatrixMode(gl.MODELVIEW);
-    gl.PushMatrix;
-    gl.LoadIdentity();
-
-    Gl.TexImage2D(imagen);
-
-    Gl.TexParameteri(Gl.TEXTURE_2D, Gl.TEXTURE_MIN_FILTER, Gl.NEAREST);
-
-    Gl.TexParameteri(Gl.TEXTURE_2D, Gl.TEXTURE_MAG_FILTER, Gl.NEAREST);
-
-    gl.BindTexture(gl.TEXTURE_2D, hText[0]);
-
-    Gl.Begin(Gl.QUADS);
-
-    gl.color3f(1, 1, 1);
-
-    Gl.TexCoordf(0.0, 1.0); // Bottom Left OF The Texture AND Quad
-
-    Gl.Vertex2f(x, y);
-
-    Gl.TexCoordf(1.0, 1.0); // Bottom Right OF The Texture AND Quad
-
-    Gl.Vertex2f(x + rectangulo.Width * EscalaGL, y);
-
-    Gl.TexCoordf(1.0, 0.0); // Top Right OF The Texture AND Quad
-
-    Gl.Vertex2f(x + rectangulo.Width * EscalaGL, y + rectangulo.Height * EscalaGL);
-
-    Gl.TexCoordf(0.0, 0.0); // Top Left OF The Texture AND Quad
-
-    Gl.Vertex2f(x, y + rectangulo.Height * EscalaGL);
-
-    Gl.End();
-
-    gl.PopMatrix;
-    gl.MatrixMode(gl.PROJECTION);
-    gl.PopMatrix;
-
-}
-
-public static void DrawText3D(string texto, Punto3d pr, float Altura= 12, long _color= Colors.Blue, long _BackColor= -1, int centradoH= 0, int centradoV= 0)
+public static void DrawText3D(string texto, Punto3d pr, double Altura= 12, long _color= Colors.Blue, long _BackColor= -1, int centradoH= 0, int centradoV= 0)
     {
 
 
@@ -4614,23 +4432,23 @@ public static void DrawText3D(string texto, Punto3d pr, float Altura= 12, long _
 
  // Public Sub LucesOn()
  //
- //     Gl.Lightfv(Gl.LIGHT0, Gl.AMBIENT_AND_DIFFUSE, [1.0, 1.0, 1.0, 0.5])
+ //     GL.Lightfv(GL.LIGHT0, GL.AMBIENT_AND_DIFFUSE, [1.0, 1.0, 1.0, 0.5])
  //
- //     Gl.Lightfv(Gl.LIGHT0, Gl.POSITION, [GLCam.camera.Position.x, GLCam.camera.Position.y, -GLCam.camera.Position.z, 1])
+ //     GL.Lightfv(GL.LIGHT0, GL.POSITION, [GLCam.camera.Position.x, GLCam.camera.Position.y, -GLCam.camera.Position.z, 1])
  //
- //     Gl.Enable(Gl.LIGHTING)
- //     Gl.Enable(Gl.LIGHT0)
+ //     GL.Enable(GL.LIGHTING)
+ //     GL.Enable(GL.LIGHT0)
  //
- //     Gl.Enable(Gl.NORMALIZE) // esto sirve para normalizar los vectores normales , o sea que sean de largo = 1
+ //     GL.Enable(GL.NORMALIZE) // esto sirve para normalizar los vectores normales , o sea que sean de largo = 1
  //
  // End
  //
  // Public Sub LucesOff()
  //
- //     Gl.Disable(Gl.LIGHTING)
- //     Gl.disable(Gl.LIGHT0)
+ //     GL.Disable(GL.LIGHTING)
+ //     GL.disable(GL.LIGHT0)
  //
- //     Gl.disable(Gl.NORMALIZE) // esto sirve para normalizar los vectores normales , o sea que sean de largo = 1
+ //     GL.disable(GL.NORMALIZE) // esto sirve para normalizar los vectores normales , o sea que sean de largo = 1
  //
  // End Sub
 
@@ -4640,19 +4458,19 @@ public static void GLQuadColor4F(Punto3d p1, Punto3d p2, Punto3d p3, Punto3d p4,
 
      // Quad esta obsoleto , reemplazo por dos triangulos
 
-    gl.begin(gl.TRIANGLES);
+    GL.begin(GL.TRIANGLES);
 
     Vertex3D(p1, c1);
     Vertex3D(p2, c2);
     Vertex3D(p3, c3);
-    gl.End;
+    GL.End;
 
-    gl.begin(gl.TRIANGLEs);
+    GL.begin(GL.TRIANGLEs);
     Vertex3D(p1, c1);
     Vertex3D(p3, c3);
     Vertex3D(p4, c4);
 
-    gl.end;
+    GL.end;
 
 }
 
