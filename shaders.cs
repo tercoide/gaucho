@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
@@ -195,6 +196,507 @@ using OpenTK.Mathematics;
         {
             GL.UseProgram(Handle);
             GL.Uniform3(_uniformLocations[name], data);
+        }
+    }
+
+    /// <summary>
+    /// Enumeration for supported primitive types
+    /// </summary>
+    public enum PrimitiveType
+    {
+        Triangles,
+        Lines
+    }
+
+    /// <summary>
+    /// A VBO container class that holds vertex data arrays for rendering
+    /// </summary>
+    public class VboContainer : IDisposable
+    {
+        private static int _nextIndex = 0;
+        private bool _disposed = false;
+
+        // Public properties
+        public int Index { get; private set; }
+        public PrimitiveType PrimitiveType { get; set; }
+        
+        // Vertex data arrays
+        public float[]? VertexArray { get; set; }
+        public float[]? ColorArray { get; set; }
+        public float[]? NormalsArray { get; set; }
+        public float[]? TextureUVArray { get; set; }
+
+        // OpenGL buffer handles
+        public int VAO { get; private set; }
+        public int VertexVBO { get; private set; }
+        public int ColorVBO { get; private set; }
+        public int NormalsVBO { get; private set; }
+        public int TextureVBO { get; private set; }
+
+        // Vertex count
+        public int VertexCount { get; private set; }
+
+        /// <summary>
+        /// Creates a new VBO container with a unique index
+        /// </summary>
+        /// <param name="primitiveType">The type of primitives to draw (Triangles or Lines)</param>
+        public VboContainer(PrimitiveType primitiveType = PrimitiveType.Triangles)
+        {
+            Index = _nextIndex++;
+            PrimitiveType = primitiveType;
+            
+            // Generate OpenGL objects
+            VAO = GL.GenVertexArray();
+            VertexVBO = GL.GenBuffer();
+            ColorVBO = GL.GenBuffer();
+            NormalsVBO = GL.GenBuffer();
+            TextureVBO = GL.GenBuffer();
+        }
+
+        /// <summary>
+        /// Sets the vertex positions array
+        /// </summary>
+        /// <param name="vertices">Array of vertex positions (x, y, z for each vertex)</param>
+        public void SetVertices(float[] vertices)
+        {
+            VertexArray = vertices;
+            VertexCount = vertices.Length / 3; // Assuming 3 components per vertex (x, y, z)
+            
+            GL.BindBuffer(BufferTarget.ArrayBuffer, VertexVBO);
+            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
+        }
+
+        /// <summary>
+        /// Sets the color array
+        /// </summary>
+        /// <param name="colors">Array of colors (r, g, b, a for each vertex)</param>
+        public void SetColors(float[] colors)
+        {
+            ColorArray = colors;
+            
+            GL.BindBuffer(BufferTarget.ArrayBuffer, ColorVBO);
+            GL.BufferData(BufferTarget.ArrayBuffer, colors.Length * sizeof(float), colors, BufferUsageHint.StaticDraw);
+        }
+
+        /// <summary>
+        /// Sets the normals array
+        /// </summary>
+        /// <param name="normals">Array of normal vectors (nx, ny, nz for each vertex)</param>
+        public void SetNormals(float[] normals)
+        {
+            NormalsArray = normals;
+            
+            GL.BindBuffer(BufferTarget.ArrayBuffer, NormalsVBO);
+            GL.BufferData(BufferTarget.ArrayBuffer, normals.Length * sizeof(float), normals, BufferUsageHint.StaticDraw);
+        }
+
+        /// <summary>
+        /// Sets the texture UV coordinates array
+        /// </summary>
+        /// <param name="uvs">Array of UV coordinates (u, v for each vertex)</param>
+        public void SetTextureUVs(float[] uvs)
+        {
+            TextureUVArray = uvs;
+            
+            GL.BindBuffer(BufferTarget.ArrayBuffer, TextureVBO);
+            GL.BufferData(BufferTarget.ArrayBuffer, uvs.Length * sizeof(float), uvs, BufferUsageHint.StaticDraw);
+        }
+
+        /// <summary>
+        /// Configures the vertex attributes and prepares the VAO for rendering
+        /// </summary>
+        public void SetupVertexAttributes()
+        {
+            GL.BindVertexArray(VAO);
+
+            // Vertex positions (location 0)
+            if (VertexArray != null)
+            {
+                GL.BindBuffer(BufferTarget.ArrayBuffer, VertexVBO);
+                GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 0, 0);
+                GL.EnableVertexAttribArray(0);
+            }
+
+            // Colors (location 1)
+            if (ColorArray != null)
+            {
+                GL.BindBuffer(BufferTarget.ArrayBuffer, ColorVBO);
+                GL.VertexAttribPointer(1, 4, VertexAttribPointerType.Float, false, 0, 0);
+                GL.EnableVertexAttribArray(1);
+            }
+
+            // Normals (location 2)
+            if (NormalsArray != null)
+            {
+                GL.BindBuffer(BufferTarget.ArrayBuffer, NormalsVBO);
+                GL.VertexAttribPointer(2, 3, VertexAttribPointerType.Float, false, 0, 0);
+                GL.EnableVertexAttribArray(2);
+            }
+
+            // Texture UVs (location 3)
+            if (TextureUVArray != null)
+            {
+                GL.BindBuffer(BufferTarget.ArrayBuffer, TextureVBO);
+                GL.VertexAttribPointer(3, 2, VertexAttribPointerType.Float, false, 0, 0);
+                GL.EnableVertexAttribArray(3);
+            }
+
+            GL.BindVertexArray(0);
+        }
+
+        /// <summary>
+        /// Renders the VBO using the current shader
+        /// </summary>
+        public void Render()
+        {
+            if (VertexCount == 0) return;
+
+            GL.BindVertexArray(VAO);
+
+            OpenTK.Graphics.OpenGL4.PrimitiveType glPrimitiveType = PrimitiveType switch
+            {
+                PrimitiveType.Triangles => OpenTK.Graphics.OpenGL4.PrimitiveType.Triangles,
+                PrimitiveType.Lines => OpenTK.Graphics.OpenGL4.PrimitiveType.Lines,
+                _ => OpenTK.Graphics.OpenGL4.PrimitiveType.Triangles
+            };
+
+            GL.DrawArrays(glPrimitiveType, 0, VertexCount);
+            GL.BindVertexArray(0);
+        }
+
+        /// <summary>
+        /// Updates vertex data dynamically
+        /// </summary>
+        /// <param name="vertices">New vertex data</param>
+        public void UpdateVertices(float[] vertices)
+        {
+            VertexArray = vertices;
+            VertexCount = vertices.Length / 3;
+            
+            GL.BindBuffer(BufferTarget.ArrayBuffer, VertexVBO);
+            GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, vertices.Length * sizeof(float), vertices);
+        }
+
+        /// <summary>
+        /// Updates color data dynamically
+        /// </summary>
+        /// <param name="colors">New color data</param>
+        public void UpdateColors(float[] colors)
+        {
+            ColorArray = colors;
+            
+            GL.BindBuffer(BufferTarget.ArrayBuffer, ColorVBO);
+            GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, colors.Length * sizeof(float), colors);
+        }
+
+        /// <summary>
+        /// Appends vertex data to the existing vertex array
+        /// </summary>
+        /// <param name="newVertices">Array of new vertices to append (x, y, z for each vertex)</param>
+        public void AppendVertices(float[] newVertices)
+        {
+            if (newVertices == null || newVertices.Length == 0) return;
+
+            // Combine existing and new vertex data
+            var combinedVertices = CombineArrays(VertexArray, newVertices);
+            SetVertices(combinedVertices);
+        }
+
+        /// <summary>
+        /// Appends color data to the existing color array
+        /// </summary>
+        /// <param name="newColors">Array of new colors to append (r, g, b, a for each vertex)</param>
+        public void AppendColors(float[] newColors)
+        {
+            if (newColors == null || newColors.Length == 0) return;
+
+            // Combine existing and new color data
+            var combinedColors = CombineArrays(ColorArray, newColors);
+            SetColors(combinedColors);
+        }
+
+        /// <summary>
+        /// Appends normal data to the existing normals array
+        /// </summary>
+        /// <param name="newNormals">Array of new normals to append (nx, ny, nz for each vertex)</param>
+        public void AppendNormals(float[] newNormals)
+        {
+            if (newNormals == null || newNormals.Length == 0) return;
+
+            // Combine existing and new normal data
+            var combinedNormals = CombineArrays(NormalsArray, newNormals);
+            SetNormals(combinedNormals);
+        }
+
+        /// <summary>
+        /// Appends texture UV data to the existing UV array
+        /// </summary>
+        /// <param name="newUVs">Array of new UV coordinates to append (u, v for each vertex)</param>
+        public void AppendTextureUVs(float[] newUVs)
+        {
+            if (newUVs == null || newUVs.Length == 0) return;
+
+            // Combine existing and new UV data
+            var combinedUVs = CombineArrays(TextureUVArray, newUVs);
+            SetTextureUVs(combinedUVs);
+        }
+
+        /// <summary>
+        /// Appends complete vertex data (vertices, colors, normals, UVs) in one operation
+        /// </summary>
+        /// <param name="vertices">New vertices to append</param>
+        /// <param name="colors">New colors to append (optional)</param>
+        /// <param name="normals">New normals to append (optional)</param>
+        /// <param name="uvs">New UV coordinates to append (optional)</param>
+        public void AppendVertexData(float[] vertices, float[]? colors = null, float[]? normals = null, float[]? uvs = null)
+        {
+            if (vertices == null || vertices.Length == 0) return;
+
+            // Append all provided data arrays
+            AppendVertices(vertices);
+            
+            if (colors != null && colors.Length > 0)
+                AppendColors(colors);
+                
+            if (normals != null && normals.Length > 0)
+                AppendNormals(normals);
+                
+            if (uvs != null && uvs.Length > 0)
+                AppendTextureUVs(uvs);
+
+            // Re-setup vertex attributes after appending all data
+            SetupVertexAttributes();
+        }
+
+        /// <summary>
+        /// Appends another VboContainer's data to this container
+        /// </summary>
+        /// <param name="other">The VboContainer to append data from</param>
+        public void AppendFromVbo(VboContainer other)
+        {
+            if (other == null) return;
+
+            AppendVertexData(
+                other.VertexArray ?? new float[0],
+                other.ColorArray,
+                other.NormalsArray,
+                other.TextureUVArray
+            );
+        }
+
+        /// <summary>
+        /// Helper method to combine two float arrays
+        /// </summary>
+        /// <param name="existing">Existing array (can be null)</param>
+        /// <param name="newData">New data to append</param>
+        /// <returns>Combined array</returns>
+        private static float[] CombineArrays(float[]? existing, float[] newData)
+        {
+            if (existing == null || existing.Length == 0)
+                return (float[])newData.Clone();
+
+            if (newData == null || newData.Length == 0)
+                return (float[])existing.Clone();
+
+            var combined = new float[existing.Length + newData.Length];
+            Array.Copy(existing, 0, combined, 0, existing.Length);
+            Array.Copy(newData, 0, combined, existing.Length, newData.Length);
+            return combined;
+        }
+
+        /// <summary>
+        /// Clears all vertex data arrays
+        /// </summary>
+        public void ClearAllData()
+        {
+            VertexArray = null;
+            ColorArray = null;
+            NormalsArray = null;
+            TextureUVArray = null;
+            VertexCount = 0;
+
+            // Clear GPU buffers by setting them to empty
+            if (VAO != 0)
+            {
+                GL.BindBuffer(BufferTarget.ArrayBuffer, VertexVBO);
+                GL.BufferData(BufferTarget.ArrayBuffer, 0, IntPtr.Zero, BufferUsageHint.StaticDraw);
+                
+                GL.BindBuffer(BufferTarget.ArrayBuffer, ColorVBO);
+                GL.BufferData(BufferTarget.ArrayBuffer, 0, IntPtr.Zero, BufferUsageHint.StaticDraw);
+                
+                GL.BindBuffer(BufferTarget.ArrayBuffer, NormalsVBO);
+                GL.BufferData(BufferTarget.ArrayBuffer, 0, IntPtr.Zero, BufferUsageHint.StaticDraw);
+                
+                GL.BindBuffer(BufferTarget.ArrayBuffer, TextureVBO);
+                GL.BufferData(BufferTarget.ArrayBuffer, 0, IntPtr.Zero, BufferUsageHint.StaticDraw);
+            }
+        }
+
+        /// <summary>
+        /// Removes vertices at the specified indices
+        /// </summary>
+        /// <param name="indicesToRemove">Array of vertex indices to remove</param>
+        public void RemoveVertices(int[] indicesToRemove)
+        {
+            if (indicesToRemove == null || indicesToRemove.Length == 0 || VertexArray == null)
+                return;
+
+            // Sort indices in descending order to avoid index shifting issues
+            var sortedIndices = indicesToRemove.Distinct().OrderByDescending(x => x).ToArray();
+
+            // Remove from each array
+            if (VertexArray != null)
+                VertexArray = RemoveElementsFromArray(VertexArray, sortedIndices, 3);
+                
+            if (ColorArray != null)
+                ColorArray = RemoveElementsFromArray(ColorArray, sortedIndices, 4);
+                
+            if (NormalsArray != null)
+                NormalsArray = RemoveElementsFromArray(NormalsArray, sortedIndices, 3);
+                
+            if (TextureUVArray != null)
+                TextureUVArray = RemoveElementsFromArray(TextureUVArray, sortedIndices, 2);
+
+            // Update vertex count and refresh GPU buffers
+            VertexCount = VertexArray?.Length / 3 ?? 0;
+            
+            if (VertexArray != null) SetVertices(VertexArray);
+            if (ColorArray != null) SetColors(ColorArray);
+            if (NormalsArray != null) SetNormals(NormalsArray);
+            if (TextureUVArray != null) SetTextureUVs(TextureUVArray);
+            
+            SetupVertexAttributes();
+        }
+
+        /// <summary>
+        /// Helper method to remove elements from an array based on vertex indices
+        /// </summary>
+        /// <param name="array">Source array</param>
+        /// <param name="vertexIndices">Vertex indices to remove (sorted descending)</param>
+        /// <param name="componentsPerVertex">Number of components per vertex</param>
+        /// <returns>New array with elements removed</returns>
+        private static float[] RemoveElementsFromArray(float[] array, int[] vertexIndices, int componentsPerVertex)
+        {
+            var result = new List<float>(array);
+            
+            foreach (int vertexIndex in vertexIndices)
+            {
+                int startIndex = vertexIndex * componentsPerVertex;
+                if (startIndex >= 0 && startIndex < result.Count)
+                {
+                    // Remove all components for this vertex
+                    for (int i = 0; i < componentsPerVertex && startIndex < result.Count; i++)
+                    {
+                        result.RemoveAt(startIndex);
+                    }
+                }
+            }
+            
+            return result.ToArray();
+        }
+
+        /// <summary>
+        /// Gets information about this VBO container
+        /// </summary>
+        /// <returns>String with VBO information</returns>
+        public override string ToString()
+        {
+            return $"VBO[{Index}] - Type: {PrimitiveType}, Vertices: {VertexCount}, " +
+                   $"HasColors: {ColorArray != null}, HasNormals: {NormalsArray != null}, " +
+                   $"HasUVs: {TextureUVArray != null}";
+        }
+
+        /// <summary>
+        /// Disposes of OpenGL resources
+        /// </summary>
+        public void Dispose()
+        {
+            if (_disposed) return;
+
+            GL.DeleteVertexArray(VAO);
+            GL.DeleteBuffer(VertexVBO);
+            GL.DeleteBuffer(ColorVBO);
+            GL.DeleteBuffer(NormalsVBO);
+            GL.DeleteBuffer(TextureVBO);
+
+            _disposed = true;
+        }
+
+        /// <summary>
+        /// Finalizer to ensure OpenGL resources are cleaned up
+        /// </summary>
+        ~VboContainer()
+        {
+            // Note: In a real application, you should dispose on the main thread
+            // This is just a safety net
+            Dispose();
+        }
+    }
+
+    /// <summary>
+    /// Static manager class for VBO containers
+    /// </summary>
+    public static class VboManager
+    {
+        private static readonly Dictionary<int, VboContainer> _vbos = new();
+
+        /// <summary>
+        /// Creates a new VBO container and adds it to the manager
+        /// </summary>
+        /// <param name="primitiveType">Type of primitives to draw</param>
+        /// <returns>The created VBO container</returns>
+        public static VboContainer CreateVbo(PrimitiveType primitiveType = PrimitiveType.Triangles)
+        {
+            var vbo = new VboContainer(primitiveType);
+            _vbos[vbo.Index] = vbo;
+            return vbo;
+        }
+
+        /// <summary>
+        /// Gets a VBO container by its index
+        /// </summary>
+        /// <param name="index">The VBO index</param>
+        /// <returns>The VBO container or null if not found</returns>
+        public static VboContainer? GetVbo(int index)
+        {
+            return _vbos.TryGetValue(index, out var vbo) ? vbo : null;
+        }
+
+        /// <summary>
+        /// Removes a VBO container from the manager and disposes it
+        /// </summary>
+        /// <param name="index">The VBO index to remove</param>
+        /// <returns>True if the VBO was found and removed</returns>
+        public static bool RemoveVbo(int index)
+        {
+            if (_vbos.TryGetValue(index, out var vbo))
+            {
+                vbo.Dispose();
+                _vbos.Remove(index);
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Gets all VBO containers
+        /// </summary>
+        /// <returns>Collection of all VBO containers</returns>
+        public static IEnumerable<VboContainer> GetAllVbos()
+        {
+            return _vbos.Values;
+        }
+
+        /// <summary>
+        /// Clears all VBO containers and disposes them
+        /// </summary>
+        public static void ClearAll()
+        {
+            foreach (var vbo in _vbos.Values)
+            {
+                vbo.Dispose();
+            }
+            _vbos.Clear();
         }
     }
 // }

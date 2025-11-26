@@ -2,13 +2,15 @@
     // Port of Gambas clsEntities.class -> C#
     // Notes:
     // - This translation preserves behavior and structure but assumes existing types:
-    //   Entity, Block, Layer, LineType, Style, Sheet, Drawing, Undo, glx, gl, paint, puntos, stl, dxf, Gcd, etc.
+    //   Entity, Block, Layer, LineType, Style, Sheet, Drawing, Undo, Glx, gl, paint, puntos, stl, dxf, Gcd, etc.
     // - Gambas "Collection" -> List<T> or Dictionary<string,T> depending on keyed usage.
     // - Gambas "Float[]" -> double[] here (consistent with previous puntos conversion).
-    // - Many helper classes and global objects (Gcd, glx, gl, paint, dxf, stl) are referenced as-is; integrate with your project.
+    // - Many helper classes and global objects (Gcd, Glx, gl, paint, dxf, stl) are referenced as-is; integrate with your project.
     // - Some Gambas semantics (e.g. IsNull, Try ... Catch-free behavior, dynamic resizing) are approximated.
     //
     // You should compile this together with the rest of the converted code and wire the external dependencies.
+    using OpenTK.Graphics.OpenGL4;
+    
     public static class clsEntities
     {
         // Buffer IDs previously an Integer[] Collection in Gambas
@@ -63,36 +65,36 @@
 
             try
             {
-                glx.glBindBuffer(glx.ARRAY_BUFFER, InxBuffersID[0]);
+                Glx.glBindBuffer(Glx.ARRAY_BUFFER, InxBuffersID[0]);
 
-                var iError = glx.glGetError();
+                var iError = Glx.glGetError();
                 if (iError != 0) Gcd.debugInfo("GL Error: " + iError);
-                glx.glEnableClientState(glx.VERTEX_ARRAY);
-                glx.glEnableClientState(glx.NORMAL_ARRAY);
-                glx.glEnableClientState(glx.COLOR_ARRAY);
+                Glx.glEnableClientState(Glx.VERTEX_ARRAY);
+                Glx.glEnableClientState(Glx.NORMAL_ARRAY);
+                Glx.glEnableClientState(Glx.COLOR_ARRAY);
 
-                iError = glx.glGetError();
+                iError = Glx.glGetError();
                 if (iError != 0) Gcd.debugInfo("GL Error: " + iError);
 
                 var vOffset = 0;
-                var nOffset = glx.VBO_vertex.Count * sizeof(float);
-                var cOffset = nOffset + glx.VBO_normals.Count * sizeof(float);
+                var nOffset = Glx.VBO_vertex.Count * sizeof(float);
+                var cOffset = nOffset + Glx.VBO_normals.Count * sizeof(float);
                 // tOffset omitted
 
-                glx.glVertexPointer(3, glx.FLOAT, 0, vOffset);
-                glx.glNormalPointer(glx.FLOAT, 0, nOffset);
-                glx.glColorPointer(3, glx.FLOAT, 0, cOffset);
+                Glx.glVertexPointer(3, Glx.FLOAT, 0, vOffset);
+                Glx.glNormalPointer(Glx.FLOAT, 0, nOffset);
+                Glx.glColorPointer(3, Glx.FLOAT, 0, cOffset);
 
-                iError = glx.glGetError();
+                iError = Glx.glGetError();
                 if (iError != 0) Gcd.debugInfo("GL Error: " + iError);
 
-                glx.glDrawArrays(glx.DrawLines, 0, glx.VBO_vertex.Count * 3);
+                Glx.glDrawArrays(Glx.DrawLines, 0, Glx.VBO_vertex.Count * 3);
 
-                glx.gldisableClientState(glx.VERTEX_ARRAY);
-                glx.gldisableClientState(glx.NORMAL_ARRAY);
-                glx.gldisableClientState(glx.COLOR_ARRAY);
+                Glx.gldisableClientState(Glx.VERTEX_ARRAY);
+                Glx.gldisableClientState(Glx.NORMAL_ARRAY);
+                Glx.gldisableClientState(Glx.COLOR_ARRAY);
 
-                glx.glBindBuffer(glx.ARRAY_BUFFER, 0);
+                Glx.glBindBuffer(Glx.ARRAY_BUFFER, 0);
             }
             catch (Exception ex)
             {
@@ -213,7 +215,7 @@
             {
                 if (Gcd.Drawing.Sheet.Entities.Count == 0) return;
 
-                glx.VBOFlush();
+                Glx.VBOFlush();
                 foreach (var e in Gcd.Drawing.Sheet.Entities)
                 {
                     Gcd.CCC[e.Gender].Draw(e);
@@ -223,25 +225,25 @@
                 while (InxBuffersID.Count < 3) InxBuffersID.Add(0);
 
                 int[] ids = new int[3];
-                glx.glGenBuffers(3, InxBuffersID.ToArray()); // assume glx.glGenBuffers fills provided array or uses wrapper
-                var iError = glx.glGetError();
+                Glx.glGenBuffers(3, InxBuffersID.ToArray()); // assume Glx.glGenBuffers fills provided array or uses wrapper
+                var iError = Glx.glGetError();
                 if (iError != 0) Gcd.debugInfo("GL Error: " + iError);
 
-                glx.glBindBuffer(glx.ARRAY_BUFFER, InxBuffersID[0]);
-                iError = glx.glGetError();
+                Glx.glBindBuffer(Glx.ARRAY_BUFFER, InxBuffersID[0]);
+                iError = Glx.glGetError();
                 if (iError != 0) Gcd.debugInfo("GL Error: " + iError);
 
-                var bytesTot = (glx.VBO_vertex.Count + glx.VBO_normals.Count + glx.VBO_colors.Count) * sizeof(float);
-                glx.glBufferData(glx.ARRAY_BUFFER, bytesTot, IntPtr.Zero, glx.STATIC_DRAW);
+                var bytesTot = (Glx.VBO_vertex.Count + Glx.VBO_normals.Count + Glx.VBO_colors.Count) * sizeof(float);
+                Glx.glBufferData(Glx.ARRAY_BUFFER, bytesTot, IntPtr.Zero, Glx.STATIC_DRAW);
 
-                glx.glBufferSubData(glx.ARRAY_BUFFER, 0, glx.VBO_vertex.Count * sizeof(float), glx.VBO_vertex.Data);
-                glx.glBufferSubData(glx.ARRAY_BUFFER, glx.VBO_vertex.Count * sizeof(float), glx.VBO_normals.Count * sizeof(float), glx.VBO_normals.Data);
-                glx.glBufferSubData(glx.ARRAY_BUFFER, (glx.VBO_vertex.Count + glx.VBO_normals.Count) * sizeof(float), glx.VBO_colors.Count * sizeof(float), glx.VBO_colors.Data);
+                Glx.glBufferSubData(Glx.ARRAY_BUFFER, 0, Glx.VBO_vertex.Count * sizeof(float), Glx.VBO_vertex.Data);
+                Glx.glBufferSubData(Glx.ARRAY_BUFFER, Glx.VBO_vertex.Count * sizeof(float), Glx.VBO_normals.Count * sizeof(float), Glx.VBO_normals.Data);
+                Glx.glBufferSubData(Glx.ARRAY_BUFFER, (Glx.VBO_vertex.Count + Glx.VBO_normals.Count) * sizeof(float), Glx.VBO_colors.Count * sizeof(float), Glx.VBO_colors.Data);
 
-                iError = glx.glGetError();
+                iError = Glx.glGetError();
                 if (iError != 0) Gcd.debugInfo("GL Error: " + iError);
 
-                glx.glBindBuffer(glx.ARRAY_BUFFER, 0);
+                Glx.glBindBuffer(Glx.ARRAY_BUFFER, 0);
             }
             catch (Exception ex)
             {
@@ -257,20 +259,20 @@
                 if (eEntity == null) return;
                 Gcd.CCC[eEntity.Gender].Translate(eEntity, -Gcd.Drawing.Sheet.PanBaseRealX, -Gcd.Drawing.Sheet.PanBaseRealY);
 
-                if (!gl.islist(eEntity.glDrwList)) eEntity.glDrwList = gl.GenLists(1);
-                gl.NewList(eEntity.glDrwList, gl.COMPILE);
+                if (!GL.islist(eEntity.glDrwList)) eEntity.glDrwList = GL.GenLists(1);
+                GL.NewList(eEntity.glDrwList, GL.COMPILE);
                 Gcd.CCC[eEntity.Gender].Draw(eEntity);
-                gl.EndList();
+                GL.EndList();
 
-                if (!gl.islist(eEntity.glDrwListSel)) eEntity.glDrwListSel = gl.GenLists(1);
-                gl.NewList(eEntity.glDrwListSel, gl.COMPILE);
+                if (!GL.islist(eEntity.glDrwListSel)) eEntity.glDrwListSel = GL.GenLists(1);
+                GL.NewList(eEntity.glDrwListSel, GL.COMPILE);
                 Gcd.CCC[eEntity.Gender].DrawSelected(eEntity);
-                gl.EndList();
+                GL.EndList();
 
-                if (!gl.islist(eEntity.glDrwListRemark)) eEntity.glDrwListRemark = gl.GenLists(1);
-                gl.NewList(eEntity.glDrwListRemark, gl.COMPILE);
+                if (!GL.islist(eEntity.glDrwListRemark)) eEntity.glDrwListRemark = GL.GenLists(1);
+                GL.NewList(eEntity.glDrwListRemark, GL.COMPILE);
                 Gcd.CCC[eEntity.Gender].DrawRemark(eEntity);
-                gl.EndList();
+                GL.EndList();
 
                 Gcd.CCC[eEntity.Gender].Translate(eEntity, Gcd.Drawing.Sheet.PanBaseRealX, Gcd.Drawing.Sheet.PanBaseRealY);
             }
@@ -285,20 +287,20 @@
                         e.Generated = true;
                         e.Regenerable = Gcd.CCC[e.Gender].Regenerable;
 
-                        if (!gl.islist(e.glDrwList)) e.glDrwList = gl.GenLists(1);
-                        gl.NewList(e.glDrwList, gl.COMPILE);
+                        if (!GL.islist(e.glDrwList)) e.glDrwList = GL.GenLists(1);
+                        GL.NewList(e.glDrwList, GL.COMPILE);
                         Gcd.CCC[e.Gender].Draw(e);
-                        gl.EndList();
+                        GL.EndList();
 
-                        if (!gl.islist(e.glDrwListSel)) e.glDrwListSel = gl.GenLists(1);
-                        gl.NewList(e.glDrwListSel, gl.COMPILE);
+                        if (!GL.islist(e.glDrwListSel)) e.glDrwListSel = GL.GenLists(1);
+                        GL.NewList(e.glDrwListSel, GL.COMPILE);
                         Gcd.CCC[e.Gender].DrawSelected(e);
-                        gl.EndList();
+                        GL.EndList();
 
-                        if (!gl.islist(e.glDrwListRemark)) e.glDrwListRemark = gl.GenLists(1);
-                        gl.NewList(e.glDrwListRemark, gl.COMPILE);
+                        if (!GL.islist(e.glDrwListRemark)) e.glDrwListRemark = GL.GenLists(1);
+                        GL.NewList(e.glDrwListRemark, GL.COMPILE);
                         Gcd.CCC[e.Gender].DrawRemark(e);
-                        gl.EndList();
+                        GL.EndList();
                     }
                 }
 
@@ -316,86 +318,86 @@
 
         public static void GlGenDrawListSel(bool RegenEntity = false)
         {
-            if (!gl.islist(Gcd.Drawing.GlListEntitiesSelected)) Gcd.Drawing.GlListEntitiesSelected = gl.GenLists(1);
+            if (!GL.islist(Gcd.Drawing.GlListEntitiesSelected)) Gcd.Drawing.GlListEntitiesSelected = GL.GenLists(1);
 
-            gl.NewList(Gcd.Drawing.GlListEntitiesSelected, gl.COMPILE);
+            GL.NewList(Gcd.Drawing.GlListEntitiesSelected, GL.COMPILE);
 
             foreach (var e in Gcd.Drawing.Sheet.EntitiesSelected)
             {
-                if (e.glDrwListSel > 0) gl.CallList(e.glDrwListSel);
+                if (e.glDrwListSel > 0) GL.CallList(e.glDrwListSel);
                 else Gcd.CCC[e.Gender].DrawSelected(e);
             }
 
-            gl.EndList();
+            GL.EndList();
         }
 
         public static void GlGenDrawListAll(bool ExcludeSelected = false)
         {
-            gl.NewList(Gcd.Drawing.Sheet.GlListAllEntities, gl.COMPILE);
+            GL.NewList(Gcd.Drawing.Sheet.GlListAllEntities, GL.COMPILE);
 
             foreach (var e in Gcd.Drawing.Sheet.Entities)
             {
                 if (!Gcd.Drawing.Sheet.EntitiesSelected.Exists(e.id))
                 {
-                    if (e.pLayer.Visible) gl.CallList(e.glDrwList);
+                    if (e.pLayer.Visible) GL.CallList(e.glDrwList);
                 }
             }
 
-            gl.EndList();
+            GL.EndList();
         }
 
         public static void GlGenDrawListLayers(Layer aLayer = null)
         {
             if (aLayer != null)
             {
-                if (!gl.islist(aLayer.glList)) aLayer.glList = gl.GenLists(1);
-                gl.NewList(aLayer.glList, gl.COMPILE);
+                if (!GL.islist(aLayer.glList)) aLayer.glList = GL.GenLists(1);
+                GL.NewList(aLayer.glList, GL.COMPILE);
                 foreach (var e in Gcd.Drawing.Sheet.Entities)
                 {
                     if (e.pLayer == aLayer && !e.PaperSpace)
                     {
-                        gl.CallList(e.glDrwList);
+                        GL.CallList(e.glDrwList);
                     }
                 }
-                gl.EndList();
+                GL.EndList();
             }
             else
             {
                 foreach (var a in Gcd.Drawing.Layers)
                 {
-                    if (!gl.islist(a.glList)) a.glList = gl.GenLists(1);
-                    gl.NewList(a.glList, gl.COMPILE);
+                    if (!GL.islist(a.glList)) a.glList = GL.GenLists(1);
+                    GL.NewList(a.glList, GL.COMPILE);
                     foreach (var s in Gcd.Drawing.Sheets)
                     {
                         if (!s.name.Equals("Model")) continue;
-                        glx.DrawTriangles(s.model3d.xyzVertex, Color.Red);
+                        Glx.DrawTriangles(s.model3d.xyzVertex, Color.Red);
                         foreach (var e in s.Entities)
                         {
                             if (e.pLayer == a)
                             {
-                                gl.CallList(e.glDrwList);
+                                GL.CallList(e.glDrwList);
                             }
                         }
                     }
-                    gl.EndList();
+                    GL.EndList();
                 }
 
                 foreach (var s in Gcd.Drawing.Sheets)
                 {
                     if (s.Name== "Model") continue;
-                    if (!gl.islist(s.GlListAllEntities)) s.GlListAllEntities = gl.GenLists(1);
-                    gl.NewList(s.GlListAllEntities, gl.COMPILE);
+                    if (!GL.islist(s.GlListAllEntities)) s.GlListAllEntities = GL.GenLists(1);
+                    GL.NewList(s.GlListAllEntities, GL.COMPILE);
                     foreach (var a in Gcd.Drawing.Layers)
                     {
                         foreach (var e in s.Entities)
                         {
                             if (e.pLayer == a)
                             {
-                                gl.CallList(e.glDrwList);
+                                GL.CallList(e.glDrwList);
                             }
                         }
                     }
-                    gl.EndList();
+                    GL.EndList();
                 }
             }
         }

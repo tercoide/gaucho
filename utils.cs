@@ -78,8 +78,73 @@ namespace Gaucho;
             int g = 255 - ((color >> 8) & 0xFF);
             int b = 255 - (color & 0xFF);
             return (r << 16) | (g << 8) | b;
-        }   
-        
+        }
+
+        /// <summary>
+        /// Extracts the alpha component from an ARGB color value
+        /// </summary>
+        /// <param name="color">The ARGB color value (format: 0xAARRGGBB)</param>
+        /// <returns>The alpha component (0-255)</returns>
+        public static int GetAlpha(int color)
+        {
+            return (color >> 24) & 0xFF;
+        }
+
+        /// <summary>
+        /// Extracts the red component from an RGB or ARGB color value
+        /// </summary>
+        /// <param name="color">The color value</param>
+        /// <returns>The red component (0-255)</returns>
+        public static int GetRed(int color)
+        {
+            return (color >> 16) & 0xFF;
+        }
+
+        /// <summary>
+        /// Extracts the green component from an RGB or ARGB color value
+        /// </summary>
+        /// <param name="color">The color value</param>
+        /// <returns>The green component (0-255)</returns>
+        public static int GetGreen(int color)
+        {
+            return (color >> 8) & 0xFF;
+        }
+
+        /// <summary>
+        /// Extracts the blue component from an RGB or ARGB color value
+        /// </summary>
+        /// <param name="color">The color value</param>
+        /// <returns>The blue component (0-255)</returns>
+        public static int GetBlue(int color)
+        {
+            return color & 0xFF;
+        }
+
+        /// <summary>
+        /// Creates an ARGB color value from individual components
+        /// </summary>
+        /// <param name="alpha">Alpha component (0-255)</param>
+        /// <param name="red">Red component (0-255)</param>
+        /// <param name="green">Green component (0-255)</param>
+        /// <param name="blue">Blue component (0-255)</param>
+        /// <returns>The ARGB color value</returns>
+        public static int MakeArgb(int alpha, int red, int green, int blue)
+        {
+            return ((alpha & 0xFF) << 24) | ((red & 0xFF) << 16) | ((green & 0xFF) << 8) | (blue & 0xFF);
+        }
+
+        /// <summary>
+        /// Creates an RGB color value from individual components (alpha = 255)
+        /// </summary>
+        /// <param name="red">Red component (0-255)</param>
+        /// <param name="green">Green component (0-255)</param>
+        /// <param name="blue">Blue component (0-255)</param>
+        /// <returns>The ARGB color value with full opacity</returns>
+        public static int MakeRgb(int red, int green, int blue)
+        {
+            return MakeArgb(255, red, green, blue);
+        }
+
     }
 
 
