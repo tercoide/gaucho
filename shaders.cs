@@ -205,11 +205,49 @@ using OpenTK.Mathematics;
     public enum PrimitiveType
     {
         Triangles,
-        Lines
+        Lines,
+        LineStrip
+    }
+
+    /// <summary>
+    /// Individual VBO data for a specific primitive type
+    /// </summary>
+    public class VboData
+    {
+        public int VAO { get; set; }
+        public int VertexVBO { get; set; }
+        public int ColorVBO { get; set; }
+        public int NormalsVBO { get; set; }
+        public int TextureVBO { get; set; }
+        public int VertexCount { get; set; }
+        public float[]? VertexArray { get; set; }
+        public float[]? ColorArray { get; set; }
+        public float[]? NormalsArray { get; set; }
+        public float[]? TextureUVArray { get; set; }
+
+        public VboData()
+        {
+            VAO = GL.GenVertexArray();
+            VertexVBO = GL.GenBuffer();
+            ColorVBO = GL.GenBuffer();
+            NormalsVBO = GL.GenBuffer();
+            TextureVBO = GL.GenBuffer();
+            VertexCount = 0;
+        }
+
+        public void Dispose()
+        {
+            GL.DeleteVertexArray(VAO);
+            GL.DeleteBuffer(VertexVBO);
+            GL.DeleteBuffer(ColorVBO);
+            GL.DeleteBuffer(NormalsVBO);
+            GL.DeleteBuffer(TextureVBO);
+        }
     }
 
     /// <summary>
     /// A VBO container class that holds vertex data arrays for rendering
+    /// Contains separate VBOs for each supported primitive type
     /// </summary>
     public class VboContainer : IDisposable
     {
@@ -218,63 +256,152 @@ using OpenTK.Mathematics;
 
         // Public properties
         public int Index { get; private set; }
-        public PrimitiveType PrimitiveType { get; set; }
+        public PrimitiveType CurrentPrimitiveType { get; set; }
         
-        // Vertex data arrays
-        public float[]? VertexArray { get; set; }
-        public float[]? ColorArray { get; set; }
-        public float[]? NormalsArray { get; set; }
-        public float[]? TextureUVArray { get; set; }
+        // Individual VBOs for each primitive type
+        public VboData TrianglesVbo { get; private set; }
+        public VboData LinesVbo { get; private set; }
+        public VboData LineStripVbo { get; private set; }
 
-        // OpenGL buffer handles
-        public int VAO { get; private set; }
-        public int VertexVBO { get; private set; }
-        public int ColorVBO { get; private set; }
-        public int NormalsVBO { get; private set; }
-        public int TextureVBO { get; private set; }
-
-        // Vertex count
-        public int VertexCount { get; private set; }
+        // Dictionary for easy access to VBOs by primitive type
+        private Dictionary<PrimitiveType, VboData> _vbosByType;
 
         /// <summary>
-        /// Creates a new VBO container with a unique index
+        /// Creates a new VBO container with a unique index and 3 VBOs for each primitive type
         /// </summary>
-        /// <param name="primitiveType">The type of primitives to draw (Triangles or Lines)</param>
-        public VboContainer(PrimitiveType primitiveType = PrimitiveType.Triangles)
+        /// <param name="defaultPrimitiveType">The default primitive type to use</param>
+        public VboContainer(PrimitiveType defaultPrimitiveType = PrimitiveType.Triangles)
         {
             Index = _nextIndex++;
-            PrimitiveType = primitiveType;
+            CurrentPrimitiveType = defaultPrimitiveType;
             
-            // Generate OpenGL objects
-            VAO = GL.GenVertexArray();
-            VertexVBO = GL.GenBuffer();
-            ColorVBO = GL.GenBuffer();
-            NormalsVBO = GL.GenBuffer();
-            TextureVBO = GL.GenBuffer();
+            // Create individual VBOs for each primitive type
+            TrianglesVbo = new VboData();
+            LinesVbo = new VboData();
+            LineStripVbo = new VboData();
+            
+            // Set up dictionary for easy access
+            _vbosByType = new Dictionary<PrimitiveType, VboData>
+            {
+                { PrimitiveType.Triangles, TrianglesVbo },
+                { PrimitiveType.Lines, LinesVbo },
+                { PrimitiveType.LineStrip, LineStripVbo }
+            };
         }
 
         /// <summary>
-        /// Sets the vertex positions array
+        /// Gets the VBO data for the specified primitive type
+        /// </summary>
+        /// <param name="primitiveType">The primitive type</param>
+        /// <returns>The VBO data for that primitive type</returns>
+        public VboData GetVbo(PrimitiveType primitiveType)
+        {
+            return _vbosByType[primitiveType];
+        }
+
+        /// <summary>
+        /// Gets the VBO data for the current primitive type
+        /// </summary>
+        /// <returns>The VBO data for the current primitive type</returns>
+        public VboData GetCurrentVbo()
+        {
+            return _vbosByType[CurrentPrimitiveType];
+        }
+
+        /// <summary>
+        /// Sets the current primitive type
+        /// </summary>
+        /// <param name="primitiveType">The primitive type to set as current</param>
+        public void SetCurrentPrimitiveType(PrimitiveType primitiveType)
+        {
+            CurrentPrimitiveType = primitiveType;
+        }
+
+        // Legacy properties for backward compatibility - they operate on the current VBO
+        public float[]? VertexArray 
+        { 
+            get => GetCurrentVbo().VertexArray; 
+            set => GetCurrentVbo().VertexArray = value; 
+        }
+        
+        public float[]? ColorArray 
+        { 
+            get => GetCurrentVbo().ColorArray; 
+            set => GetCurrentVbo().ColorArray = value; 
+        }
+        
+        public float[]? NormalsArray 
+        { 
+            get => GetCurrentVbo().NormalsArray; 
+            set => GetCurrentVbo().NormalsArray = value; 
+        }
+        
+        public float[]? TextureUVArray 
+        { 
+            get => GetCurrentVbo().TextureUVArray; 
+            set => GetCurrentVbo().TextureUVArray = value; 
+        }
+
+        public int VAO => GetCurrentVbo().VAO;
+        public int VertexVBO => GetCurrentVbo().VertexVBO;
+        public int ColorVBO => GetCurrentVbo().ColorVBO;
+        public int NormalsVBO => GetCurrentVbo().NormalsVBO;
+        public int TextureVBO => GetCurrentVbo().TextureVBO;
+        public int VertexCount => GetCurrentVbo().VertexCount;
+
+        /// <summary>
+        /// Sets the vertex positions array for the current primitive type
         /// </summary>
         /// <param name="vertices">Array of vertex positions (x, y, z for each vertex)</param>
         public void SetVertices(float[] vertices)
         {
-            VertexArray = vertices;
-            VertexCount = vertices.Length / 3; // Assuming 3 components per vertex (x, y, z)
+            var currentVbo = GetCurrentVbo();
+            currentVbo.VertexArray = vertices;
+            currentVbo.VertexCount = vertices.Length / 3; // Assuming 3 components per vertex (x, y, z)
             
-            GL.BindBuffer(BufferTarget.ArrayBuffer, VertexVBO);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, currentVbo.VertexVBO);
             GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
         }
 
         /// <summary>
-        /// Sets the color array
+        /// Sets the vertex positions array for a specific primitive type
+        /// </summary>
+        /// <param name="vertices">Array of vertex positions (x, y, z for each vertex)</param>
+        /// <param name="primitiveType">The primitive type to set vertices for</param>
+        public void SetVertices(float[] vertices, PrimitiveType primitiveType)
+        {
+            var vbo = GetVbo(primitiveType);
+            vbo.VertexArray = vertices;
+            vbo.VertexCount = vertices.Length / 3;
+            
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo.VertexVBO);
+            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
+        }
+
+        /// <summary>
+        /// Sets the color array for the current primitive type
         /// </summary>
         /// <param name="colors">Array of colors (r, g, b, a for each vertex)</param>
         public void SetColors(float[] colors)
         {
-            ColorArray = colors;
+            var currentVbo = GetCurrentVbo();
+            currentVbo.ColorArray = colors;
             
-            GL.BindBuffer(BufferTarget.ArrayBuffer, ColorVBO);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, currentVbo.ColorVBO);
+            GL.BufferData(BufferTarget.ArrayBuffer, colors.Length * sizeof(float), colors, BufferUsageHint.StaticDraw);
+        }
+
+        /// <summary>
+        /// Sets the color array for a specific primitive type
+        /// </summary>
+        /// <param name="colors">Array of colors (r, g, b, a for each vertex)</param>
+        /// <param name="primitiveType">The primitive type to set colors for</param>
+        public void SetColors(float[] colors, PrimitiveType primitiveType)
+        {
+            var vbo = GetVbo(primitiveType);
+            vbo.ColorArray = colors;
+            
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo.ColorVBO);
             GL.BufferData(BufferTarget.ArrayBuffer, colors.Length * sizeof(float), colors, BufferUsageHint.StaticDraw);
         }
 
@@ -345,35 +472,61 @@ using OpenTK.Mathematics;
         }
 
         /// <summary>
-        /// Renders the VBO using the current shader
+        /// Renders the VBO using the current shader for the current primitive type
         /// </summary>
         public void Render()
         {
-            if (VertexCount == 0) return;
+            var currentVbo = GetCurrentVbo();
+            if (currentVbo.VertexCount == 0) return;
 
-            GL.BindVertexArray(VAO);
+            GL.BindVertexArray(currentVbo.VAO);
 
-            OpenTK.Graphics.OpenGL4.PrimitiveType glPrimitiveType = PrimitiveType switch
+            OpenTK.Graphics.OpenGL4.PrimitiveType glPrimitiveType = CurrentPrimitiveType switch
             {
                 PrimitiveType.Triangles => OpenTK.Graphics.OpenGL4.PrimitiveType.Triangles,
                 PrimitiveType.Lines => OpenTK.Graphics.OpenGL4.PrimitiveType.Lines,
+                PrimitiveType.LineStrip => OpenTK.Graphics.OpenGL4.PrimitiveType.LineStrip,
                 _ => OpenTK.Graphics.OpenGL4.PrimitiveType.Triangles
             };
 
-            GL.DrawArrays(glPrimitiveType, 0, VertexCount);
+            GL.DrawArrays(glPrimitiveType, 0, currentVbo.VertexCount);
             GL.BindVertexArray(0);
         }
 
         /// <summary>
-        /// Updates vertex data dynamically
+        /// Renders a specific primitive type VBO
+        /// </summary>
+        /// <param name="primitiveType">The primitive type to render</param>
+        public void Render(PrimitiveType primitiveType)
+        {
+            var vbo = GetVbo(primitiveType);
+            if (vbo.VertexCount == 0) return;
+
+            GL.BindVertexArray(vbo.VAO);
+
+            OpenTK.Graphics.OpenGL4.PrimitiveType glPrimitiveType = primitiveType switch
+            {
+                PrimitiveType.Triangles => OpenTK.Graphics.OpenGL4.PrimitiveType.Triangles,
+                PrimitiveType.Lines => OpenTK.Graphics.OpenGL4.PrimitiveType.Lines,
+                PrimitiveType.LineStrip => OpenTK.Graphics.OpenGL4.PrimitiveType.LineStrip,
+                _ => OpenTK.Graphics.OpenGL4.PrimitiveType.Triangles
+            };
+
+            GL.DrawArrays(glPrimitiveType, 0, vbo.VertexCount);
+            GL.BindVertexArray(0);
+        }
+
+        /// <summary>
+        /// Updates vertex data dynamically for the current primitive type
         /// </summary>
         /// <param name="vertices">New vertex data</param>
         public void UpdateVertices(float[] vertices)
         {
-            VertexArray = vertices;
-            VertexCount = vertices.Length / 3;
+            var currentVbo = GetCurrentVbo();
+            currentVbo.VertexArray = vertices;
+            currentVbo.VertexCount = vertices.Length / 3;
             
-            GL.BindBuffer(BufferTarget.ArrayBuffer, VertexVBO);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, currentVbo.VertexVBO);
             GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, vertices.Length * sizeof(float), vertices);
         }
 
@@ -505,29 +658,63 @@ using OpenTK.Mathematics;
         }
 
         /// <summary>
-        /// Clears all vertex data arrays
+        /// Clears all vertex data arrays for all primitive types
         /// </summary>
         public void ClearAllData()
         {
-            VertexArray = null;
-            ColorArray = null;
-            NormalsArray = null;
-            TextureUVArray = null;
-            VertexCount = 0;
-
-            // Clear GPU buffers by setting them to empty
-            if (VAO != 0)
+            // Clear data for all VBOs
+            foreach (var vbo in _vbosByType.Values)
             {
-                GL.BindBuffer(BufferTarget.ArrayBuffer, VertexVBO);
+                vbo.VertexArray = null;
+                vbo.ColorArray = null;
+                vbo.NormalsArray = null;
+                vbo.TextureUVArray = null;
+                vbo.VertexCount = 0;
+
+                // Clear GPU buffers by setting them to empty
+                if (vbo.VAO != 0)
+                {
+                    GL.BindBuffer(BufferTarget.ArrayBuffer, vbo.VertexVBO);
+                    GL.BufferData(BufferTarget.ArrayBuffer, 0, IntPtr.Zero, BufferUsageHint.StaticDraw);
+                    
+                    GL.BindBuffer(BufferTarget.ArrayBuffer, vbo.ColorVBO);
+                    GL.BufferData(BufferTarget.ArrayBuffer, 0, IntPtr.Zero, BufferUsageHint.StaticDraw);
+                    
+                    GL.BindBuffer(BufferTarget.ArrayBuffer, vbo.NormalsVBO);
+                    GL.BufferData(BufferTarget.ArrayBuffer, 0, IntPtr.Zero, BufferUsageHint.StaticDraw);
+                    
+                    GL.BindBuffer(BufferTarget.ArrayBuffer, vbo.TextureVBO);
+                    GL.BufferData(BufferTarget.ArrayBuffer, 0, IntPtr.Zero, BufferUsageHint.StaticDraw);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Clears vertex data for a specific primitive type
+        /// </summary>
+        /// <param name="primitiveType">The primitive type to clear data for</param>
+        public void ClearData(PrimitiveType primitiveType)
+        {
+            var vbo = GetVbo(primitiveType);
+            vbo.VertexArray = null;
+            vbo.ColorArray = null;
+            vbo.NormalsArray = null;
+            vbo.TextureUVArray = null;
+            vbo.VertexCount = 0;
+
+            // Clear GPU buffers
+            if (vbo.VAO != 0)
+            {
+                GL.BindBuffer(BufferTarget.ArrayBuffer, vbo.VertexVBO);
                 GL.BufferData(BufferTarget.ArrayBuffer, 0, IntPtr.Zero, BufferUsageHint.StaticDraw);
                 
-                GL.BindBuffer(BufferTarget.ArrayBuffer, ColorVBO);
+                GL.BindBuffer(BufferTarget.ArrayBuffer, vbo.ColorVBO);
                 GL.BufferData(BufferTarget.ArrayBuffer, 0, IntPtr.Zero, BufferUsageHint.StaticDraw);
                 
-                GL.BindBuffer(BufferTarget.ArrayBuffer, NormalsVBO);
+                GL.BindBuffer(BufferTarget.ArrayBuffer, vbo.NormalsVBO);
                 GL.BufferData(BufferTarget.ArrayBuffer, 0, IntPtr.Zero, BufferUsageHint.StaticDraw);
                 
-                GL.BindBuffer(BufferTarget.ArrayBuffer, TextureVBO);
+                GL.BindBuffer(BufferTarget.ArrayBuffer, vbo.TextureVBO);
                 GL.BufferData(BufferTarget.ArrayBuffer, 0, IntPtr.Zero, BufferUsageHint.StaticDraw);
             }
         }
@@ -544,26 +731,28 @@ using OpenTK.Mathematics;
             // Sort indices in descending order to avoid index shifting issues
             var sortedIndices = indicesToRemove.Distinct().OrderByDescending(x => x).ToArray();
 
-            // Remove from each array
-            if (VertexArray != null)
-                VertexArray = RemoveElementsFromArray(VertexArray, sortedIndices, 3);
+            // Remove from each array for the current VBO
+            var currentVbo = GetCurrentVbo();
+            
+            if (currentVbo.VertexArray != null)
+                currentVbo.VertexArray = RemoveElementsFromArray(currentVbo.VertexArray, sortedIndices, 3);
                 
-            if (ColorArray != null)
-                ColorArray = RemoveElementsFromArray(ColorArray, sortedIndices, 4);
+            if (currentVbo.ColorArray != null)
+                currentVbo.ColorArray = RemoveElementsFromArray(currentVbo.ColorArray, sortedIndices, 4);
                 
-            if (NormalsArray != null)
-                NormalsArray = RemoveElementsFromArray(NormalsArray, sortedIndices, 3);
+            if (currentVbo.NormalsArray != null)
+                currentVbo.NormalsArray = RemoveElementsFromArray(currentVbo.NormalsArray, sortedIndices, 3);
                 
-            if (TextureUVArray != null)
-                TextureUVArray = RemoveElementsFromArray(TextureUVArray, sortedIndices, 2);
+            if (currentVbo.TextureUVArray != null)
+                currentVbo.TextureUVArray = RemoveElementsFromArray(currentVbo.TextureUVArray, sortedIndices, 2);
 
             // Update vertex count and refresh GPU buffers
-            VertexCount = VertexArray?.Length / 3 ?? 0;
+            currentVbo.VertexCount = currentVbo.VertexArray?.Length / 3 ?? 0;
             
-            if (VertexArray != null) SetVertices(VertexArray);
-            if (ColorArray != null) SetColors(ColorArray);
-            if (NormalsArray != null) SetNormals(NormalsArray);
-            if (TextureUVArray != null) SetTextureUVs(TextureUVArray);
+            if (currentVbo.VertexArray != null) SetVertices(currentVbo.VertexArray);
+            if (currentVbo.ColorArray != null) SetColors(currentVbo.ColorArray);
+            if (currentVbo.NormalsArray != null) SetNormals(currentVbo.NormalsArray);
+            if (currentVbo.TextureUVArray != null) SetTextureUVs(currentVbo.TextureUVArray);
             
             SetupVertexAttributes();
         }
@@ -601,9 +790,10 @@ using OpenTK.Mathematics;
         /// <returns>String with VBO information</returns>
         public override string ToString()
         {
-            return $"VBO[{Index}] - Type: {PrimitiveType}, Vertices: {VertexCount}, " +
+            return $"VBO[{Index}] - CurrentType: {CurrentPrimitiveType}, Vertices: {VertexCount}, " +
                    $"HasColors: {ColorArray != null}, HasNormals: {NormalsArray != null}, " +
-                   $"HasUVs: {TextureUVArray != null}";
+                   $"HasUVs: {TextureUVArray != null}, " +
+                   $"TriangleVerts: {TrianglesVbo.VertexCount}, LineVerts: {LinesVbo.VertexCount}, LineStripVerts: {LineStripVbo.VertexCount}";
         }
 
         /// <summary>
@@ -639,6 +829,12 @@ using OpenTK.Mathematics;
     public static class VboManager
     {
         private static readonly Dictionary<int, VboContainer> _vbos = new();
+
+        public static VboContainer? CurrentVBO;
+        public static PrimitiveType primitive=PrimitiveType.Lines;
+
+
+
 
         /// <summary>
         /// Creates a new VBO container and adds it to the manager
