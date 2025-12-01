@@ -5,7 +5,7 @@ public class Letters
 
  // Las letras LFF se dibujan como una LWPOLYLINE, con trazos y bulges.
 public int Code ;         
-public float[][]               FontGlyps ;          // las lineas que dibujan uns letra
-public float[][]              FontBulges ;          // los semicirculos que forman la letra
+public double[][]               FontGlyps ;          // las lineas que dibujan uns letra
+public double[][]              FontBulges ;          // los semicirculos que forman la letra
 
 }

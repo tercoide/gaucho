@@ -349,85 +349,85 @@ using OpenTK.Mathematics;
         public int TextureVBO => GetCurrentVbo().TextureVBO;
         public int VertexCount => GetCurrentVbo().VertexCount;
 
-        /// <summary>
-        /// Sets the vertex positions array for the current primitive type
-        /// </summary>
-        /// <param name="vertices">Array of vertex positions (x, y, z for each vertex)</param>
-        public void SetVertices(float[] vertices)
-        {
-            var currentVbo = GetCurrentVbo();
-            currentVbo.VertexArray = vertices;
-            currentVbo.VertexCount = vertices.Length / 3; // Assuming 3 components per vertex (x, y, z)
+        // /// <summary>
+        // /// Sets the vertex positions array for the current primitive type
+        // /// </summary>
+        // /// <param name="vertices">Array of vertex positions (x, y, z for each vertex)</param>
+        // public void SetVertices(float[] vertices)
+        // {
+        //     var currentVbo = GetCurrentVbo();
+        //     currentVbo.VertexArray = vertices;
+        //     currentVbo.VertexCount = vertices.Length / 3; // Assuming 3 components per vertex (x, y, z)
             
-            GL.BindBuffer(BufferTarget.ArrayBuffer, currentVbo.VertexVBO);
-            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
-        }
+        //     GL.BindBuffer(BufferTarget.ArrayBuffer, currentVbo.VertexVBO);
+        //     GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
+        // }
 
-        /// <summary>
-        /// Sets the vertex positions array for a specific primitive type
-        /// </summary>
-        /// <param name="vertices">Array of vertex positions (x, y, z for each vertex)</param>
-        /// <param name="primitiveType">The primitive type to set vertices for</param>
-        public void SetVertices(float[] vertices, PrimitiveType primitiveType)
-        {
-            var vbo = GetVbo(primitiveType);
-            vbo.VertexArray = vertices;
-            vbo.VertexCount = vertices.Length / 3;
+        // /// <summary>
+        // /// Sets the vertex positions array for a specific primitive type
+        // /// </summary>
+        // /// <param name="vertices">Array of vertex positions (x, y, z for each vertex)</param>
+        // /// <param name="primitiveType">The primitive type to set vertices for</param>
+        // public void SetVertices(float[] vertices, PrimitiveType primitiveType)
+        // {
+        //     var vbo = GetVbo(primitiveType);
+        //     vbo.VertexArray = vertices;
+        //     vbo.VertexCount = vertices.Length / 3;
             
-            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo.VertexVBO);
-            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
-        }
+        //     GL.BindBuffer(BufferTarget.ArrayBuffer, vbo.VertexVBO);
+        //     GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
+        // }
 
-        /// <summary>
-        /// Sets the color array for the current primitive type
-        /// </summary>
-        /// <param name="colors">Array of colors (r, g, b, a for each vertex)</param>
-        public void SetColors(float[] colors)
-        {
-            var currentVbo = GetCurrentVbo();
-            currentVbo.ColorArray = colors;
+        // /// <summary>
+        // /// Sets the color array for the current primitive type
+        // /// </summary>
+        // /// <param name="colors">Array of colors (r, g, b, a for each vertex)</param>
+        // public void SetColors(float[] colors)
+        // {
+        //     var currentVbo = GetCurrentVbo();
+        //     currentVbo.ColorArray = colors;
             
-            GL.BindBuffer(BufferTarget.ArrayBuffer, currentVbo.ColorVBO);
-            GL.BufferData(BufferTarget.ArrayBuffer, colors.Length * sizeof(float), colors, BufferUsageHint.StaticDraw);
-        }
+        //     GL.BindBuffer(BufferTarget.ArrayBuffer, currentVbo.ColorVBO);
+        //     GL.BufferData(BufferTarget.ArrayBuffer, colors.Length * sizeof(float), colors, BufferUsageHint.StaticDraw);
+        // }
 
-        /// <summary>
-        /// Sets the color array for a specific primitive type
-        /// </summary>
-        /// <param name="colors">Array of colors (r, g, b, a for each vertex)</param>
-        /// <param name="primitiveType">The primitive type to set colors for</param>
-        public void SetColors(float[] colors, PrimitiveType primitiveType)
-        {
-            var vbo = GetVbo(primitiveType);
-            vbo.ColorArray = colors;
+        // /// <summary>
+        // /// Sets the color array for a specific primitive type
+        // /// </summary>
+        // /// <param name="colors">Array of colors (r, g, b, a for each vertex)</param>
+        // /// <param name="primitiveType">The primitive type to set colors for</param>
+        // public void SetColors(float[] colors, PrimitiveType primitiveType)
+        // {
+        //     var vbo = GetVbo(primitiveType);
+        //     vbo.ColorArray = colors;
             
-            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo.ColorVBO);
-            GL.BufferData(BufferTarget.ArrayBuffer, colors.Length * sizeof(float), colors, BufferUsageHint.StaticDraw);
-        }
+        //     GL.BindBuffer(BufferTarget.ArrayBuffer, vbo.ColorVBO);
+        //     GL.BufferData(BufferTarget.ArrayBuffer, colors.Length * sizeof(float), colors, BufferUsageHint.StaticDraw);
+        // }
 
-        /// <summary>
-        /// Sets the normals array
-        /// </summary>
-        /// <param name="normals">Array of normal vectors (nx, ny, nz for each vertex)</param>
-        public void SetNormals(float[] normals)
-        {
-            NormalsArray = normals;
+        // /// <summary>
+        // /// Sets the normals array
+        // /// </summary>
+        // /// <param name="normals">Array of normal vectors (nx, ny, nz for each vertex)</param>
+        // public void SetNormals(float[] normals)
+        // {
+        //     NormalsArray = normals;
             
-            GL.BindBuffer(BufferTarget.ArrayBuffer, NormalsVBO);
-            GL.BufferData(BufferTarget.ArrayBuffer, normals.Length * sizeof(float), normals, BufferUsageHint.StaticDraw);
-        }
+        //     GL.BindBuffer(BufferTarget.ArrayBuffer, NormalsVBO);
+        //     GL.BufferData(BufferTarget.ArrayBuffer, normals.Length * sizeof(float), normals, BufferUsageHint.StaticDraw);
+        // }
 
-        /// <summary>
-        /// Sets the texture UV coordinates array
-        /// </summary>
-        /// <param name="uvs">Array of UV coordinates (u, v for each vertex)</param>
-        public void SetTextureUVs(float[] uvs)
-        {
-            TextureUVArray = uvs;
+        // /// <summary>
+        // /// Sets the texture UV coordinates array
+        // /// </summary>
+        // /// <param name="uvs">Array of UV coordinates (u, v for each vertex)</param>
+        // public void SetTextureUVs(float[] uvs)
+        // {
+        //     TextureUVArray = uvs;
             
-            GL.BindBuffer(BufferTarget.ArrayBuffer, TextureVBO);
-            GL.BufferData(BufferTarget.ArrayBuffer, uvs.Length * sizeof(float), uvs, BufferUsageHint.StaticDraw);
-        }
+        //     GL.BindBuffer(BufferTarget.ArrayBuffer, TextureVBO);
+        //     GL.BufferData(BufferTarget.ArrayBuffer, uvs.Length * sizeof(float), uvs, BufferUsageHint.StaticDraw);
+        // }
 
         /// <summary>
         /// Configures the vertex attributes and prepares the VAO for rendering
@@ -552,7 +552,7 @@ using OpenTK.Mathematics;
 
             // Combine existing and new vertex data
             var combinedVertices = CombineArrays(VertexArray, newVertices);
-            SetVertices(combinedVertices);
+            // SetVertices(combinedVertices);
         }
 
         /// <summary>
@@ -565,7 +565,7 @@ using OpenTK.Mathematics;
 
             // Combine existing and new color data
             var combinedColors = CombineArrays(ColorArray, newColors);
-            SetColors(combinedColors);
+            // SetColors(combinedColors);
         }
 
         /// <summary>
@@ -578,7 +578,7 @@ using OpenTK.Mathematics;
 
             // Combine existing and new normal data
             var combinedNormals = CombineArrays(NormalsArray, newNormals);
-            SetNormals(combinedNormals);
+            // SetNormals(combinedNormals);
         }
 
         /// <summary>
@@ -591,7 +591,7 @@ using OpenTK.Mathematics;
 
             // Combine existing and new UV data
             var combinedUVs = CombineArrays(TextureUVArray, newUVs);
-            SetTextureUVs(combinedUVs);
+            // SetTextureUVs(combinedUVs);
         }
 
         /// <summary>
@@ -601,7 +601,7 @@ using OpenTK.Mathematics;
         /// <param name="colors">New colors to append (optional)</param>
         /// <param name="normals">New normals to append (optional)</param>
         /// <param name="uvs">New UV coordinates to append (optional)</param>
-        public void AppendVertexData(float[] vertices, float[]? colors = null, float[]? normals = null, float[]? uvs = null)
+        public void AppendVertexData(float[] vertices, float[]? colors = null, float[]? normals = null, float[]? uvs = null, bool SetToGPU=false)
         {
             if (vertices == null || vertices.Length == 0) return;
 
@@ -618,7 +618,7 @@ using OpenTK.Mathematics;
                 AppendTextureUVs(uvs);
 
             // Re-setup vertex attributes after appending all data
-            SetupVertexAttributes();
+            if (SetToGPU) SetupVertexAttributes();
         }
 
         /// <summary>
@@ -749,10 +749,10 @@ using OpenTK.Mathematics;
             // Update vertex count and refresh GPU buffers
             currentVbo.VertexCount = currentVbo.VertexArray?.Length / 3 ?? 0;
             
-            if (currentVbo.VertexArray != null) SetVertices(currentVbo.VertexArray);
-            if (currentVbo.ColorArray != null) SetColors(currentVbo.ColorArray);
-            if (currentVbo.NormalsArray != null) SetNormals(currentVbo.NormalsArray);
-            if (currentVbo.TextureUVArray != null) SetTextureUVs(currentVbo.TextureUVArray);
+            // if (currentVbo.VertexArray != null) SetVertices(currentVbo.VertexArray);
+            // if (currentVbo.ColorArray != null) SetColors(currentVbo.ColorArray);
+            // if (currentVbo.NormalsArray != null) SetNormals(currentVbo.NormalsArray);
+            // if (currentVbo.TextureUVArray != null) SetTextureUVs(currentVbo.TextureUVArray);
             
             SetupVertexAttributes();
         }

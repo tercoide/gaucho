@@ -57,7 +57,7 @@ public static string[] FontsNameList ;          // lista de fuentes LFF disponib
 
 public static int[] FontsCAllLists ;          // listas de listas de caracteres
 
-public static  Dictionary<string, LFFFonts> glFont ;         
+public static  Dictionary<int, LFFFonts> glFont ;         
 public  struct TextureSt
 {
     public static string FileName ;
@@ -255,7 +255,7 @@ public const int SHORT = 0x00001402;
 public const int UNSIGNED_SHORT = 0x00001403;
 public const int INT = 0x00001404;
 public const int UNSIGNED_INT = 0x00001405;
-public const int FLOAT = 0x00001406;
+public const int FLOAT  = 0x00001406;
 public const int STACK_OVERFLOW = 0x00000503;
 public const int STACK_UNDERFLOW = 0x00000504;
 public const int CLEAR = 0x00001500;
@@ -3000,7 +3000,7 @@ public static void Rectangle2D(double x1, double y1, double w, double h, int col
         Vertex2D(x1 + w, y1 + h, c4);
         Vertex2D(x1, y1 + h, c3);
 
-        GL.end;
+        
 
     }
 
@@ -3036,7 +3036,7 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
         Vertex2D(x1, y1 + side, ColorRigth);
         Vertex2D(x1, y1 - side, ColorRigth);
 
-        GL.end;
+        
 
     }
 
@@ -3064,10 +3064,10 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
     g = (Gb.Shr(colour, 8) & 255) / 256;
     b = (colour & 255) / 256;
 
-    if ( fVertices.Length < 2 ) return;
+    if ( fVertices.Length  < 2 ) return;
 
     
-        for ( i = 0; i < vertices.Length; i + 2)
+        for ( i = 0; i < vertices.Length ; i + 2)
         {
             VBO_vertex[VBO_Id].Add(vertices[i]); //X
             VBO_vertex[VBO_Id].Add(vertices[i + 1]); //Y
@@ -3108,13 +3108,13 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 
     GL.Begin(GL.POLYGON);
 
-    for ( i = 0; i <= vertices.Max; i + 2)
+    for ( i = 0; i <= vertices.Length  -1; i + 2)
     {
         glColorRGB(colour);
         GL.Vertex2f(vertices[i], vertices[i + 1]);
 
     }
-    GL.end;
+    
 
 }
 
@@ -3129,13 +3129,13 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 
     GL.Begin(GL.LINE_LOOP);
 
-    for ( i = 0; i <= vertices.Max; i + 2)
+    for ( i = 0; i <= vertices.Length  -1; i + 2)
     {
         glColorRGB(colour);
         GL.Vertex2f(vertices[i], vertices[i + 1]);
 
     }
-    GL.end;
+    
 
 }
  // Dibuja un arco, suponiendo que el centro esta en 0,0 (despues de un Translate())
@@ -3222,11 +3222,11 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 
     if ( dashes.count > 0 )
     {
-        Vertices = puntos.DashedLineStrip(fvertices, dashes, 1);
+        Vertices = Puntos.DashedLineStrip(fvertices, dashes, 1);
 
         GL.Begin(GL.LINES);
         GL.Color3f(r, g, b);
-        for ( i = 0; i <= vertices.Max; i + 2)
+        for ( i = 0; i <= vertices.Length  -1; i + 2)
         {
              //    glColorRGB(colour)
             GL.Vertex2f(vertices[i], vertices[i + 1]);
@@ -3237,7 +3237,7 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
         Vertices = fvertices;
         GL.Begin(GL.LINE_STRIP);
         GL.Color3f(r, g, b);
-        for ( i = 0; i <= vertices.Max; i + 2)
+        for ( i = 0; i <= vertices.Length  -1; i + 2)
         {
              //glColorRGB(colour)
             GL.Vertex2f(vertices[i], vertices[i + 1]);
@@ -3265,13 +3265,13 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 
     GL.Begin(GL.TRIANGLES);
 
-    for ( i = 0; i <= vertices.Max; i + 2)
+    for ( i = 0; i <= vertices.Length  -1; i + 2)
     {
         glColorRGB(colour);
         GL.Vertex3f(vertices[i], vertices[i + 1], zLevel);
 
     }
-    GL.end;
+    
 
 }
 
@@ -3284,14 +3284,14 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 
     GL.Begin(GL.TRIANGLES);
 
-    for ( i = 0; i <= faces.max; i + 3)
+    for ( i = 0; i <= faces.Length  -1; i + 3)
     {
 
         glColorRGB(colour);
         GL.Vertex3f(vertices3d[faces[i]], vertices3d[faces[i + 1]], vertices3d[faces[i + 2]]);
 
     }
-    GL.end;
+    
 
 }
 
@@ -3358,7 +3358,7 @@ public static void CIRCLE(double[] center, double radious, int colour= 0, bool F
     r = (Gb.Shr(gbColor, 16) & 255) / 255;
     g = (Gb.Shr(gbColor, 8) & 255) / 255;
     b = (gbColor & 255) / 255;
-    GL.Color4f(r, g, b, a);
+    VboManager.CurrentVBO.AppendColors(new double [] { (double )r, (double )g, (double )b, (double )a });
 
 }
 
@@ -3477,36 +3477,36 @@ public static void CIRCLE(double[] center, double radious, int colour= 0, bool F
 
 // }
 
-//  public static void Vertex2D(double x2d, double y2d,  int colour = Colors.Red)
-//      //
-//      //
-//      //     //2020 el color va primero
-//      // //
-// {
-//     if ( colour )
-//     {
-//         glColorRGB(colour);
+ public static void Vertex2D(double x2d, double y2d,  int colour = Colors.Red)
+     //
+     //
+     //     //2020 el color va primero
+     // //
+{
+    
 
-//     }
+    
+        glColorRGB(colour);
 
-//     GL.Vertex2f(x2d, y2d);
-//      //
+    
 
-// }
+    VboManager.CurrentVBO.AppendVertices(new double [] { (double )x2d, (double )y2d , 0.0f});
+     //
 
-// public static void Vertex3D(Punto3d p,  int colour = Colors.Blue)
-//      //
-//      //
-//      //     //2020 el color va primero
-//      //
-// {
-//     glColorRGB(colour);
+}
 
-//     GL.Vertex3f(p.x, p.y, p.z);
-//      //
+public static void Vertex3D(Punto3d p,  int colour = Colors.Blue)
+     //
+     //
+     //     //2020 el color va primero
+     //
+{
+    glColorRGB(colour);
 
-// }
-//  //
+    VboManager.CurrentVBO.AppendVertices(new double [] { (double )p.x, (double )p.y, (double )p.z});
+     //
+
+}
 
 
 
@@ -3825,12 +3825,12 @@ public static string[] LoadFonts(string DirPath)
  //
  //   If Not LaFont Then Return 0
  //
- //   For i = 0 To LaFont.Letter.Max
+ //   For i = 0 To LaFont.Letter.Length  -1
  //     If LaFont.Letter[i].Code = UTFcode Then Return i
  //   Next
  //
  //   // si estamos aca es porque no lo encontramos, buscamos en unicode
- //   For i = 0 To UnicodeFont.Letter.Max
+ //   For i = 0 To UnicodeFont.Letter.Length  -1
  //     If UnicodeFont.Letter[i].Code = UTFcode Then Return -i
  //   Next
  //
@@ -3879,7 +3879,7 @@ public static string[] LoadFonts(string DirPath)
 
      //SelectFont("romant")
      // GL.Scalef(textH * FontScale, textH * FontScale, 1)
-    for ( i = 1; i <= UTFstring.Length; i++ ) // para cada letra
+    for ( i = 1; i <= UTFstring.Length ; i++ ) // para cada letra
     {
         UTFcode = String.Code(UTFstring, i); // obtengo el UTF code
 
@@ -3889,13 +3889,13 @@ public static string[] LoadFonts(string DirPath)
 
         } else {
              // DEPRE LetterIndex = GetCodeIndex(ActualFont, UTFcode)                     // obtengo el indice de la letra
-            if ( ActualFont.Letter.Exist(UTFcode) )
+            if ( ActualFont.Letter.ContainsKey(UTFcode) )
             {
                 TGlyps = ActualFont.Letter[UTFcode].FontGlyps;
                 TBulges = ActualFont.Letter[UTFcode].FontBulges;
 
             } // is unicode
-            else if ( UnicodeFont.Letter.Exist(UTFcode) )
+            else if ( UnicodeFont.Letter.ContainsKey(UTFcode) )
             {
                 TGlyps = UnicodeFont.Letter[UTFcode].FontGlyps;
                 TBulges = UnicodeFont.Letter[UTFcode].FontBulges;
@@ -3923,7 +3923,7 @@ public static string[] LoadFonts(string DirPath)
                          // // FIXME: arc problem
                          // Continue
                         ang1 = Ang(Glyps[(i2 + 1) * 2] - Glyps[i2 * 2], Glyps[(i2 + 1) * 2 + 1] - Glyps[i2 * 2 + 1]); // angulo del tramo
-                        Lt = puntos.distancia(Glyps[i2 * 2], Glyps[i2 * 2 + 1], Glyps[(i2 + 1) * 2], Glyps[(i2 + 1) * 2 + 1]);
+                        Lt = Puntos.distancia(Glyps[i2 * 2], Glyps[i2 * 2 + 1], Glyps[(i2 + 1) * 2], Glyps[(i2 + 1) * 2 + 1]);
                         if ( Lt == 0 ) continue;
                         mx = (Glyps[(i2 + 1) * 2] + Glyps[i2 * 2]) / 2; // punto medio del tramo
                         my = (Glyps[(i2 + 1) * 2 + 1] + Glyps[i2 * 2 + 1]) / 2;
@@ -3934,7 +3934,7 @@ public static string[] LoadFonts(string DirPath)
 
                          // aqui podria usar una rutina de arco entre 3 puntos
 
-                        fArcParams = puntos.Arc3Point(Glyps[i2 * 2], Glyps[i2 * 2 + 1], bx, by, Glyps[(i2 + 1) * 2], Glyps[(i2 + 1) * 2 + 1]);
+                        fArcParams = Puntos.Arc3Point(Glyps[i2 * 2], Glyps[i2 * 2 + 1], bx, by, Glyps[(i2 + 1) * 2], Glyps[(i2 + 1) * 2 + 1]);
 
                         flxArc = ArcPoly(fArcParams[0] + Xadvance, fArcParams[1], fArcParams[2], fArcParams[3], fArcParams[4], Math.PI / 16);
 
@@ -3949,7 +3949,7 @@ public static string[] LoadFonts(string DirPath)
                     }
 
                 }
-                for ( iii = 0; iii <= Glyps.Max; iii + 2) // calculo cuanto tiene que avanzar el puntero
+                for ( iii = 0; iii <= Glyps.Length  -1; iii + 2) // calculo cuanto tiene que avanzar el puntero
                 {
                     if ( Glyps[iii] > xMax ) xMax = Glyps[iii];
                 }
@@ -3964,18 +3964,18 @@ public static string[] LoadFonts(string DirPath)
         }
     }
 
-    puntos.Scale(flxAnswer, textH * FontScale * fScaleX, textH * FontScale);
+    Puntos.Scale(flxAnswer, textH * FontScale * fScaleX, textH * FontScale);
 
     if ( sItalicAngle != 0 )
     {
 
-        for ( iii = 0; iii <= flxAnswer.Max - 1; iii + 2)
+        for ( iii = 0; iii <= flxAnswer.Length  -1 - 1; iii + 2)
         {
             flxAnswer[iii] += flxAnswer[iii + 1] * Sin(Rad(sItalicAngle));
         }
 
     }
-    if ( sRotationRad != 0 ) puntos.Rotate(flxAnswer, sRotationRad);
+    if ( sRotationRad != 0 ) Puntos.Rotate(flxAnswer, sRotationRad);
     return flxAnswer;
 
 }
@@ -3998,7 +3998,7 @@ public static bool DrawText2(string UTFstring, double posX, double posY, double 
     if ( italic ) sItalicAngle = 20;
 
     flxText = DrawTextPoly(UTFstring, textH, angle, sItalicAngle);
-    tRect = puntos.Limits(flxText);
+    tRect = Puntos.Limits(flxText);
 
      // veo si tengo que comprimir en un ractangulo
     if ( (rectH > 0) & (rectW > 0) )
@@ -4007,7 +4007,7 @@ public static bool DrawText2(string UTFstring, double posX, double posY, double 
         factorX = rectW / (tRect[2] - tRect[0]);
         factorY = rectH / (tRect[3] - tRect[1]);
 
-        puntos.Scale(flxText, factorX, factorY);
+        Puntos.Scale(flxText, factorX, factorY);
 
     } else {
 
@@ -4021,7 +4021,7 @@ public static bool DrawText2(string UTFstring, double posX, double posY, double 
     if ( alignVert == 1 ) tY = -rectH / 2;
     if ( alignVert == 2 ) tY = -rectH;
 
-    puntos.Translate(flxText, tx, ty);
+    Puntos.Translate(flxText, tx, ty);
 
     GL.MatrixMode(GL.PROJECTION);
     GL.PushMatrix;
@@ -4061,7 +4061,7 @@ public static bool DrawText3(string UTFstring, double posX, double posY, double 
     if ( italic ) sItalicAngle = 20;
 
     flxText = DrawTextPoly(UTFstring, textH, angle, sItalicAngle);
-    tRect = puntos.Limits(flxText);
+    tRect = Puntos.Limits(flxText);
 
      // veo si tengo que comprimir en un ractangulo
     if ( (rectH > 0) & (rectW > 0) )
@@ -4070,7 +4070,7 @@ public static bool DrawText3(string UTFstring, double posX, double posY, double 
         factorX = rectW / (tRect[2] - tRect[0]);
         factorY = rectH / (tRect[3] - tRect[1]);
 
-        puntos.Scale(flxText, factorX, factorY);
+        Puntos.Scale(flxText, factorX, factorY);
 
     } else {
 
@@ -4084,7 +4084,7 @@ public static bool DrawText3(string UTFstring, double posX, double posY, double 
     if ( alignVert == 1 ) tY = -rectH / 2;
     if ( alignVert == 2 ) tY = -rectH;
 
-    puntos.Translate(flxText, tx, ty);
+    Puntos.Translate(flxText, tx, ty);
 
      // GL.MatrixMode(GL.PROJECTION)
      // GL.PushMatrix
@@ -4115,7 +4115,7 @@ public static bool DrawText3(string UTFstring, double posX, double posY, double 
      double[] tRect ;         
 
     flxText = DrawTextPoly(UTFstring, textH, sRotationRad, sItalicAngle);
-    tRect = puntos.Limits(flxText);
+    tRect = Puntos.Limits(flxText);
      //tRect[1] *= textH * FontScale * 1.2
 
     return tRect;
@@ -4192,7 +4192,7 @@ public static void TexturedTriangle2D(double x1, double y1, double x2, double y2
 
     GL.Vertex2f(x3, y3);
 
-    GL.End;
+    
 
 }
 
@@ -4284,14 +4284,14 @@ public static void GLQuadColor4F(Punto3d p1, Punto3d p2, Punto3d p3, Punto3d p4,
     Vertex3D(p1, c1);
     Vertex3D(p2, c2);
     Vertex3D(p3, c3);
-    GL.End;
+    
 
     GL.begin(GL.TRIANGLEs);
     Vertex3D(p1, c1);
     Vertex3D(p3, c3);
     Vertex3D(p4, c4);
 
-    GL.end;
+    
 
 }
 
