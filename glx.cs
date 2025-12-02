@@ -76,6 +76,8 @@ public  struct GLColorSt
     double Alpha ;
 
 }
+
+public static  float[] CurrentColor = new float[4] {1.0f, 1.0f, 1.0f, 1.0f} ;          // current color RGBA
  // A shader is a small C program that the GPU understands
  // minimal shaders we need to compile at the GPU
 
@@ -3200,20 +3202,21 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
     double g ;         
     double b ;         
 
-    r = (Shr(colour, 16) & 255) / 256;
-    g = (Shr(colour, 8) & 255) / 256;
-    b = (colour & 255) / 256;
+    r = (Gb.Shr(colour, 16) & 255) / 256;
+    g = (Gb.Shr(colour, 8) & 255) / 256;
+    b = (Gb.Shr(colour, 0) & 255) / 256;
 
-    if ( fvertices.Count < 2 ) return;
+    if ( fVertices.Length < 2 ) return;
     
 
-    if ( dashes.count > 0 )
+    if ( dashes.Length > 0 )
     {
-        Vertices = Puntos.DashedLineStrip(fvertices, dashes, 1);
+        vertices = Puntos.DashedLineStrip(fVertices, dashes, 1);
 
-        GL.Begin(GL.LINES);
-        GL.Color3f(r, g, b);
-        for ( i = 0; i <= vertices.Length  -1; i + 2)
+        VboManager.CurrentVBO.SetCurrentPrimitiveType(PrimitiveType.Lines);
+
+        Color3f(r, g, b);
+        for ( i = 0; i <= vertices.Length  -1; i += 2)
         {
              //    glColorRGB(colour)
             Vertex2D(vertices[i], vertices[i + 1]);
@@ -3221,10 +3224,10 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 
     } else {
 
-        Vertices = fvertices;
-        GL.Begin(GL.LINE_STRIP);
-        GL.Color3f(r, g, b);
-        for ( i = 0; i <= vertices.Length  -1; i + 2)
+        vertices = fVertices;
+        VboManager.CurrentVBO.SetCurrentPrimitiveType(PrimitiveType.LineStrip);
+        Color3f(r, g, b);
+        for ( i = 0; i <= vertices.Length  -1; i += 2)
         {
              //glColorRGB(colour)
             Vertex2D(vertices[i], vertices[i + 1]);
@@ -3232,7 +3235,7 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 
     }
 
-    GL.End();
+    
 
 }
 
@@ -3336,16 +3339,19 @@ public static void CIRCLE(double[] center, double radious, int colour= 0, bool F
  public static void glColorRGB(int gbColor,  double alpha = 1.0)
      // set the color to GL
 {
-    double r ;         
-    double g ;         
-    double b ;         
-    double a ;         
+    float r ;         
+    float g ;         
+    float b ;         
+    float a ;         
 
-    a = alpha; // 1 - Colors.GetAlpha(gbColor) / 255
+    a = (float)alpha; // 1 - Colors.GetAlpha(gbColor) / 255
     r = (Gb.Shr(gbColor, 16) & 255) / 255;
     g = (Gb.Shr(gbColor, 8) & 255) / 255;
     b = (gbColor & 255) / 255;
-    VboManager.CurrentVBO.AppendColors(new double [] { (double )r, (double )g, (double )b, (double )a });
+    CurrentColor[0] = r;
+    CurrentColor[1] = g;
+    CurrentColor[2] = b;
+    CurrentColor[3] = a;
 
 }
 
@@ -3464,7 +3470,7 @@ public static void CIRCLE(double[] center, double radious, int colour= 0, bool F
 
 // }
 
- public static void Vertex2D(double x2d, double y2d,  int colour = Colors.Red)
+ public static void Vertex2D(double x2d, double y2d,  int colour = -1)
      //
      //
      //     //2020 el color va primero
@@ -3473,24 +3479,53 @@ public static void CIRCLE(double[] center, double radious, int colour= 0, bool F
     
 
     
-        glColorRGB(colour);
+if (colour != -1) 
+{
+            glColorRGB(colour);
+} else {
+     VboManager.CurrentVBO.AppendColors(CurrentColor);
 
-    
+}
 
     VboManager.CurrentVBO.AppendVertices(new double [] { (double )x2d, (double )y2d , 0.0f});
      //
 
 }
 
-public static void Vertex3D(Punto3d p,  int colour = Colors.Blue)
+public static void Vertex3D(Punto3d p,  int colour = -1)
      //
      //
      //     //2020 el color va primero
      //
 {
-    glColorRGB(colour);
+   if (colour != -1) 
+        {
+                glColorRGB(colour);
+        } else {
+            VboManager.CurrentVBO.AppendColors(CurrentColor);
+
+        }
 
     VboManager.CurrentVBO.AppendVertices(new double [] { (double )p.x, (double )p.y, (double )p.z});
+     //
+
+}
+
+public static void Vertex3F(double X, double Y, double Z,  int colour = -1)
+     //
+     //
+     //     //2020 el color va primero
+     //
+{
+   if (colour != -1) 
+        {
+                glColorRGB(colour);
+        } else {
+            VboManager.CurrentVBO.AppendColors(CurrentColor);
+
+        }
+
+    VboManager.CurrentVBO.AppendVertices(new double [] { (double )X, (double )Y, (double )Z});
      //
 
 }
@@ -3679,11 +3714,11 @@ public static string[] LoadFonts(string DirPath)
      // C0041
      // 2.000000,9.0000,4.0000,10.0000
 
-    string sFilename ;         
+    // string sFilename ;         
     File fFile ;         
     string sData ;         
-    string sCoord ;         
-    string aVert ;         
+    // string sCoord ;         
+    // string aVert ;         
     string sCode ;         
     string[] sPuntos ;         
      string[] Lista ;         
@@ -3698,26 +3733,26 @@ public static string[] LoadFonts(string DirPath)
     foreach ( var sFilename in Gb.DirFullPath(DirPath, "*.lff"))
     {
 
-         LFFFonts fntNuevas ;         
+         LFFFonts fntNuevas = new LFFFonts();         
 
         fntNuevas.FileName = sFilename;
         fntNuevas.WordSpacing = 6.75;
         fntNuevas.LetterSpacing = 1; //.25
         fntNuevas.LineSpacingFactor = 1;
-        fntNuevas.Letter = new Dictionary<string, string>();
+        fntNuevas.Letter = new Dictionary<int, Letters>();
         var ffile = File.Open( sFilename,FileMode.Open);
         
-        while ( ! ffile.EOF )
+        while ( ! ffile.eof )
         {
             ffile.Read( sData) ;
              //Console.WriteLine( sData);
             if ( Gb.Left(sData, 1) == "[" ) // nueva letra
             {
-                var Letra = new Letters();
-                sCode = Replace(sData, "#", "");
-                sCode = Replace(sCode, "[[", "[");
-                sCode = Mid(sCode, 2, 4);
-                letra.Code = Val("0x0000" + sCode); // [0021]!
+                var letra = new Letters();
+                sCode = Gb.Replace(sData, "#", "");
+                sCode = Gb.Replace(sCode, "[[", "[");
+                sCode = Gb.Mid(sCode, 2, 4);
+                letra.Code = Gb.Val("0x0000" + sCode); // [0021]!
                 letra.FontGlyps = new double[][];
                 letra.FontBulges = new double[][];
 
@@ -3848,7 +3883,7 @@ public static string[] LoadFonts(string DirPath)
     double Ang =0;         
     double m1 =0;         
     double m2 =0;         
-    double b =0;         
+    double B =0;         
     double bx = 0 ;         
     double by = 0 ;         
     double mx =0;         
@@ -3860,15 +3895,16 @@ public static string[] LoadFonts(string DirPath)
     double dX =0;          // donde tengo el cursor
     double dY =0;         
     double alpha =0;         
-     double[] flxArc ;         
-     double[] flxGlyps ;         
-     double[] flxAnswer ;         
+     double[] flxArc    = new double[0];         
+     double[] flxGlyps = new double[0];         
+     double[] flxAnswer = new double[0];    
+
 
      //SelectFont("romant")
      // GL.Scalef(textH * FontScale, textH * FontScale, 1)
     for ( i = 1; i <= UTFstring.Length ; i++ ) // para cada letra
     {
-        UTFcode = String.Code(UTFstring, i); // obtengo el UTF code
+        UTFcode = Gb.GetUnicodeCodePoint(UTFstring, i); // obtengo el UTF code
 
         if ( UTFcode == 32 ) // es un espacio
         {
@@ -3909,7 +3945,7 @@ public static string[] LoadFonts(string DirPath)
                     {
                          // // FIXME: arc problem
                          // Continue
-                        ang1 = Ang(Glyps[(i2 + 1) * 2] - Glyps[i2 * 2], Glyps[(i2 + 1) * 2 + 1] - Glyps[i2 * 2 + 1]); // angulo del tramo
+                        ang1 = Gb.Ang(Glyps[(i2 + 1) * 2 + 1] - Glyps[i2 * 2 + 1], Glyps[(i2 + 1) * 2] - Glyps[i2 * 2]); // angulo del tramo
                         Lt = Puntos.distancia(Glyps[i2 * 2], Glyps[i2 * 2 + 1], Glyps[(i2 + 1) * 2], Glyps[(i2 + 1) * 2 + 1]);
                         if ( Lt == 0 ) continue;
                         mx = (Glyps[(i2 + 1) * 2] + Glyps[i2 * 2]) / 2; // punto medio del tramo
@@ -3925,14 +3961,14 @@ public static string[] LoadFonts(string DirPath)
 
                         flxArc = ArcPoly(fArcParams[0] + Xadvance, fArcParams[1], fArcParams[2], fArcParams[3], fArcParams[4], Math.PI / 16);
 
-                        flxAnswer.Insert(flxArc);
+                        flxAnswer = Gb.AppendArray(flxAnswer, flxArc);
 
-                        fArcParams.Clear;
-                        flxArc.Clear;
+                        Array.Clear(fArcParams);
+                        Array.Clear(flxArc);
 
                     } else { // dibujo la linea normalmente
 
-                        flxAnswer.Insert([Glyps[i2 * 2] + Xadvance, Glyps[i2 * 2 + 1], Glyps[(i2 + 1) * 2] + Xadvance, Glyps[(i2 + 1) * 2 + 1]]);
+                        flxAnswer = Gb.AppendArray(flxAnswer, new double[] { Glyps[i2 * 2] + Xadvance, Glyps[i2 * 2 + 1], Glyps[(i2 + 1) * 2] + Xadvance, Glyps[(i2 + 1) * 2 + 1] });
                     }
 
                 }

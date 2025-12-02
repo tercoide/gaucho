@@ -73,12 +73,21 @@ namespace Gaucho
             }
         }
 
+        public static double Ang(double X , double Y)
+        {
+            double result = Math.Atan2(Y, X);
+           
+                return result;
+           
+        }
+
+
         /// <summary>
         /// Returns the absolute value of an integer
         /// </summary>
         /// <param name="i">The integer value</param>
         /// <returns>The absolute value</returns>
-        public static int Abs(int i)
+        public static double Abs(double i)
         {
             return Math.Abs(i);
         }
@@ -652,6 +661,136 @@ namespace Gaucho
             if (idx == -1) return fileName;
             // if '.' is the first character, this returns an empty string (matches VB behavior)
             return fileName.Substring(0, idx);
+        }
+
+        #endregion
+
+        #region Character/Unicode Functions
+
+        /// <summary>
+        /// VB.NET-like Asc function - Returns the UTF-16 code of a character in a string
+        /// </summary>
+        /// <param name="str">The source string</param>
+        /// <param name="position">The 1-based position of the character (default: 1)</param>
+        /// <returns>The UTF-16 code of the character</returns>
+        /// <exception cref="ArgumentException">Thrown when the string is null or empty</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when position is invalid</exception>
+        public static int Asc(string str, int position = 1)
+        {
+            if (string.IsNullOrEmpty(str))
+                throw new ArgumentException("String cannot be null or empty", nameof(str));
+
+            if (position < 1 || position > str.Length)
+                throw new ArgumentOutOfRangeException(nameof(position), 
+                    $"Position must be between 1 and {str.Length}");
+
+            // Convert 1-based position to 0-based for C#
+            return (int)str[position - 1];
+        }
+
+        /// <summary>
+        /// Gets the UTF-16 code of a character
+        /// </summary>
+        /// <param name="character">The character to get the code for</param>
+        /// <returns>The UTF-16 code of the character</returns>
+        public static int Asc(char character)
+        {
+            return (int)character;
+        }
+
+        /// <summary>
+        /// VB.NET-like Chr function - Returns the character corresponding to a UTF-16 code
+        /// </summary>
+        /// <param name="code">The UTF-16 code</param>
+        /// <returns>The character corresponding to the code</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when code is not a valid UTF-16 value</exception>
+        public static char Chr(int code)
+        {
+            if (code < 0 || code > 65535)
+                throw new ArgumentOutOfRangeException(nameof(code), 
+                    "Code must be between 0 and 65535 for UTF-16");
+
+            return (char)code;
+        }
+
+        /// <summary>
+        /// Gets the full Unicode code point of a character in a string (supports surrogate pairs)
+        /// </summary>
+        /// <param name="str">The source string</param>
+        /// <param name="position">The 1-based position of the character (default: 1)</param>
+        /// <returns>The Unicode code point</returns>
+        /// <exception cref="ArgumentException">Thrown when the string is null or empty</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when position is invalid</exception>
+        public static int GetUnicodeCodePoint(string str, int position = 1)
+        {
+            if (string.IsNullOrEmpty(str))
+                throw new ArgumentException("String cannot be null or empty", nameof(str));
+
+            if (position < 1 || position > str.Length)
+                throw new ArgumentOutOfRangeException(nameof(position), 
+                    $"Position must be between 1 and {str.Length}");
+
+            // Convert 1-based position to 0-based for C#
+            int index = position - 1;
+
+            // Check if this is a high surrogate (start of a surrogate pair)
+            if (char.IsHighSurrogate(str[index]) && index + 1 < str.Length && char.IsLowSurrogate(str[index + 1]))
+            {
+                return char.ConvertToUtf32(str[index], str[index + 1]);
+            }
+
+            return (int)str[index];
+        }
+
+        #endregion
+
+        #region Array Helper Functions
+
+        /// <summary>
+        /// Appends one array to another, works with any type (generic/type-agnostic)
+        /// </summary>
+        /// <typeparam name="T">The type of elements in the arrays</typeparam>
+        /// <param name="original">The original array to append to (can be null)</param>
+        /// <param name="toAppend">The array to append to the original</param>
+        /// <returns>A new array containing all elements from both arrays</returns>
+        public static T[] AppendArray<T>(T[]? original, T[] toAppend)
+        {
+            if (toAppend == null)
+                throw new ArgumentNullException(nameof(toAppend), "Array to append cannot be null");
+
+            if (original == null || original.Length == 0)
+                return (T[])toAppend.Clone();
+
+            if (toAppend.Length == 0)
+                return (T[])original.Clone();
+
+            var result = new T[original.Length + toAppend.Length];
+            Array.Copy(original, 0, result, 0, original.Length);
+            Array.Copy(toAppend, 0, result, original.Length, toAppend.Length);
+            return result;
+        }
+
+        /// <summary>
+        /// Appends one double array to another, similar to array concatenation
+        /// </summary>
+        /// <param name="original">The original array to append to (can be null)</param>
+        /// <param name="toAppend">The array to append to the original</param>
+        /// <returns>A new array containing all elements from both arrays</returns>
+        public static double[] AppendDoubleArray(double[]? original, double[] toAppend)
+        {
+            if (toAppend == null)
+                throw new ArgumentNullException(nameof(toAppend), "Array to append cannot be null");
+
+            if (original == null || original.Length == 0)
+                return (double[])toAppend.Clone();
+
+            if (toAppend.Length == 0)
+                return (double[])original.Clone();
+
+            var result = new double[original.Length + toAppend.Length];
+            Array.Copy(original, 0, result, 0, original.Length);
+            Array.Copy(toAppend, 0, result, original.Length, toAppend.Length);
+            return result;
         }
 
         #endregion
