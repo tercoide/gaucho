@@ -220,7 +220,7 @@ using OpenTK.Mathematics;
         public int NormalsVBO { get; set; }
         public int TextureVBO { get; set; }
         public int VertexCount { get; set; }
-        public float[]? VertexArray { get; set; }
+        public double[]? VertexArray { get; set; }
         public float[]? ColorArray { get; set; }
         public float[]? NormalsArray { get; set; }
         public float[]? TextureUVArray { get; set; }
@@ -318,7 +318,7 @@ using OpenTK.Mathematics;
         }
 
         // Legacy properties for backward compatibility - they operate on the current VBO
-        public float[]? VertexArray 
+        public double[]? VertexArray 
         { 
             get => GetCurrentVbo().VertexArray; 
             set => GetCurrentVbo().VertexArray = value; 
@@ -520,14 +520,14 @@ using OpenTK.Mathematics;
         /// Updates vertex data dynamically for the current primitive type
         /// </summary>
         /// <param name="vertices">New vertex data</param>
-        public void UpdateVertices(float[] vertices)
+        public void UpdateVertices(double[] vertices)
         {
             var currentVbo = GetCurrentVbo();
             currentVbo.VertexArray = vertices;
             currentVbo.VertexCount = vertices.Length / 3;
             
             GL.BindBuffer(BufferTarget.ArrayBuffer, currentVbo.VertexVBO);
-            GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, vertices.Length * sizeof(float), vertices);
+            GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, vertices.Length * sizeof(double), vertices);
         }
 
         /// <summary>
@@ -546,12 +546,12 @@ using OpenTK.Mathematics;
         /// Appends vertex data to the existing vertex array
         /// </summary>
         /// <param name="newVertices">Array of new vertices to append (x, y, z for each vertex)</param>
-        public void AppendVertices(float[] newVertices)
+        public void AppendVertices(double[] newVertices)
         {
             if (newVertices == null || newVertices.Length == 0) return;
 
             // Combine existing and new vertex data
-            var combinedVertices = CombineArrays(VertexArray, newVertices);
+            var combinedVertices = CombineDoubleArrays(VertexArray, newVertices);
             // SetVertices(combinedVertices);
         }
 
@@ -601,7 +601,7 @@ using OpenTK.Mathematics;
         /// <param name="colors">New colors to append (optional)</param>
         /// <param name="normals">New normals to append (optional)</param>
         /// <param name="uvs">New UV coordinates to append (optional)</param>
-        public void AppendVertexData(float[] vertices, float[]? colors = null, float[]? normals = null, float[]? uvs = null, bool SetToGPU=false)
+        public void AppendVertexData(double[] vertices, float[]? colors = null, float[]? normals = null, float[]? uvs = null, bool SetToGPU=false)
         {
             if (vertices == null || vertices.Length == 0) return;
 
@@ -630,7 +630,7 @@ using OpenTK.Mathematics;
             if (other == null) return;
 
             AppendVertexData(
-                other.VertexArray ?? new float[0],
+                other.VertexArray ?? new double[0],
                 other.ColorArray,
                 other.NormalsArray,
                 other.TextureUVArray
@@ -652,6 +652,26 @@ using OpenTK.Mathematics;
                 return (float[])existing.Clone();
 
             var combined = new float[existing.Length + newData.Length];
+            Array.Copy(existing, 0, combined, 0, existing.Length);
+            Array.Copy(newData, 0, combined, existing.Length, newData.Length);
+            return combined;
+        }
+
+        /// <summary>
+        /// Helper method to combine two double arrays
+        /// </summary>
+        /// <param name="existing">Existing array (can be null)</param>
+        /// <param name="newData">New data to append</param>
+        /// <returns>Combined array</returns>
+        private static double[] CombineDoubleArrays(double[]? existing, double[] newData)
+        {
+            if (existing == null || existing.Length == 0)
+                return (double[])newData.Clone();
+
+            if (newData == null || newData.Length == 0)
+                return (double[])existing.Clone();
+
+            var combined = new double[existing.Length + newData.Length];
             Array.Copy(existing, 0, combined, 0, existing.Length);
             Array.Copy(newData, 0, combined, existing.Length, newData.Length);
             return combined;
@@ -767,6 +787,26 @@ using OpenTK.Mathematics;
         private static float[] RemoveElementsFromArray(float[] array, int[] vertexIndices, int componentsPerVertex)
         {
             var result = new List<float>(array);
+            
+            foreach (int vertexIndex in vertexIndices)
+            {
+                int startIndex = vertexIndex * componentsPerVertex;
+                if (startIndex >= 0 && startIndex < result.Count)
+                {
+                    // Remove all components for this vertex
+                    for (int i = 0; i < componentsPerVertex && startIndex < result.Count; i++)
+                    {
+                        result.RemoveAt(startIndex);
+                    }
+                }
+            }
+            
+            return result.ToArray();
+        }
+
+        private static double[] RemoveElementsFromArray(double[] array, int[] vertexIndices, int componentsPerVertex)
+        {
+            var result = new List<double>(array);
             
             foreach (int vertexIndex in vertexIndices)
             {

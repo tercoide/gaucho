@@ -167,7 +167,7 @@ public partial class fMain : ApplicationWindow
 
             shader?.Use();
             GL.BindVertexArray(vao);
-            GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
+            GL.DrawArrays(OpenTK.Graphics.OpenGL4.PrimitiveType.Triangles, 0, 3);
             GL.BindVertexArray(0);
             return true;
 
