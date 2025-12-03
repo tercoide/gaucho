@@ -53,20 +53,20 @@ public static double FontScale = 0.1125;                      // the general sca
 
 public static double zLevel = 0;
 
-public static string[] FontsNameList ;          // lista de fuentes LFF disponibles ya cargadas
+public static List<string> FontsNameList =[];          // lista de fuentes LFF disponibles ya cargadas
 
-public static int[] FontsCAllLists ;          // listas de listas de caracteres
+public static int[] FontsCAllLists =[];          // listas de listas de caracteres
 
-public static  Dictionary<string, LFFFonts> glFont ;         
+public static  Dictionary<string, LFFFonts> glFont =[];         
 public  struct TextureSt
 {
-    public static string FileName ;
-    public static string TextureName ;
+    public static string FileName ="";
+    public static string TextureName ="";
     public static int Id ;
-    public static Image hImage ;
+    public static Image? hImage ;
 }
 
-public static  TextureSt[] glTextures ;
+public static  TextureSt[] glTextures =[];
 public  struct GLColorSt
 {
 
@@ -81,40 +81,27 @@ public static  float[] CurrentColor = new float[4] {1.0f, 1.0f, 1.0f, 1.0f} ;   
  // A shader is a small C program that the GPU understands
  // minimal shaders we need to compile at the GPU
 
-public static string shaVertexShaderSource ;         
-public static string shaFragmentShaderSource ;         
-
-public static int shaVert1 ;          //  main vertex shader
-public static int shaFrag1 ;          //  main fragment shader
-public static int shaderProgram ;          //  el programa que corre en la GPU
 
 public static double escalaGL ;         
 
 public static int ViewportWIdth ;         
 public static int ViewportHeight ;         
 
-public static  int[] hText ;         
+public static  int[] hText =[];         
 
  // new OpenGL stuff
-public static  int[]                        GLDrwList ;          // all entities, each one
-public static  int[]                 GLDrwListEditing ;          // all entities on edit by some tool, including new ones
+public static  int[]                        GLDrwList =[];          // all entities, each one
+public static  int[]                 GLDrwListEditing =[];          // all entities on edit by some tool, including new ones
 
  // lineas de puntos
-public static  int[] LineStipples ;         
+public static  int[] LineStipples =[];         
 public static  int[] LineStippleScales ;         
 
  // modo inmediato o programado
 public static bool InmediateMode = true;
 public static bool InmediateModeRequired ;         
 public static bool VBO_present = false;    // si tenemos VBO que dibujar
-
- // VBO
-public static int VBO_Id ;          //Current VBO buffer
-public static  double[][] VBO_vertex ;         
-public static  double[][] VBO_colors ;         
-public static  double[][] VBO_normals ;         
-public static  double[][] VBO_pixels ;         
-public static  int[] VBO_Primitive ;         
+  
  //
  // Copyright (C) Ing Martin P Cristia
  //
@@ -1588,7 +1575,7 @@ public const int VERTEX_ARRAY_BINDING = 0x000085B5;
 // public static void glHint(int iTarget, int Mode)
 //     {
 
-// public static void glLineWIdth(double fWIdth)
+// public static void glLineWidth(double fWIdth)
 //     {
 
 // public static void glPointSize(double fSize)
@@ -3053,7 +3040,7 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 }
 
  // Dibuja un serie de lineas
- public static void DrawLines(double[] fVertices,  int colour = 0, double LineWIdth = 1, double[] dashes = null)
+ public static void DrawLines(double[] fVertices,  int colour = 0, double LineWidth = 1, double[] dashes = null)
     {
 
     int i ;         
@@ -3084,31 +3071,31 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 
 
 
- // Dibuja un seria de polilinea
- public static void PolygonFilled(double[] vertices,  int colour = 0, int FillColor = 0, double LineWIdth = 1, double[] dashes = null)
-    {
+//  // Dibuja un seria de polilinea
+//  public static void PolygonFilled(double[] vertices,  int colour = 0, int FillColor = 0, double LineWidth = 1, double[] dashes = null)
+//     {
 
-    int i ;         
+//     int i ;         
 
-     //glColorRGB(colour)
+//      //glColorRGB(colour)
     
 
   
 
-    GL.Begin(GL.POLYGON);
+//     GL.Begin(GL.POLYGON);
 
-    for ( i = 0; i <= vertices.Length  -1; i += 2)
-    {
-        glColorRGB(colour);
-        Vertex2D(vertices[i], vertices[i + 1]);
+//     for ( i = 0; i <= vertices.Length  -1; i += 2)
+//     {
+//         glColorRGB(colour);
+//         Vertex2D(vertices[i], vertices[i + 1]);
 
-    }
+//     }
     
 
-}
+// }
 
  // Dibuja un seria de polilinea
- public static void Polygon(double[] vertices,  int colour = 0, double LineWIdth = 1, double[] dashes = null)
+ public static void Polygon(double[] vertices,  int colour = 0, double LineWidth = 1, double[] dashes = null)
     {
 
     int i ;         
@@ -3118,12 +3105,13 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 
     VboManager.CurrentVBO.SetCurrentPrimitiveType(PrimitiveType.LineStrip);
 
-    for ( i = 0; i <= vertices.Length  -1; i+=2)
+    for ( i = 0; i <= vertices.Length-1; i+=2)
     {
         glColorRGB(colour);
         Vertex2D(vertices[i], vertices[i + 1]);
 
     }
+    Vertex2D(vertices[0], vertices[ 1]);
     
 
 }
@@ -3137,16 +3125,16 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
     double theta ;         
     double x0 ;         
     double y0 ;         
-     double[] flxPoly ;         
-    int i ;         
+    List<double> flxPoly ;         
+    int i =0 ;         
      //double max_angle = 2 * Math.PI
      //double angle_increment = Math.PI / 1000
      //angle_increment = Pi * 2 / 360
 
-     // verifico los angulos
+     // verif=0ico los angulos
      // If length < 0 Then angle_increment *= -1
-    flxPoly.Resize(CInt(length / angle_increment) * 4);
-    for ( theta = angle_increment; theta <= length; theta + angle_increment)
+    flxPoly = new List<double>((int)(length / angle_increment) * 4);
+    for ( theta = angle_increment; theta <= length; theta += angle_increment)
     {
         x0 = radio * Math.Cos(start_angle + theta - angle_increment);
         y0 = radio * Math.Sin(start_angle + theta - angle_increment);
@@ -3189,23 +3177,16 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
     i++;
      //If flxPoly.Count <> i Then Stop
 
-    return flxPoly;
+    return flxPoly.ToArray();
 
 }
 
- public static void PolyLines(double[] fVertices,  int colour = 0, double LineWIdth = 1, double[] dashes = null)
+ public static void PolyLines(double[] fVertices,  int colour = 0, double LineWidth = 1, double[] dashes = null)
 {
     int i ;         
     double[] vertices ;         
     double[] vertices2 ;         
-    double r ;         
-    double g ;         
-    double b ;         
-
-    r = (Gb.Shr(colour, 16) & 255) / 256;
-    g = (Gb.Shr(colour, 8) & 255) / 256;
-    b = (Gb.Shr(colour, 0) & 255) / 256;
-
+   
     if ( fVertices.Length < 2 ) return;
     
 
@@ -3215,22 +3196,22 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 
         VboManager.CurrentVBO.SetCurrentPrimitiveType(PrimitiveType.Lines);
 
-        Color3f(r, g, b);
+ 
         for ( i = 0; i <= vertices.Length  -1; i += 2)
         {
              //    glColorRGB(colour)
-            Vertex2D(vertices[i], vertices[i + 1]);
+            Vertex2D(vertices[i], vertices[i + 1],colour);
         }
 
     } else {
 
         vertices = fVertices;
         VboManager.CurrentVBO.SetCurrentPrimitiveType(PrimitiveType.LineStrip);
-        Color3f(r, g, b);
+   
         for ( i = 0; i <= vertices.Length  -1; i += 2)
         {
              //glColorRGB(colour)
-            Vertex2D(vertices[i], vertices[i + 1]);
+            Vertex2D(vertices[i], vertices[i + 1],colour);
         }
 
     }
@@ -3239,33 +3220,33 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 
 }
 
- public static void DrawTriangles(double[] vertices,  int colour = 0, int FillColor = 0, double LineWIdth = 1, double[] dashes = null)
+ public static void DrawTriangles(double[] vertices,  int colour = 0, int FillColor = 0, double LineWidth = 1, double[] dashes = null)
 {
     int i ;         
 
      //glColorRGB(colour)
     
 
-    if ( dashes.Count > 0 )
+    if ( dashes != null && dashes.Length > 0 )
     {
 
-        PolyLines(vertices, colour, linewIdth, dashes);
+        PolyLines(vertices, colour, LineWidth, dashes);
 
     }
 
     VboManager.CurrentVBO.SetCurrentPrimitiveType(PrimitiveType.Triangles);
 
-    for ( i = 0; i <= vertices.Length  -1; i + 2)
+    for ( i = 0; i <= vertices.Length  -1; i += 2)
     {
         glColorRGB(colour);
-        Vertex3D(vertices[i], vertices[i + 1], zLevel);
+        Vertex3F(vertices[i], vertices[i + 1], zLevel);
 
     }
     
 
 }
 
- public static void DrawTriangles3D(double[] vertices3D, double[] faces,  int colour = 0, int FillColor = 0, double LineWIdth = 1)
+ public static void DrawTriangles3D(double[] vertices3D, int[] faces,  int colour = 0, int FillColor = 0, double LineWidth = 1)
 {
     int i ;         
 
@@ -3274,11 +3255,11 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 
     VboManager.CurrentVBO.SetCurrentPrimitiveType(PrimitiveType.Triangles);
 
-    for ( i = 0; i <= faces.Length  -1; i + 3)
+    for ( i = 0; i <= faces.Length  -1; i += 3)
     {
 
         glColorRGB(colour);
-        Vertex3D(vertices3d[faces[i]], vertices3d[faces[i + 1]], vertices3d[faces[i + 2]]);
+        Vertex3F(vertices3D[faces[i]], vertices3D[faces[i + 1]], vertices3D[faces[i + 2]]);
 
     }
     
@@ -3287,7 +3268,7 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 
  // Dibuja un circulo
 
-public static void CIRCLE(double[] center, double radious, int colour= 0, bool Filled= false, double LineWIdth= 1, double[] dashes= null)
+public static void CIRCLE(double[] center, double radious, int colour= 0, bool Filled= false, double LineWidth= 1, double[] dashes= null)
     {
 
 
@@ -3296,41 +3277,41 @@ public static void CIRCLE(double[] center, double radious, int colour= 0, bool F
     double theta ;         
     double angle_increment ;         
     int StepFactor = 2;
-     double[] vertices ;         
-     double[] fVertices ;         
+     List<double> vertices ;         
+     List<double> fVertices = new List<double>();         
 
     
 
-    if ( filled )
+    if ( Filled )
     {
-        GL.Begin(GL.POLYGON);
+        VboManager.CurrentVBO.SetCurrentPrimitiveType(PrimitiveType.LineStrip);
         angle_increment = Math.PI * 2 / 360; // esto va de a un grado, que puede ser exagerado
 
         angle_increment *= StepFactor;
-        for ( theta = 0; theta <= 2 * Math.PI; theta + angle_increment)
+        for ( theta = 0; theta <= 2 * Math.PI; theta += angle_increment)
         {
              // el punto considerando 0,0 al centro
             x = center[0] + radious * Math.Cos(theta);
             y = center[1] + radious * Math.Sin(theta);
             Vertex2D(x, y, colour);
         }
-        GL.End();
+        
     } else {
 
         angle_increment = Math.PI * 2 / 360; // esto va de a un grado, que puede ser exagerado
 
         angle_increment *= StepFactor;
 
-        for ( theta = 0; theta <= 2 * Math.PI; theta + angle_increment)
+        for ( theta = 0; theta <= 2 * Math.PI; theta += angle_increment)
         {
              // el punto considerando 0,0 al centro
             x = center[0] + radious * Math.Cos(theta);
             y = center[1] + radious * Math.Sin(theta);
-            fvertices.Add(x);
-            fvertices.Add(y);
+            fVertices.Add(x);
+            fVertices.Add(y);
         }
 
-        PolyLines(fVertices, colour, linewIdth, dashes);
+        PolyLines(fVertices.ToArray(), colour, LineWidth, dashes);
 
     }
 
@@ -3532,112 +3513,112 @@ public static void Vertex3F(double X, double Y, double Z,  int colour = -1)
 
 
 
-public static void Get2DpointFrom3Dworld(Punto3d p1, ref double  x2, ref double  y2, ref double  z2)
-    {
+// public static void Get2DpointFrom3Dworld(Punto3d p1, ref double  x2, ref double  y2, ref double  z2)
+//     {
 
 
-     double[16] modelmatrix ;         
-     double[16] projMatrix ;         
-     double[16] miMatrix ;         
+//      double[16] modelmatrix ;         
+//      double[16] projMatrix ;         
+//      double[16] miMatrix ;         
 
-     int[4] vp ;         
+//      int[4] vp ;         
 
-     double[3] p2 ;         
+//      double[3] p2 ;         
 
-    modelMatrix = GL.Getdoublev(GL.MODELVIEW_MATRIX);
-    projMatrix = GL.Getdoublev(GL.PROJECTION_MATRIX);
-    vp = GL.Getintv(GL.VIEWPORT_);
+//     modelMatrix = GL.Getdoublev(GL.MODELVIEW_MATRIX);
+//     projMatrix = GL.Getdoublev(GL.PROJECTION_MATRIX);
+//     vp = GL.Getintv(GL.VIEWPORT_);
 
-    p2 = glu.Project(p1.x, p1.y, p1.z, modelMatrix, projMatrix, vp);
+//     p2 = glu.Project(p1.x, p1.y, p1.z, modelMatrix, projMatrix, vp);
 
-    if ( IsNull(p2) ) return;
+//     if ( IsNull(p2) ) return;
 
-    x2 = p2[0];
-    y2 = p2[1];
+//     x2 = p2[0];
+//     y2 = p2[1];
 
-     // z>0 ---> el punto es visible
-    z2 = p2[2];
+//      // z>0 ---> el punto es visible
+//     z2 = p2[2];
 
-}
+// }
 
-public static void Get2DpointFrom3Dworld2(double x, double y, double z, ref double  x2, ref double  y2, ref double  z2)
-    {
-
-
-     double[16] modelmatrix ;         
-     double[16] projMatrix ;         
-     double[16] miMatrix ;         
-
-     int[4] vp ;         
-
-     double[3] p2 ;         
-
-    modelMatrix = GL.Getdoublev(GL.MODELVIEW_MATRIX);
-    projMatrix = GL.Getdoublev(GL.PROJECTION_MATRIX);
-    vp = GL.Getintv(GL.VIEWPORT_);
-
-    p2 = glu.Project(x, y, z, modelMatrix, projMatrix, vp);
-
-    if ( IsNull(p2) ) return;
-
-    x2 = p2[0];
-    y2 = p2[1];
-
-     // z>0 ---> el punto es visible
-    z2 = p2[2];
-
-}
-
- // Proveo las matrices de trnasformacion porque en cada cambio deben guardarse para que esta funcion se corresponda con lo que se muestra
-public static void Get2DpointFrom3Dworld3(double x, double y, double z, double[] ModelMatrix, double[] projMatrix, int[] iViewPort, ref double x2, ref double y2, ref double z2)
-    {
+// public static void Get2DpointFrom3Dworld2(double x, double y, double z, ref double  x2, ref double  y2, ref double  z2)
+//     {
 
 
-     double[3] p2 ;         
+//      double[16] modelmatrix ;         
+//      double[16] projMatrix ;         
+//      double[16] miMatrix ;         
 
-    p2 = glu.Project(x, y, z, modelMatrix, projMatrix, iViewPort);
+//      int[4] vp ;         
 
-    if ( IsNull(p2) ) return;
+//      double[3] p2 ;         
 
-    x2 = p2[0];
-    y2 = p2[1];
+//     modelMatrix = GL.Getdoublev(GL.MODELVIEW_MATRIX);
+//     projMatrix = GL.Getdoublev(GL.PROJECTION_MATRIX);
+//     vp = GL.Getintv(GL.VIEWPORT_);
 
-     // z>0 ---> el punto es visible
-    z2 = p2[2];
+//     p2 = glu.Project(x, y, z, modelMatrix, projMatrix, vp);
 
-}
- // Trnasforma un punto de la pantalla en un punto del espacio, que en realidad es un rayo en 3D
- // que en 2D es perpendicular a la pantalla
+//     if ( IsNull(p2) ) return;
 
-public static double[] Get3DpointFromScreen(int Xscreen, int Yscreen)
-    {
+//     x2 = p2[0];
+//     y2 = p2[1];
+
+//      // z>0 ---> el punto es visible
+//     z2 = p2[2];
+
+// }
+
+//  // Proveo las matrices de trnasformacion porque en cada cambio deben guardarse para que esta funcion se corresponda con lo que se muestra
+// public static void Get2DpointFrom3Dworld3(double x, double y, double z, double[] ModelMatrix, double[] projMatrix, int[] iViewPort, ref double x2, ref double y2, ref double z2)
+//     {
 
 
-     double[16] modelmatrix ;         
-     double[16] projMatrix ;         
-     double[16] miMatrix ;         
+//      double[3] p2 ;         
 
-     int[4] vp ;         
+//     p2 = glu.Project(x, y, z, modelMatrix, projMatrix, iViewPort);
 
-     double[3] p2 ;         
-    modelMatrix = GL.Getdoublev(GL.MODELVIEW_MATRIX);
-    projMatrix = GL.Getdoublev(GL.PROJECTION_MATRIX);
-    vp = GL.Getintv(GL.VIEWPORT_);
+//     if ( IsNull(p2) ) return;
 
-    p2 = glu.UnProject(Xscreen, Yscreen, 0, modelMatrix, projMatrix, vp);
+//     x2 = p2[0];
+//     y2 = p2[1];
 
-    if ( IsNull(p2) ) return;
+//      // z>0 ---> el punto es visible
+//     z2 = p2[2];
 
-     // p2[2]
-     // z<=1  --> el punto esta frente a la camara
-     // z> 1  ---> el punto es invisible
+// }
+//  // Trnasforma un punto de la pantalla en un punto del espacio, que en realidad es un rayo en 3D
+//  // que en 2D es perpendicular a la pantalla
 
-     // test
-     //Console.WriteLine( "Screen", Xscreen, Yscreen, " -> Real ", p2[0], p2[1]
+// public static double[] Get3DpointFromScreen(int Xscreen, int Yscreen)
+//     {
 
-    return p2;
 
-}
+//      double[16] modelmatrix ;         
+//      double[16] projMatrix ;         
+//      double[16] miMatrix ;         
+
+//      int[4] vp ;         
+
+//      double[3] p2 ;         
+//     modelMatrix = GL.Getdoublev(GL.MODELVIEW_MATRIX);
+//     projMatrix = GL.Getdoublev(GL.PROJECTION_MATRIX);
+//     vp = GL.Getintv(GL.VIEWPORT_);
+
+//     p2 = glu.UnProject(Xscreen, Yscreen, 0, modelMatrix, projMatrix, vp);
+
+//     if ( IsNull(p2) ) return;
+
+//      // p2[2]
+//      // z<=1  --> el punto esta frente a la camara
+//      // z> 1  ---> el punto es invisible
+
+//      // test
+//      //Console.WriteLine( "Screen", Xscreen, Yscreen, " -> Real ", p2[0], p2[1]
+
+//     return p2;
+
+// }
 
  // Establece la fuente con que se dibujaran los textos
 public static bool SelectFont(string FontName)
@@ -3656,7 +3637,7 @@ public static bool SelectFont(string FontName)
 }
 
  // Lee todas las fuentes del directorio provisto y devuelve un listado con sus nombres
-public static string[] LoadFonts(string DirPath)
+public static List<string> LoadFonts(string DirPath)
     {
 
      // This class loads all fonts available at startup
@@ -3715,20 +3696,20 @@ public static string[] LoadFonts(string DirPath)
      // 2.000000,9.0000,4.0000,10.0000
 
     // string sFilename ;         
-    File fFile ;         
+    // File fFile ;         
     string sData ;         
     // string sCoord ;         
     // string aVert ;         
     string sCode ;         
     string[] sPuntos ;         
-     string[] Lista ;         
+     List<string> Lista = new List<string>()  ;         
     int p1 ;         
     bool BulgeAdded ;         
     string[] sVert ;         
-    double[] fltb ;         
-    double[] flt1 ;         
-    double[] flt3 ;         
-    double flt2 ;         
+    // List<double> fltb = new List<double>()  ;         
+    // List<double> flt1 ;         
+    List<double> flt3 ;         
+    // double flt2 ;         
 
     foreach ( var sFilename in Gb.DirFullPath(DirPath, "*.lff"))
     {
@@ -3740,11 +3721,13 @@ public static string[] LoadFonts(string DirPath)
         fntNuevas.LetterSpacing = 1; //.25
         fntNuevas.LineSpacingFactor = 1;
         fntNuevas.Letter = new Dictionary<int, Letters>();
-        var ffile = File.Open( sFilename,FileMode.Open);
+        using var ffile = new StreamReader(sFilename);
         
-        while ( ! ffile.eof )
+        while ( !ffile.EndOfStream )
         {
-            ffile.Read( sData) ;
+            string? line = ffile.ReadLine();
+            if (line == null) break;
+            sData = line;
              //Console.WriteLine( sData);
             if ( Gb.Left(sData, 1) == "[" ) // nueva letra
             {
@@ -3752,22 +3735,22 @@ public static string[] LoadFonts(string DirPath)
                 sCode = Gb.Replace(sData, "#", "");
                 sCode = Gb.Replace(sCode, "[[", "[");
                 sCode = Gb.Mid(sCode, 2, 4);
-                letra.Code = Gb.Val("0x0000" + sCode); // [0021]!
-                letra.FontGlyps = new double[][];
-                letra.FontBulges = new double[][];
+                letra.Code = Gb.CInt("0x0000" + sCode); // [0021]!
+                letra.FontGlyps = new List<List<double>>();
+                letra.FontBulges = new List<List<double>>();
 
-                while ( sdata != "")
+                while ( sData != "")
                 {
-                    ffile.Read( sData) ;
+                    sData = ffile.ReadLine() ?? "";
                      //Console.WriteLine( sData);
-                    // Input #fFile, sDAta; // 0.428572, 0.857143; 0, 0.428572
+                    // Input #fFile, sData; // 0.428572, 0.857143; 0, 0.428572
                     if ( Gb.Left(sData, 1) == "C" ) // Copio datos de otra letra
                     {
                         int CopyCode = 0;
-                        CopyCode = Val("0x0000" + Mid(sData, 2, 4)); // C0021
+                        CopyCode = Gb.CInt("0x0000" + Gb.Mid(sData, 2, 4)); // C0021
                          //CopyCode = GetCodeIndex(fntNuevas, CopyCode)
-                        flt1 = new double[];
-                        flt3 = new double[];
+                        // flt1 = new List<double>();
+                        flt3 = [];
 
                         foreach ( var flt1 in fntNuevas.Letter[CopyCode].FontGlyps)
                         {
@@ -3777,7 +3760,7 @@ public static string[] LoadFonts(string DirPath)
                                 flt3.Add(flt2);
                             }
                         }
-                        flt3 = new double[];
+                        flt3 =  [];
                         foreach ( var flt1 in fntNuevas.Letter[CopyCode].FontBulges)
                         {
                             letra.FontBulges.Add(flt3);
@@ -3788,13 +3771,13 @@ public static string[] LoadFonts(string DirPath)
                         }
 
                     } else {
-                        flt1 = new double[];
-                        fltb = new double[];
+                        var flt1 = new List<double>();
+                        var fltb =  new List<double>();
 
                         letra.FontGlyps.Add(flt1);
                         letra.FontBulges.Add(fltb);
 
-                        sPuntos = Gb.Split(sDAta, ");");
+                        sPuntos = Gb.Split(sData, ");");
 
                         foreach ( var sCoord in sPuntos)
                         {
@@ -3821,23 +3804,22 @@ public static string[] LoadFonts(string DirPath)
                         }
                     }
                 } // fin de la letra
-                fntNuevas.Letter.Add(letra, letra.Code);
+                fntNuevas.Letter.Add(letra.Code, letra);
 
             } // ignoro todos los comentarios
 
         }
-        fntNuevas.FontName = Utils.FileWithoutExtension(sFilename);
+        fntNuevas.FontName = Gb.FileWithoutExtension(sFilename);
         glFont.Add(fntNuevas.FontName, fntNuevas);
         ActualFont = fntNuevas;
         if ( fntNuevas.FontName == "unicode" ) UnicodeFont = fntNuevas;
 
         Console.WriteLine( "LeIdas " + fntNuevas.Letter.Count + " letras en " + sFilename);
-        lista.Add(fntNuevas.FontName);
+        Lista.Add(fntNuevas.FontName);
 
     }
 
-    return lista;
-
+    return Lista;
 }
 
  // // Busca el codigo UTF y devuelve la posicion en el indice de letras
@@ -3877,9 +3859,9 @@ public static string[] LoadFonts(string DirPath)
     double xMax =0 ;
         double[] fArcParams ;
         // double[] Glyps ;         
-     double[] Bulges ;         
-    double[][] TGlyps ;         
-    double[][] TBulges ;         
+     List<double> Bulges ;         
+   List<List<double>> TGlyps ;         
+    List<List<double>> TBulges ;         
     double Ang =0;         
     double m1 =0;         
     double m2 =0;         
@@ -3937,7 +3919,7 @@ public static string[] LoadFonts(string DirPath)
             {
                 Bulges = TBulges[iBulge];
 
-                for ( i2 = 0; i2 <= Glyps.Length / 2 - 2; i2 += 1)
+                for ( i2 = 0; i2 <= Glyps.Count / 2 - 2; i2 += 1)
                 {
 
                      // no todos los tramos pueden tener bulges
@@ -3972,7 +3954,7 @@ public static string[] LoadFonts(string DirPath)
                     }
 
                 }
-                for ( iii = 0; iii <= Glyps.Length  -1; iii += 2) // calculo cuanto tiene que avanzar el puntero
+                for ( iii = 0; iii <= Glyps.Count  -1; iii += 2) // calculo cuanto tiene que avanzar el puntero
                 {
                     if ( Glyps[iii] > xMax ) xMax = Glyps[iii];
                 }
@@ -4005,7 +3987,7 @@ public static string[] LoadFonts(string DirPath)
 
 //  // AlingHoriz : 0=Rigth, 1=Center, 2=Left
 //  // AlingVert: 0=Top, 1=Center, 2=Bottom
-// public static bool DrawText2(string UTFstring, double posX, double posY, double angle= 0, double textH= 1, int colour= -14, int Backcolour= -1, double linewIdth= 1, bool italic= false, double rectW= 0, double rectH= 0, int alignHoriz= 0, int alignVert= 0)
+// public static bool DrawText2(string UTFstring, double posX, double posY, double angle= 0, double textH= 1, int colour= -14, int Backcolour= -1, double LineWidth= 1, bool italic= false, double rectW= 0, double rectH= 0, int alignHoriz= 0, int alignVert= 0)
 //     {
 
 
@@ -4057,7 +4039,7 @@ public static string[] LoadFonts(string DirPath)
 //     GL.PushMatrix;
 //     GL.LoadIdentity();
 //     GL.Translatef(posX, posY, 0);
-//     DrawLines(flxText, colour, linewIdth);
+//     DrawLines(flxText, colour, LineWidth);
 //     Rectangle2D(tx - fBorderExtension, ty - fBorderExtension, rectW + fBorderExtension * 2, rectH + fBorderExtension * 2, Backcolour,,,,,,, 0);
 
 //     GL.PopMatrix;
@@ -4069,7 +4051,7 @@ public static string[] LoadFonts(string DirPath)
 
 //  // AlingHoriz : 0=Rigth, 1=Center, 2=Left
 //  // AlingVert: 0=Top, 1=Center, 2=Bottom
-// public static bool DrawText3(string UTFstring, double posX, double posY, double posZ, double angle= 0, double textH= 1, int colour= -14, int Backcolour= -1, double linewIdth= 1, bool italic= false, double rectW= 0, double rectH= 0, int alignHoriz= 0, int alignVert= 0)
+// public static bool DrawText3(string UTFstring, double posX, double posY, double posZ, double angle= 0, double textH= 1, int colour= -14, int Backcolour= -1, double LineWidth= 1, bool italic= false, double rectW= 0, double rectH= 0, int alignHoriz= 0, int alignVert= 0)
 //     {
 
 
@@ -4121,7 +4103,7 @@ public static string[] LoadFonts(string DirPath)
 //      // GL.PushMatrix
 //      // GL.LoadIdentity()
 //     GL.Translatef(posX, posY, 0);
-//     DrawLines(flxText, colour, linewIdth);
+//     DrawLines(flxText, colour, LineWidth);
 //     Rectangle2D(tx - fBorderExtension, ty - fBorderExtension, rectW + fBorderExtension * 2, rectH + fBorderExtension * 2, Backcolour, Backcolour , Backcolour, Backcolour, Backcolour, 0,0, 0);
 
 //      // GL.PopMatrix
