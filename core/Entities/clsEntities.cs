@@ -23,233 +23,194 @@
         }
 
         // Edit properties for a collection of entities
-        public static bool EditEntities(string sProperty, object vValue, bool DoRegen = true, IEnumerable<Entity> cEntities = null)
+        public static bool EditEntities(string sProperty, string vValue, bool DoRegen = true, Dictionary<string, Entity> cEntities = null)
         {
-            if (cEntities == null) cEntities = Gcd.Drawing.Sheet.EntitiesSelected ?? Enumerable.Empty<Entity>();
+            if (cEntities == null) cEntities = Gcd.Drawing.Sheet.EntitiesSelected ?? [];
 
-            Gcd.Drawing.uUndo.OpenUndoStage(sProperty, Undo.TypeModify);
+            // Gcd.Drawing.uUndo.OpenUndoStage(sProperty, Undo.TypeModify);
 
-            foreach (var e in cEntities.ToList())
+            foreach (var ep in cEntities)
             {
-                Gcd.Drawing.uUndo.AddUndoItem(e);
+                var e = ep.Value;
+                // Gcd.Drawing.uUndo.AddUndoItem(e);
                 switch (sProperty)
                 {
                     case "color":
                         e.Colour = Convert.ToInt32(vValue);
                         break;
                     case "linewidth":
-                        e.LineWidth = Convert.ToSingle(vValue);
+                        e.LineWidth = Convert.ToInt32(vValue);
                         break;
                     case "layer":
                         e.pLayer = Gcd.GetLayer(Convert.ToString(vValue));
                         break;
                     case "linetype":
-                        e.LineType = vValue as LineType ?? GetLTypeByName(Convert.ToString(vValue));
+                        e.LType = GetLTypeByName(Convert.ToString(vValue));
                         break;
-                    case "points":
-                        // expecting double[] or float[] based on your model
-                        e.P = vValue as double[] ?? vValue as float[] as double[];
-                        break;
+                    // case "points":
+                    //     // expecting double[] or float[] based on your model
+                    //     e.P = vValue as double[] ?? vValue as float[] as double[];
+                    //     break;
                 }
             }
 
-            Gcd.Drawing.uUndo.CloseUndoStage();
+           // Gcd.Drawing.uUndo.CloseUndoStage();
             CollectVisibleEntities();
             if (DoRegen) Gcd.Regen();
             return true;
         }
 
-        public static void DrawArrays()
-        {
-            if (InxBuffersID.Count == 0) return;
+       
 
-            try
-            {
-                Glx.glBindBuffer(Glx.ARRAY_BUFFER, InxBuffersID[0]);
+        // public static Block FindBlockById(string blockId)
+        // {
+        //     if (string.IsNullOrEmpty(blockId)) return null;
+        //     foreach (var b in Gcd.Drawing.Blocks)
+        //     {
+        //         if (b.id == blockId) return b;
+        //     }
+        //     return null;
+        // }
 
-                var iError = Glx.glGetError();
-                if (iError != 0) Gcd.debugInfo("GL Error: " + iError);
-                Glx.glEnableClientState(Glx.VERTEX_ARRAY);
-                Glx.glEnableClientState(Glx.NORMAL_ARRAY);
-                Glx.glEnableClientState(Glx.COLOR_ARRAY);
+        // public static Block FindBlock(string blockName, IEnumerable<Block> container)
+        // {
+        //     if (string.IsNullOrEmpty(blockName) || container == null) return null;
+        //     foreach (var b in container)
+        //     {
+        //         if (b.Name== blockName) return b;
+        //     }
+        //     return null;
+        // }
 
-                iError = Glx.glGetError();
-                if (iError != 0) Gcd.debugInfo("GL Error: " + iError);
+        // public static Style FindStyle(string name)
+        // {
+        //     if (string.IsNullOrEmpty(name)) return null;
+        //     foreach (var s in Gcd.Drawing.oStyles)
+        //     {
+        //         if (s.Name== name) return s;
+        //     }
+        //     return null;
+        // }
 
-                var vOffset = 0;
-                var nOffset = Glx.VBO_vertex.Count * sizeof(float);
-                var cOffset = nOffset + Glx.VBO_normals.Count * sizeof(float);
-                // tOffset omitted
+        // public static bool ReconstruirBloques()
+        // {
+        //     // Rebuild blocks from entities
+        //     try
+        //     {
+        //         // var sw = Stopwatch.StartNew();
+        //         Gcd.debugInfo("Reconstruyendo bloques");
 
-                Glx.glVertexPointer(3, Glx.FLOAT, 0, vOffset);
-                Glx.glNormalPointer(Glx.FLOAT, 0, nOffset);
-                Glx.glColorPointer(3, Glx.FLOAT, 0, cOffset);
+        //         var entities = Gcd.Drawing.Sheet.Entities;
+        //         var arrBlocks = new List<Block>();
 
-                iError = Glx.glGetError();
-                if (iError != 0) Gcd.debugInfo("GL Error: " + iError);
+        //         int iStart = 0;
+        //         for (int i = 0; i < entities.Count; i++)
+        //         {
+        //             // Gcd.prompt = $"Loading blocks {((double)i / entities.Count):P2}";
+        //             // System.Threading.Thread.Sleep(0); // Wait 0
 
-                Glx.glDrawArrays(Glx.DrawLines, 0, Glx.VBO_vertex.Count * 3);
+        //             var ent = entities[i];
+        //             if (ent.Gender == "BLOCK")
+        //             {
+        //                 var newBlock = new Block
+        //                 {
+        //                     Name = ent.block,
+        //                     x = ent.p?[0] ?? 0,
+        //                     y = ent.p?.Length > 1 ? ent.p[1] : 0,
+        //                     entities = new Dictionary<string, Entity>()
+        //                 };
 
-                Glx.gldisableClientState(Glx.VERTEX_ARRAY);
-                Glx.gldisableClientState(Glx.NORMAL_ARRAY);
-                Glx.gldisableClientState(Glx.COLOR_ARRAY);
+        //                 bool partesEncontradas = false;
+        //                 for (int i2 = iStart; i2 < entities.Count; i2++)
+        //                 {
+        //                     var e2 = entities[i2];
+        //                     if (e2.block == newBlock.Name&& e2.Gender != "BLOCK")
+        //                     {
+        //                         if (e2.block == newBlock.Name&& e2.Gender != "INSERT")
+        //                         {
+        //                             partesEncontradas = true;
+        //                             var o2 = ClonEntity(e2);
+        //                             Gcd.CCC[o2.Gender].Finish(o2);
+        //                             newBlock.entities.Add(o2);
+        //                         }
+        //                     }
+        //                     else
+        //                     {
+        //                         if (partesEncontradas)
+        //                         {
+        //                             partesEncontradas = false;
+        //                             iStart = i2;
+        //                             break;
+        //                         }
+        //                     }
+        //                 }
+        //                 arrBlocks.Add(newBlock);
+        //             }
+        //         }
 
-                Glx.glBindBuffer(Glx.ARRAY_BUFFER, 0);
-            }
-            catch (Exception ex)
-            {
-                Gcd.debugInfo("DrawArrays exception: " + ex.Message);
-            }
-        }
+        //         Gcd.Drawing.arrBlocks = arrBlocks;
+        //         System.Threading.Thread.Sleep(0);
+        //         sw.Stop();
+        //         Gcd.debugInfo($"Reconstruccion finalizada en {sw.Elapsed.TotalSeconds}s");
+        //         return true;
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         Gcd.debugInfo("ReconstruirBloques error: " + ex.Message);
+        //         return false;
+        //     }
+        // }
 
-        public static Block FindBlockById(string blockId)
-        {
-            if (string.IsNullOrEmpty(blockId)) return null;
-            foreach (var b in Gcd.Drawing.Blocks)
-            {
-                if (b.id == blockId) return b;
-            }
-            return null;
-        }
+        // // Generate GL buffers: either for a single entity or for the whole drawing VBOs
+        // public static void GlGenBuffers(Entity eEntity = null)
+        // {
+        //     if (eEntity != null)
+        //     {
+        //         // Per-entity GL list generation is done in other methods (glGenDrawList).
+        //         return;
+        //     }
 
-        public static Block FindBlock(string blockName, IEnumerable<Block> container)
-        {
-            if (string.IsNullOrEmpty(blockName) || container == null) return null;
-            foreach (var b in container)
-            {
-                if (b.Name== blockName) return b;
-            }
-            return null;
-        }
+        //     // Whole drawing VBO generation
+        //     try
+        //     {
+        //         if (Gcd.Drawing.Sheet.Entities.Count == 0) return;
 
-        public static Style FindStyle(string name)
-        {
-            if (string.IsNullOrEmpty(name)) return null;
-            foreach (var s in Gcd.Drawing.oStyles)
-            {
-                if (s.Name== name) return s;
-            }
-            return null;
-        }
+        //         Glx.VBOFlush();
+        //         foreach (var ep in Gcd.Drawing.Sheet.Entities)
+        //         {
+        //             var e = ep.Value;
+        //             Gcd.CCC[e.Gender].Draw(e);
+        //         }
 
-        public static bool ReconstruirBloques()
-        {
-            // Rebuild blocks from entities
-            try
-            {
-                var sw = Stopwatch.StartNew();
-                Gcd.debugInfo("Reconstruyendo bloques");
+        //         // Generate buffers
+        //         while (InxBuffersID.Count < 3) InxBuffersID.Add(0);
 
-                var entities = Gcd.Drawing.Sheet.Entities;
-                var arrBlocks = new List<Block>();
+        //         int[] ids = new int[3];
+        //         Glx.glGenBuffers(3, InxBuffersID.ToArray()); // assume Glx.glGenBuffers fills provided array or uses wrapper
+        //         var iError = Glx.glGetError();
+        //         if (iError != 0) Gcd.debugInfo("GL Error: " + iError);
 
-                int iStart = 0;
-                for (int i = 0; i < entities.Count; i++)
-                {
-                    Gcd.prompt = $"Loading blocks {((double)i / entities.Count):P2}";
-                    System.Threading.Thread.Sleep(0); // Wait 0
+        //         Glx.glBindBuffer(Glx.ARRAY_BUFFER, InxBuffersID[0]);
+        //         iError = Glx.glGetError();
+        //         if (iError != 0) Gcd.debugInfo("GL Error: " + iError);
 
-                    var ent = entities[i];
-                    if (ent.Gender == "BLOCK")
-                    {
-                        var newBlock = new Block
-                        {
-                            name = ent.block,
-                            x = ent.p?[0] ?? 0,
-                            y = ent.p?.Length > 1 ? ent.p[1] : 0,
-                            entities = new List<Entity>()
-                        };
+        //         var bytesTot = (Glx.VBO_vertex.Count + Glx.VBO_normals.Count + Glx.VBO_colors.Count) * sizeof(float);
+        //         Glx.glBufferData(Glx.ARRAY_BUFFER, bytesTot, IntPtr.Zero, Glx.STATIC_DRAW);
 
-                        bool partesEncontradas = false;
-                        for (int i2 = iStart; i2 < entities.Count; i2++)
-                        {
-                            var e2 = entities[i2];
-                            if (e2.block == newBlock.Name&& e2.Gender != "BLOCK")
-                            {
-                                if (e2.block == newBlock.Name&& e2.Gender != "INSERT")
-                                {
-                                    partesEncontradas = true;
-                                    var o2 = ClonEntity(e2);
-                                    Gcd.CCC[o2.Gender].Finish(o2);
-                                    newBlock.entities.Add(o2);
-                                }
-                            }
-                            else
-                            {
-                                if (partesEncontradas)
-                                {
-                                    partesEncontradas = false;
-                                    iStart = i2;
-                                    break;
-                                }
-                            }
-                        }
-                        arrBlocks.Add(newBlock);
-                    }
-                }
+        //         Glx.glBufferSubData(Glx.ARRAY_BUFFER, 0, Glx.VBO_vertex.Count * sizeof(float), Glx.VBO_vertex.Data);
+        //         Glx.glBufferSubData(Glx.ARRAY_BUFFER, Glx.VBO_vertex.Count * sizeof(float), Glx.VBO_normals.Count * sizeof(float), Glx.VBO_normals.Data);
+        //         Glx.glBufferSubData(Glx.ARRAY_BUFFER, (Glx.VBO_vertex.Count + Glx.VBO_normals.Count) * sizeof(float), Glx.VBO_colors.Count * sizeof(float), Glx.VBO_colors.Data);
 
-                Gcd.Drawing.arrBlocks = arrBlocks;
-                System.Threading.Thread.Sleep(0);
-                sw.Stop();
-                Gcd.debugInfo($"Reconstruccion finalizada en {sw.Elapsed.TotalSeconds}s");
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Gcd.debugInfo("ReconstruirBloques error: " + ex.Message);
-                return false;
-            }
-        }
+        //         iError = Glx.glGetError();
+        //         if (iError != 0) Gcd.debugInfo("GL Error: " + iError);
 
-        // Generate GL buffers: either for a single entity or for the whole drawing VBOs
-        public static void GlGenBuffers(Entity eEntity = null)
-        {
-            if (eEntity != null)
-            {
-                // Per-entity GL list generation is done in other methods (glGenDrawList).
-                return;
-            }
-
-            // Whole drawing VBO generation
-            try
-            {
-                if (Gcd.Drawing.Sheet.Entities.Count == 0) return;
-
-                Glx.VBOFlush();
-                foreach (var e in Gcd.Drawing.Sheet.Entities)
-                {
-                    Gcd.CCC[e.Gender].Draw(e);
-                }
-
-                // Generate buffers
-                while (InxBuffersID.Count < 3) InxBuffersID.Add(0);
-
-                int[] ids = new int[3];
-                Glx.glGenBuffers(3, InxBuffersID.ToArray()); // assume Glx.glGenBuffers fills provided array or uses wrapper
-                var iError = Glx.glGetError();
-                if (iError != 0) Gcd.debugInfo("GL Error: " + iError);
-
-                Glx.glBindBuffer(Glx.ARRAY_BUFFER, InxBuffersID[0]);
-                iError = Glx.glGetError();
-                if (iError != 0) Gcd.debugInfo("GL Error: " + iError);
-
-                var bytesTot = (Glx.VBO_vertex.Count + Glx.VBO_normals.Count + Glx.VBO_colors.Count) * sizeof(float);
-                Glx.glBufferData(Glx.ARRAY_BUFFER, bytesTot, IntPtr.Zero, Glx.STATIC_DRAW);
-
-                Glx.glBufferSubData(Glx.ARRAY_BUFFER, 0, Glx.VBO_vertex.Count * sizeof(float), Glx.VBO_vertex.Data);
-                Glx.glBufferSubData(Glx.ARRAY_BUFFER, Glx.VBO_vertex.Count * sizeof(float), Glx.VBO_normals.Count * sizeof(float), Glx.VBO_normals.Data);
-                Glx.glBufferSubData(Glx.ARRAY_BUFFER, (Glx.VBO_vertex.Count + Glx.VBO_normals.Count) * sizeof(float), Glx.VBO_colors.Count * sizeof(float), Glx.VBO_colors.Data);
-
-                iError = Glx.glGetError();
-                if (iError != 0) Gcd.debugInfo("GL Error: " + iError);
-
-                Glx.glBindBuffer(Glx.ARRAY_BUFFER, 0);
-            }
-            catch (Exception ex)
-            {
-                Gcd.debugInfo("GlGenBuffers error: " + ex.Message);
-            }
-        }
+        //         Glx.glBindBuffer(Glx.ARRAY_BUFFER, 0);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         Gcd.debugInfo("GlGenBuffers error: " + ex.Message);
+        //     }
+        // }
 
         // Build GL display lists for entity(s)
         public static void GlGenDrawList(Entity eEntity = null)
@@ -262,27 +223,29 @@
                 if (!GL.islist(eEntity.glDrwList)) eEntity.glDrwList = GL.GenLists(1);
                 GL.NewList(eEntity.glDrwList, GL.COMPILE);
                 Gcd.CCC[eEntity.Gender].Draw(eEntity);
-                GL.EndList();
+                
 
                 if (!GL.islist(eEntity.glDrwListSel)) eEntity.glDrwListSel = GL.GenLists(1);
                 GL.NewList(eEntity.glDrwListSel, GL.COMPILE);
                 Gcd.CCC[eEntity.Gender].DrawSelected(eEntity);
-                GL.EndList();
+                
 
                 if (!GL.islist(eEntity.glDrwListRemark)) eEntity.glDrwListRemark = GL.GenLists(1);
                 GL.NewList(eEntity.glDrwListRemark, GL.COMPILE);
                 Gcd.CCC[eEntity.Gender].DrawRemark(eEntity);
-                GL.EndList();
+                
 
                 Gcd.CCC[eEntity.Gender].Translate(eEntity, Gcd.Drawing.Sheet.PanBaseRealX, Gcd.Drawing.Sheet.PanBaseRealY);
             }
             else
             {
                 var t = Stopwatch.StartNew();
-                foreach (var s in Gcd.Drawing.Sheets)
+                foreach (var sp in Gcd.Drawing.Sheets)
                 {
-                    foreach (var e in s.Entities)
+                    var s = sp.Value;
+                    foreach (var ep in s.Entities)
                     {
+                        var e = ep.Value;
                         if (e.Generated && !e.Regenerable) continue;
                         e.Generated = true;
                         e.Regenerable = Gcd.CCC[e.Gender].Regenerable;
@@ -290,17 +253,17 @@
                         if (!GL.islist(e.glDrwList)) e.glDrwList = GL.GenLists(1);
                         GL.NewList(e.glDrwList, GL.COMPILE);
                         Gcd.CCC[e.Gender].Draw(e);
-                        GL.EndList();
+                        
 
                         if (!GL.islist(e.glDrwListSel)) e.glDrwListSel = GL.GenLists(1);
                         GL.NewList(e.glDrwListSel, GL.COMPILE);
                         Gcd.CCC[e.Gender].DrawSelected(e);
-                        GL.EndList();
+                        
 
                         if (!GL.islist(e.glDrwListRemark)) e.glDrwListRemark = GL.GenLists(1);
                         GL.NewList(e.glDrwListRemark, GL.COMPILE);
                         Gcd.CCC[e.Gender].DrawRemark(e);
-                        GL.EndList();
+                        
                     }
                 }
 
@@ -310,8 +273,9 @@
 
         public static void GlGenDrawListSelected()
         {
-            foreach (var e in Gcd.Drawing.Sheet.EntitiesSelected)
+            foreach (var ep in Gcd.Drawing.Sheet.EntitiesSelected)
             {
+                var e = ep.Value;
                 GlGenDrawList(e);
             }
         }
@@ -322,28 +286,30 @@
 
             GL.NewList(Gcd.Drawing.GlListEntitiesSelected, GL.COMPILE);
 
-            foreach (var e in Gcd.Drawing.Sheet.EntitiesSelected)
+            foreach (var ep in Gcd.Drawing.Sheet.EntitiesSelected)
             {
+                var e = ep.Value;
                 if (e.glDrwListSel > 0) GL.CallList(e.glDrwListSel);
                 else Gcd.CCC[e.Gender].DrawSelected(e);
             }
 
-            GL.EndList();
+            
         }
 
         public static void GlGenDrawListAll(bool ExcludeSelected = false)
         {
             GL.NewList(Gcd.Drawing.Sheet.GlListAllEntities, GL.COMPILE);
 
-            foreach (var e in Gcd.Drawing.Sheet.Entities)
+            foreach (var ep in Gcd.Drawing.Sheet.Entities)
             {
-                if (!Gcd.Drawing.Sheet.EntitiesSelected.Exists(e.id))
+                var e = ep.Value;
+                if (!Gcd.Drawing.Sheet.EntitiesSelected.ContainsKey(e.id))
                 {
                     if (e.pLayer.Visible) GL.CallList(e.glDrwList);
                 }
             }
 
-            GL.EndList();
+            
         }
 
         public static void GlGenDrawListLayers(Layer aLayer = null)
@@ -352,52 +318,59 @@
             {
                 if (!GL.islist(aLayer.glList)) aLayer.glList = GL.GenLists(1);
                 GL.NewList(aLayer.glList, GL.COMPILE);
-                foreach (var e in Gcd.Drawing.Sheet.Entities)
+                foreach (var ep in Gcd.Drawing.Sheet.Entities)
                 {
+                    var e = ep.Value;
                     if (e.pLayer == aLayer && !e.PaperSpace)
                     {
                         GL.CallList(e.glDrwList);
                     }
                 }
-                GL.EndList();
+                
             }
             else
             {
-                foreach (var a in Gcd.Drawing.Layers)
+                foreach (var ap in Gcd.Drawing.Layers)
                 {
+                    var a = ap.Value;
                     if (!GL.islist(a.glList)) a.glList = GL.GenLists(1);
                     GL.NewList(a.glList, GL.COMPILE);
-                    foreach (var s in Gcd.Drawing.Sheets)
+                    foreach (var sp  in Gcd.Drawing.Sheets)
                     {
-                        if (!s.name.Equals("Model")) continue;
-                        Glx.DrawTriangles(s.model3d.xyzVertex, Color.Red);
-                        foreach (var e in s.Entities)
+                        var s = sp.Value;
+                        if (!s.Name.Equals("Model")) continue;
+                        // Glx.DrawTriangles(s.model3d.xyzVertex, Color.Red);
+                        foreach (var ep in s.Entities)
                         {
+                            var e = ep.Value;
                             if (e.pLayer == a)
                             {
                                 GL.CallList(e.glDrwList);
                             }
                         }
                     }
-                    GL.EndList();
+                    
                 }
 
-                foreach (var s in Gcd.Drawing.Sheets)
+                foreach (var sp in Gcd.Drawing.Sheets)
                 {
+                    var s = sp.Value;
                     if (s.Name== "Model") continue;
                     if (!GL.islist(s.GlListAllEntities)) s.GlListAllEntities = GL.GenLists(1);
                     GL.NewList(s.GlListAllEntities, GL.COMPILE);
-                    foreach (var a in Gcd.Drawing.Layers)
+                    foreach (var ap in Gcd.Drawing.Layers)
                     {
-                        foreach (var e in s.Entities)
+                        var a = ap.Value;
+                        foreach (var ep in s.Entities)
                         {
+                            var e = ep.Value;
                             if (e.pLayer == a)
                             {
                                 GL.CallList(e.glDrwList);
                             }
                         }
                     }
-                    GL.EndList();
+                    
                 }
             }
         }
@@ -409,12 +382,13 @@
             return e;
         }
 
-        public static List<Entity> ClonElements(IEnumerable<Entity> cEntities = null, bool GenerateGlList = true)
+        public static Dictionary<string, Entity> ClonElements(Dictionary<string, Entity> cEntities = null, bool GenerateGlList = true)
         {
-            var result = new List<Entity>();
+            var result = new Dictionary<string, Entity>();
             var cToClone = cEntities ?? Gcd.Drawing.Sheet.EntitiesSelected;
-            foreach (var e in cToClone)
+            foreach (var ep in cToClone)
             {
+                var e = ep.Value;
                 var eClon = ClonEntity(e, true);
                 if (GenerateGlList) GlGenDrawList(eClon);
                 result.Add(eClon);
@@ -426,22 +400,23 @@
         {
             var b = new Block
             {
-                name = bBase.name,
-                description = bBase.description,
+                Name = bBase.Name,
+                Description = bBase.Description,
                 Explotability = bBase.Explotability,
                 Flags = bBase.Flags,
                 InsertionPlace = bBase.InsertionPlace,
                 InsertUnits = bBase.InsertUnits,
-                layer = bBase.layer,
+                Layer = bBase.Layer,
                 Scalability = bBase.Scalability,
                 x0 = bBase.x0,
                 y0 = bBase.y0,
                 z0 = bBase.z0,
-                entities = new List<Entity>()
+                entities = new Dictionary<string, Entity>()
             };
 
-            foreach (var e in bBase.entities)
+            foreach (var ep in bBase.entities)
             {
+                var e = ep.Value;
                 var clone = ClonEntity(e);
                 clone.id = Gcd.NewId();
                 b.entities.Add(clone);
@@ -468,23 +443,25 @@
             {
                 Gcd.debugInfo("Borrando entidades", true);
 
-                Gcd.Drawing.uUndo.OpenUndoStage("Delete entities", Undo.TypeDelete);
+                // Gcd.Drawing.uUndo.OpenUndoStage("Delete entities", Undo.TypeDelete);
                 var selected = Gcd.Drawing.Sheet.EntitiesSelected.ToList();
                 int c = selected.Count;
                 if (c == 0) return 0;
 
-                foreach (var e in selected)
+                foreach (var ep in selected)
                 {
-                    Gcd.Drawing.uUndo.AddUndoItem(e);
+                    var e = ep.Value;
+                   // Gcd.Drawing.uUndo.AddUndoItem(e);
                     Gcd.Drawing.Sheet.Entities.Remove(e);
                     Gcd.Drawing.Sheet.EntitiesVisibles.Remove(e);
                     e.pLayer.flgForRegen = true;
                 }
 
-                Gcd.Drawing.uUndo.CloseUndoStage();
+                //Gcd.Drawing.uUndo.CloseUndoStage();
 
-                foreach (var lay in Gcd.Drawing.Layers)
+                foreach (var layp in Gcd.Drawing.Layers)
                 {
+                    var lay = layp.Value;
                     if (lay.Visible && lay.flgForRegen)
                     {
                         GlGenDrawListLAyers(lay);
@@ -502,17 +479,17 @@
             }
         }
 
-        public static void DrawPoint(double x, double y, int colour = -1, double largoReal = 0.4)
-        {
-            if (colour != -1) paint.brush = Paint.Color(colour);
-            else paint.brush = Paint.Color(Color.Blue);
-            paint.LineWidth = 1;
-            paint.MoveTo(x - largoReal / 2, y);
-            paint.RelLineTo(largoReal, 0);
-            paint.MoveTo(x, y - largoReal / 2);
-            paint.RelLineTo(0, -largoReal);
-            paint.Stroke();
-        }
+        // public static void DrawPoint(double x, double y, int colour = -1, double largoReal = 0.4)
+        // {
+        //     if (colour != -1) paint.brush = Paint.Color(colour);
+        //     else paint.brush = Paint.Color(Color.Blue);
+        //     paint.LineWidth = 1;
+        //     paint.MoveTo(x - largoReal / 2, y);
+        //     paint.RelLineTo(largoReal, 0);
+        //     paint.MoveTo(x, y - largoReal / 2);
+        //     paint.RelLineTo(0, -largoReal);
+        //     paint.Stroke();
+        // }
 
         public static void SelectElem(Entity eEntity, bool andItsPoints = true)
         {
@@ -521,7 +498,7 @@
             {
                 for (int i = 0; i < eEntity.Psel.Length; i++) eEntity.Psel[i] = true;
             }
-            Gcd.Drawing.Sheet.EntitiesSelected.Add(eEntity);
+            Gcd.Drawing.Sheet.EntitiesSelected.Add(eEntity.id, eEntity);
         }
 
         public static void DeSelectElem(Entity eEntity, bool andItsPoints = true)
@@ -531,15 +508,16 @@
             {
                 for (int i = 0; i < eEntity.Psel.Length; i++) eEntity.Psel[i] = false;
             }
-            Gcd.Drawing.Sheet.EntitiesSelected.Remove(eEntity);
+            Gcd.Drawing.Sheet.EntitiesSelected.Remove(eEntity.id);
         }
 
-        public static void Move(double dX, double dY, IEnumerable<Entity> cEntitiesToMove = null, bool OnlyPointSelected = false, bool DoUndo = false)
+        public static void Move(double dX, double dY, Dictionary<string, Entity> cEntitiesToMove = null, bool OnlyPointSelected = false, bool DoUndo = false)
         {
             if (cEntitiesToMove == null) cEntitiesToMove = Gcd.Drawing.Sheet.EntitiesSelected;
-            foreach (var e in cEntitiesToMove)
+            foreach (var ep in cEntitiesToMove)
             {
-                if (DoUndo) Gcd.Drawing.uUndo.AddUndoItem(ClonEntity(e, false));
+                var e = ep.Value;
+                // if (DoUndo) Gcd.Drawing.uUndo.AddUndoItem(ClonEntity(e, false));
                 Gcd.CCC[e.Gender].Translate(e, dX, dY, OnlyPointSelected);
             }
         }
@@ -562,8 +540,10 @@
         public static List<object> SelectionSquare(double X0, double Y0, double X1, double Y1, bool crossing = false)
         {
             var c = new List<object>();
-            foreach (var e in Gcd.Drawing.Sheet.EntitiesVisibles)
+            foreach (var ep in Gcd.Drawing.Sheet.EntitiesVisibles)
             {
+                var e = ep.Value;
+
                 bool insideX = (e.Limits[0] >= X0) && (e.Limits[2] <= X1);
                 bool insideY = (e.Limits[1] >= Y0) && (e.Limits[3] <= Y1);
                 bool outsideX = (e.Limits[0] > X1) || (e.Limits[2] < X0);
@@ -571,7 +551,7 @@
 
                 if (insideX && insideY)
                 {
-                    if (e.Container?.parent != null) c.Add(e.Container.parent);
+                    if (e.Container?.Parent != null) c.Add(e.Container.Parent);
                     else c.Add(e);
                     e.Psel = Enumerable.Repeat(true, e.Psel.Length).ToArray();
                 }
@@ -585,7 +565,7 @@
                     {
                         if (SelPartial(e, X0, Y0, X1, Y1))
                         {
-                            if (e.Container?.parent != null) c.Add(e.Container.parent);
+                            if (e.Container?.Parent != null) c.Add(e.Container.Parent);
                             else c.Add(e);
                         }
                     }
@@ -593,7 +573,7 @@
                     {
                         if (SelFull(e, X0, Y0, X1, Y1))
                         {
-                            if (e.Container?.parent != null) c.Add(e.Container.parent);
+                            if (e.Container?.Parent != null) c.Add(e.Container.Parent);
                             else c.Add(e);
                         }
                     }
@@ -602,18 +582,20 @@
             return c;
         }
 
-        public static List<Entity> SelectionPoly(double[] poly, bool crossing = false)
+        public static Dictionary<string, Entity> SelectionPoly(double[] poly, bool crossing = false)
         {
-            var c = new List<Entity>();
-            foreach (var e in Gcd.Drawing.Sheet.EntitiesVisibles)
+            var c = new Dictionary<string, Entity>();
+            foreach (var ep in Gcd.Drawing.Sheet.EntitiesVisibles)
             {
+                var e = ep.Value;
+
                 if (crossing)
                 {
-                    if (Gcd.CCC[e.Gender].SelPartialPoly(e, poly)) c.Add(e);
+                    if (Gcd.CCC[e.Gender].SelPartialPoly(e, poly)) c.Add(e.id, e);
                 }
                 else
                 {
-                    if (Gcd.CCC[e.Gender].SelFullPoly(e, poly)) c.Add(e);
+                    if (Gcd.CCC[e.Gender].SelFullPoly(e, poly)) c.Add(e.id,e);
                 }
             }
             return c;
@@ -629,20 +611,21 @@
             double x1 = Gcd.Xreal(Gcd.ScreenWidth());
             double y0 = Gcd.Yreal(Gcd.ScreenHeight());
 
-            var cNewVisibles = new List<Entity>();
+            var cNewVisibles = new Dictionary<string, Entity>();
             Collect(sSheet.Entities, x0, x1, y0, y1, cNewVisibles);
             Gcd.Drawing.Sheet.EntitiesVisibles = cNewVisibles;
             Gcd.debugInfo($"Recolectadas las entidades visibles {Gcd.Drawing.Sheet.EntitiesVisibles.Count} de {Gcd.Drawing.Sheet.Entities.Count}", true);
         }
 
-        private static void Collect(IEnumerable<Entity> cEntities, double x0, double x1, double y0, double y1, List<Entity> cNewVisibles)
+        private static void Collect(Dictionary<string, Entity> cEntities, double x0, double x1, double y0, double y1, Dictionary<string, Entity> cNewVisibles)
         {
-            foreach (var e in cEntities)
+            foreach (var ep in cEntities)
             {
+                var e = ep.Value;
                 if (!e.pLayer.Visible) continue;
                 if (e.Gender == "INSERT" && e.pBlock != null)
                 {
-                    Collect(e.pBlock.Entities, x0, x1, y0, y1, cNewVisibles);
+                    Collect(e.pBlock.entities, x0, x1, y0, y1, cNewVisibles);
                 }
                 else
                 {
@@ -661,11 +644,13 @@
             }
             else
             {
-                foreach (var b in Gcd.Drawing.Blocks)
+                foreach (var bp in Gcd.Drawing.Blocks)
                 {
+                    var b = bp.Value;
                     if (b.idAsociatedLayout == "0") continue;
-                    foreach (var ent in b.entities)
+                    foreach (var entp in b.entities)
                     {
+                        var ent = entp.Value;
                         Gcd.CCC[ent.Gender].Buildgeometry(ent);
                     }
                 }
@@ -681,8 +666,9 @@
 
             if (entGroup == null || !entGroup.Any()) return new double[] { 0, 0, 0, 0 };
 
-            foreach (var e in entGroup)
+            foreach (var ep in entGroup)
             {
+                var e = ep.Value;
                 bool isVisible = true;
                 if (onlyVisibles)
                 {
@@ -692,7 +678,7 @@
 
                 if (isVisible)
                 {
-                    puntos.LimitsMax(newLimits, e.Limits);
+                    Puntos.LimitsMax(newLimits, e.Limits);
                 }
             }
 
@@ -710,21 +696,21 @@
             // This function depends on dxf parsing utilities and entity factories.
             // Keep the logic and delegate to per-entity importers.
             var (keys, values) = dxf.DigestColeccion(c);
-            var entityType = c.ContainsKey(dxf.codEntity) ? c[dxf.codEntity] : null;
+            var entityType = c.ContainsKey("0") ? c["0"] : null;
             if (string.IsNullOrEmpty(entityType)) return null;
 
             var e = Gcd.CCC[entityType].NewEntity();
-            e.pLayer = GetLayerByName(c.ContainsKey(dxf.codLayer) ? c[dxf.codLayer] : null) ?? Gcd.Drawing.CommonLayer;
-            e.id = c.ContainsKey(dxf.codid) ? c[dxf.codid] : Gcd.NewId();
+            e.pLayer = GetLayerByName(c.ContainsKey("8") ? c["8"] : null) ?? Gcd.Drawing.CommonLayer;
+            e.id = c.ContainsKey("5") ? c["5"] : Gcd.NewId();
 
-            if (c.ContainsKey(dxf.codColor)) int.TryParse(c[dxf.codColor], out int colorVal);
+            if (c.ContainsKey("62")) int.TryParse(c["62"], out int colorVal);
             if (c.ContainsKey("370")) e.LineWidth = float.Parse(c["370"]);
 
             if (c.ContainsKey("67") && c["67"] == "1") e.PaperSpace = true;
 
-            if (c.ContainsKey(dxf.codLType))
+            if (c.ContainsKey("6"))
             {
-                var LT = GetLTypeByName(c[dxf.codLType]);
+                var LT = GetLTypeByName(c["6"]);
                 e.LineType = LT ?? drw.LineTypes.Values.FirstOrDefault();
             }
             else
@@ -760,8 +746,9 @@
         public static Layer GetLayerByid(string id)
         {
             if (string.IsNullOrEmpty(id)) return null;
-            foreach (var lay in Gcd.Drawing.Layers)
+            foreach (var layp in Gcd.Drawing.Layers)
             {
+                var lay = layp.Value;
                 if (lay.id == id) return lay;
             }
             return null;
@@ -770,8 +757,9 @@
         public static Layer GetLayerByName(string name)
         {
             if (name == null) return null;
-            foreach (var lay in Gcd.Drawing.Layers)
+            foreach (var layp in Gcd.Drawing.Layers)
             {
+                var lay = layp.Value;
                 if (lay.Name== name) return lay;
             }
             return null;
@@ -784,53 +772,82 @@
             return null;
         }
 
-        public static string EntityToJsonString(Entity e)
-        {
-            var j = new JSONCollection();
-            j.Add(e.Gender, "Entity");
-            j.Add(e.p, "Points");
-            j.Add(e.sParam, "ParamString");
-            j.Add(e.fParam, "ParamFloat");
-            j.Add(e.iParam, "ParamInt");
-            j.Add(e.Colour, "Color");
-            j.Add(e.LineWidth, "LineWidth");
-            try { j.Add(e.LineType?.Name, "LineType"); } catch { }
-            try { j.Add(e.pStyle?.name, "Style"); } catch { }
-            try { j.Add(e.pDimStyle?.name, "DimStyle"); } catch { }
-            return JSON.Encode2(j);
-        }
+        // public static string EntityToJsonString(Entity e)
+        // {
+        //     var j = new JSONCollection();
+        //     j.Add(e.Gender, "Entity");
+        //     j.Add(e.p, "Points");
+        //     j.Add(e.sParam, "ParamString");
+        //     j.Add(e.fParam, "ParamFloat");
+        //     j.Add(e.iParam, "ParamInt");
+        //     j.Add(e.Colour, "Color");
+        //     j.Add(e.LineWidth, "LineWidth");
+        //     try { j.Add(e.LineType?.Name, "LineType"); } catch { }
+        //     try { j.Add(e.pStyle?.name, "Style"); } catch { }
+        //     try { j.Add(e.pDimStyle?.name, "DimStyle"); } catch { }
+        //     return JSON.Encode2(j);
+        // }
 
-        public static List<Entity> SelectionCombine(IEnumerable<Entity> cBase, IEnumerable<Entity> cNew, string sMode)
+        public static Dictionary<string,Entity> SelectionCombine(Dictionary<string,Entity> cBase, Dictionary<string,Entity> cNew, string sMode)
         {
-            var result = new List<Entity>();
+            var result = new Dictionary<string,Entity>();
             if (sMode == "new")
             {
-                result.AddRange(cNew);
+                if (cNew != null)
+                {
+                    foreach (var kvp in cNew)
+                    {
+                        result.Add(kvp.Key, kvp.Value);
+                    }
+                }
             }
             else if (sMode == "add")
             {
-                if (cBase != null) result.AddRange(cBase);
-                if (cNew != null) result.AddRange(cNew);
+                if (cBase != null)
+                {
+                    foreach (var kvp in cBase)
+                    {
+                        result.Add(kvp.Key, kvp.Value);
+                    }
+                }
+                if (cNew != null)
+                {
+                    foreach (var kvp in cNew)
+                    {
+                        if (!result.ContainsKey(kvp.Key))
+                            result.Add(kvp.Key, kvp.Value);
+                    }
+                }
             }
             else if (sMode == "rem")
             {
-                if (cBase != null) result.AddRange(cBase);
+                if (cBase != null)
+                {
+                    foreach (var kvp in cBase)
+                    {
+                        result.Add(kvp.Key, kvp.Value);
+                    }
+                }
                 if (cNew != null)
                 {
-                    foreach (var e in cNew) result.RemoveAll(x => x.id == e.id);
+                    foreach (var kvp in cNew)
+                    {
+                        result.Remove(kvp.Key);
+                    }
                 }
             }
             return result;
         }
 
-        public static void RebuildDimensions(IEnumerable<Entity> cDims = null)
+        public static void RebuildDimensions(Dictionary <string,Entity> cDims = null)
         {
             var c = cDims ?? Gcd.Drawing.Sheet.Entities;
-            foreach (var e in c)
+            foreach (var ep in c)
             {
+                var e = ep.Value;
                 if (e.Gender != null && e.Gender.StartsWith("DIM"))
                 {
-                    var sBlockName = e.pBlock?.name;
+                    var sBlockName = e.pBlock?.Name;
                     try
                     {
                         e.pBlock = Gcd.CCC[e.Gender].RebuildBlock(e);
@@ -841,20 +858,21 @@
             }
         }
 
-        public static Entity FindInsertByName(IEnumerable<Entity> cEntities, string sName)
+        public static Entity FindInsertByName(Dictionary<string, Entity> cEntities, string sName)
         {
-            foreach (var e in cEntities)
+            foreach (var ep in cEntities)
             {
+                var e = ep.Value;
                 if (e.pBlock != null && e.pBlock.Name== sName) return e;
             }
             return null;
         }
 
-        public static void ExportStl()
-        {
-            // Currently just calls stl.SaveSTL on model3d
-            stl.SaveSTL(Gcd.Drawing.Sheet.model3d, Gcd.Drawing.FileName + ".stl");
-        }
+        // public static void ExportStl()
+        // {
+        //     // Currently just calls stl.SaveSTL on model3d
+        //     stl.SaveSTL(Gcd.Drawing.Sheet.model3d, Gcd.Drawing.FileName + ".stl");
+        // }
 
         // Additional helpers
         public static bool EqualPoints(double x1, double y1, double x2, double y2)

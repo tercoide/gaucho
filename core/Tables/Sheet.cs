@@ -36,14 +36,14 @@ public class Sheet
 
     public double ScaleZoomBase = 1;
 
-    public Viewport Viewport = new Viewport();                         //// el viewport actual en uso
+    public Viewport Viewport = new();                         //// el viewport actual en uso
 
     public Dictionary<string, Viewport> Viewports = new Dictionary<string, Viewport>(); // of Viewports
     public int TabOrder = 0;
-    public Dictionary<string, Entity> Entities = new Dictionary<string, Entity>();                      //// Apunta a .BLock.entities
-    public List<Entity> EntitiesSelected = new List<Entity>();
-    public List<Entity> EntitiesSelectedPrevious = new List<Entity>();
-    public List<Entity> EntitiesVisibles = new List<Entity>();
+    public Dictionary<string, Entity> Entities = [];                      //// Apunta a .BLock.entities
+    public Dictionary<string, Entity> EntitiesSelected = [];
+    public Dictionary<string, Entity> EntitiesSelectedPrevious = [];
+    public Dictionary<string, Entity> EntitiesVisibles = [];
 
     public Entity SkipSearch = new();                         //// entidad que no se tendran en cuenta en las busquedas
                                                     // public EntitiesSelected As New Collection

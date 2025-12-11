@@ -75,10 +75,10 @@ public static class Gcd
         const int drwOpenGLClass = 4;
 
         public static bool LoadingFinished = false;
-        public static string[] FontList= new string[0];          // esto deberia estar en otro lado
-        public static string[] TextureList= new string[0];          // esto deberia estar en otro lado
+        public static List<string> FontList= new List<string>();          // esto deberia estar en otro lado
+        public static List<string> TextureList= new List<string>();          // esto deberia estar en otro lado
         public static string FileName="";          // current work filename
-        public static string[] LineTypes= new string[0];
+        public static List<string> LineTypes= new List<string>();
 
         // dibujos
         public static Image picVisibleOn;
@@ -1158,7 +1158,7 @@ public static class Gcd
 
         }
 
-        public static int ScreenWIdth()
+        public static int ScreenWidth()
         {
 
 

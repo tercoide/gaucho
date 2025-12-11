@@ -26,10 +26,10 @@ namespace Gaucho
 
     public interface IEntity
     {
-        
-        public void Draw() { }
+        public bool Regenerable { get; set; }
+        public void Draw(Entity e) { }
 
-        public void Draw2()
+        public void Draw2(Entity e)
 
         {
             Console.WriteLine("Imprimo desde la interface IEntity");
@@ -37,6 +37,21 @@ namespace Gaucho
         }
         
         public void SaveDxfData(Entity e ) { }
+
+         public void DrawSelected(Entity e) { }
+
+          public void DrawRemark(Entity e) { }
+           public void Finish(Entity e) { }
+
+            public void Translate(Entity e, double dx, double dy,bool OnlyPointSelected=false) { }
+
+             public void Scale(Entity e, double sx, double sy) { }
+              public void Rotate(Entity e, double radians) { }
+               public void GenerateGrips(Entity e) { }
+
+               public Block RebuildBlock(Entity e, int  iMode  = 0, float fAngle = -1) { return null; }
+                public bool SelFullPoly(Entity e, List<double> poly) { return false;  }
+                 public bool SelPartialPoly(Entity e, List<double> poly) { return false;
     }
     
     
