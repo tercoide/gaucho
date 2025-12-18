@@ -51,8 +51,10 @@ namespace Gaucho
 
                public Block RebuildBlock(Entity e, int  iMode  = 0, float fAngle = -1) { return null; }
                 public bool SelFullPoly(Entity e, List<double> poly) { return false;  }
-                 public bool SelPartialPoly(Entity e, List<double> poly) { return false;
-    }
+                 public bool SelPartialPoly(Entity e, List<double> poly) { return false;}
+                 public void BuildGeometry(Entity e) { }
+                 public bool SelPartial(Entity eTesting, double X1real, double Y1real, double X2real, double Y2real) { return false;  }
+                  public bool SelFull(Entity eTesting, double X1real, double Y1real, double X2real, double Y2real) { return false;  }  
     
     
 

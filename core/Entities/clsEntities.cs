@@ -452,8 +452,8 @@
                 {
                     var e = ep.Value;
                    // Gcd.Drawing.uUndo.AddUndoItem(e);
-                    Gcd.Drawing.Sheet.Entities.Remove(e);
-                    Gcd.Drawing.Sheet.EntitiesVisibles.Remove(e);
+                    Gcd.Drawing.Sheet.Entities.Remove(e.id);
+                    Gcd.Drawing.Sheet.EntitiesVisibles.Remove(e.id);
                     e.pLayer.flgForRegen = true;
                 }
 
@@ -631,7 +631,7 @@
                 {
                     bool insideX = (e.Limits[0] <= x1) && (e.Limits[2] >= x0);
                     bool insideY = (e.Limits[1] <= y1) && (e.Limits[3] >= y0);
-                    if (insideX && insideY) cNewVisibles.Add(e);
+                    if (insideX && insideY) cNewVisibles.Add(e.id,e);
                 }
             }
         }
@@ -640,7 +640,7 @@
         {
             if (e != null)
             {
-                Gcd.CCC[e.Gender].Buildgeometry(e);
+                Gcd.CCC[e.Gender].BuildGeometry(e);
             }
             else
             {
@@ -651,7 +651,7 @@
                     foreach (var entp in b.entities)
                     {
                         var ent = entp.Value;
-                        Gcd.CCC[ent.Gender].Buildgeometry(ent);
+                        Gcd.CCC[ent.Gender].BuildGeometry(ent);
                     }
                 }
             }
@@ -689,7 +689,7 @@
             => Gcd.CCC[eTesting.Gender].SelFull(eTesting, X1real, Y1real, X2real, Y2real);
 
         public static bool SelPartial(Entity eTesting, double X1real, double Y1real, double X2real, double Y2real)
-            => Gcd.CCC[eTesting.Gender].SelPArtial(eTesting, X1real, Y1real, X2real, Y2real);
+            => Gcd.CCC[eTesting.Gender].SelPartial(eTesting, X1real, Y1real, X2real, Y2real);
 
         public static Entity DXFImportToEntity(Drawing drw, Dictionary<string, string> c, bool IsDummy = false)
         {
