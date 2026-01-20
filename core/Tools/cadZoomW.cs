@@ -1,4 +1,5 @@
 using Gaucho;
+using Gtk;
 
 class cadZoomW :  ToolsBase
 {
@@ -18,8 +19,8 @@ public static bool Start(string ElemToBuild, int _Mode= 0)
     Mode = _Mode;
     PoiChecking = false;
     Gcd.flgSearchingAllowed = false;
-
-}
+return true;
+    }
 
 public static void MouseDown()
     {
@@ -27,73 +28,73 @@ public static void MouseDown()
 
     if ( Mouse.Left )
     {
-       SelStartX = mouse.X;
-       SelStartY = mouse.Y;
+       SelStartX = Mouse.X;
+       SelStartY = Mouse.Y;
        SelEndX =SelStartX;
-       SelEndy =SelStartY;
+       SelEndY=SelStartY;
 
-       SelStartXr = gcd.Xreal(SelStartX);
-       SelStartYr = gcd.Yreal(SelStartY);
+       SelStartXr = Gcd.Xreal(SelStartX);
+       SelStartYr = Gcd.Yreal(SelStartY);
 
        Active = true;
     }
 
-}
+    }
 
-public static void MouseUp()
+    public static void MouseUp()
     {
 
 
-   SelEndX = mouse.x;
-   SelEndy = mouse.Y;
-   Active = false;
+        SelEndX = Mouse.X;
+        SelEndY = Mouse.Y;
+        Active = false;
 
-     // corrijo para start<end
-    if (SelStartX >SelEndX ) Swap (SelStartX,SelEndX);
-    if (SelStartY <SelEndY ) Swap (SelStartY,SelEndY); // this is FLIPPED
+        // corrijo para start<end
+        if (SelStartX >SelEndX ) Gb.Swap (ref SelStartX, ref SelEndX);
+        if (SelStartY <SelEndY ) Gb.Swap (ref SelStartY, ref SelEndY); // this is FLIPPED
 
-     // Paso a coordenadas reales
-   SelStartXr = gcd.Xreal(SelStartX);
-   SelStartYr = gcd.Yreal(SelStartY);
-   SelEndXr = gcd.Xreal(SelEndX);
-   SelEndyr = gcd.Yreal(SelEndy);
+            // Paso a coordenadas reales
+        SelStartXr = Gcd.Xreal(SelStartX);
+        SelStartYr = Gcd.Yreal(SelStartY);
+        SelEndXr = Gcd.Xreal(SelEndX);
+        SelEndYr = Gcd.Yreal(SelEndY);
 
      // veo si el rectangulo es suficientemente grande como para representar una seleccion por rectangulo
-    if ( (SelEndX -SelStartX + (-SelEndy +SelStartY)) < 10 ) // es un rectangulo minusculo
+    if ( (SelEndX -SelStartX + (-SelEndY +SelStartY)) < 10 ) // es un rectangulo minusculo
     {
 
-        DrawingAIds.ErrorMessage = ("Window is too small");
+        //DrawingAIds.ErrorMessage = ("Window is too small");
 
     }
          // engañamos a estas vars
 
-        gcd.Drawing.Xmayor =SelEndXr;
-        gcd.Drawing.Xmenor =SelStartXr;
+        Gcd.Drawing.Xmayor =SelEndXr;
+        Gcd.Drawing.Xmenor =SelStartXr;
 
-        gcd.Drawing.Ymayor =SelEndYr;
-        gcd.Drawing.Ymenor =SelStartYr;
+        Gcd.Drawing.Ymayor =SelEndYr;
+        Gcd.Drawing.Ymenor =SelStartYr;
 
-        cadZoomE.Start(0, 1);
+        //cadZoomE.Start(0, 1);
        Finish();
 
     }
 
-}
 
-public static void MouseMove()
+
+    public static void MouseMove()
     {
 
 
-   SelEndX = mouse.x;
+        SelEndX = Mouse.X;
 
-   SelEndy = mouse.Y;
+        SelEndY = Mouse.Y;
 
-   SelEndXr = gcd.Xreal(SelEndX);
-   SelEndYr = gcd.Yreal(SelEndY);
+        SelEndXr = Gcd.Xreal(SelEndX);
+        SelEndYr = Gcd.Yreal(SelEndY);
 
-    gcd.Redraw();
+            Gcd.Redraw();
 
-}
+    }
 
 public static void Draw() // esta rutina es llamada por FCAD en el evento DrawingArea_Draw
     {
@@ -105,7 +106,7 @@ public static void Draw() // esta rutina es llamada por FCAD en el evento Drawin
     double[] xyStart ;         
     double[] xyEnd ;         
 
-    glx.Rectangle2D(SelStartXr,SelStartYr,SelEndXr -SelStartXr,SelEndYr -SelStartYr,,,,, Color.DarkBlue, 1,, 2);
+    Glx.Rectangle2D(SelStartXr,SelStartYr,SelEndXr -SelStartXr,SelEndYr -SelStartYr,0,0,0,0, Colors.Blue, 1,[], 2);
 
 }
 
@@ -113,15 +114,14 @@ public static void Finish()
     {
 
 
-    gcd.clsJob = gcd.clsJobPrevious;
-    gcd.clsJobPrevious = this;
-
-    DrawingAIds.CleanTexts;
+    Gcd.clsJob = Gcd.clsJobPrevious;
+    // Gcd.clsJobPrevious = Gcd.CCC[Gender];
+   // DrawingAIds.CleanTexts;
 
    Active = false;
 
-    gcd.flgPosition = true;
-    gcd.flgSearchingAllowed = true;
+    Gcd.flgNewPosition = true;
+    Gcd.flgSearchingAllowed = true;
 
 }
 

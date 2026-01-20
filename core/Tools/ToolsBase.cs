@@ -19,7 +19,7 @@ public abstract class ToolsBase
         public static int SelStartX = 0;
         public static int SelStartY = 0;
         public static int SelEndX = 0;
-        public static int SelEndy = 0;
+        public static int SelEndY = 0;
 
         // Selection pan start (Pixels)
         public static int SelStartPanX = 0;

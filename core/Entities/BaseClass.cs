@@ -9,7 +9,7 @@ namespace Gaucho
         // {
 
         // }
-
+public bool Regenerable { get; set; } = false;
         public static void Draw()
         {
             Console.WriteLine("Llamada a diibujar desde la EntityBase");
@@ -58,4 +58,5 @@ namespace Gaucho
     
     
 
+}
 }

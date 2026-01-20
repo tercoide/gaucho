@@ -132,7 +132,7 @@ public static bool Start(Variant ElemToBuild, int _Mode= 2)
      //     Utils.MenuMaker(fMain, "mToolsBase", ContextMenu)
      //     //Gcd.Drawing.Sheet.GlSheet.PopupMenu = "mToolsBase"  // TODO: ver si damos soporte a menus
      // End If
-    Gcd.Drawing.iEntity.Clear;
+    Array.Clear(Gcd.Drawing.iEntity, 0, Gcd.Drawing.iEntity.Length);
     PoiChecking = true;
     Gcd.DrawHoveredEntity = true;
     GripPoint = null;
