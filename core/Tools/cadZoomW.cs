@@ -6,7 +6,7 @@ class cadZoomW :  ToolsBase
  
  // Tool maintained by Terco
 
- // this is the Main Job, either we are doing this or other job
+
 const string Gender = "ZOOMW";
 
 public static bool Start(string ElemToBuild, int _Mode= 0)

@@ -8,7 +8,7 @@
 //
 // NOTE: This is a direct port, not a complete idiomatic rewrite. Please run tests and adjust tolerances/edge-cases as needed.
 //
-
+using Gaucho;
     public struct Punto2d
     {
         public double x;

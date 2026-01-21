@@ -1,5 +1,5 @@
 using Gaucho;
-public class clsMouseTracking
+public static class clsMouseTracking
 {
  // Gambas class file
 
@@ -51,7 +51,7 @@ public static void CollectEntitiesAroundMouse(double xr, double Yr, int iToleran
 
     EntitiesSearchables.Clear;
 
-    foreach ( e in gcd.Drawing.Sheet.EntitiesVisibles)
+    foreach ( var e in gcd.Drawing.Sheet.EntitiesVisibles)
     {
         Inc iCount;
         if ( iCount == Config.TrackMaxEntitiesNumber ) Break;
@@ -89,7 +89,7 @@ public static  Entity[] CheckAboveEntities(double xr, double Yr, int iTolerance=
     EntitiesFound.Clear;
     do {
         if ( gcd.flgQuitSearch ) Break;
-        e = CheckAboveEntity(xr, yr,, e);
+        e = CheckAboveEntity(xr, yr, 12, e);
         if ( e )
         {
             if ( fEntities.Count > 0 )
@@ -400,7 +400,7 @@ public static double[] CheckPOI(double xr, double Yr, Entity e)
                         {
                             puntoA.Add(0);
                             puntoA.Add(base2);
-                        }
+                        } else {
                             puntoA.Add(1);
                             puntoA.Add(pend2 + base2);
 
@@ -408,13 +408,13 @@ public static double[] CheckPOI(double xr, double Yr, Entity e)
 
                          // determino la interseccion de ambas
                         puntoB = puntos.lineLineIntersection(gcd.Drawing.LastPoint, puntoA, [e.P[0], e.P[1]], [e.P[2], e.P[3]]);
-                    } // la recta es horizontal
+                    } else { // la recta es horizontal
 
                         puntoB.Add(gcd.Drawing.LastPoint[0]);
                         puntoB.Add(e.P[1]);
 
                     }
-                } // la recta es vertical
+                } else { // la recta es vertical
 
                     puntoB.Add(e.P[0]);
                     puntoB.Add(gcd.Drawing.LastPoint[1]);
@@ -422,7 +422,7 @@ public static double[] CheckPOI(double xr, double Yr, Entity e)
                 }
 
                  // veo si el punto b esta entre los extremos de la linea , aunque deberia estarlo!!!
-                if ( puntos.onSegment(e.P[0], e.P[1], puntoB[0], puntoB[1], e.P[2], e.P[3]) )
+                if ( Puntos.onSegment(e.P[0], e.P[1], puntoB[0], puntoB[1], e.P[2], e.P[3]) )
                 {
 
                      // determino la distancia al puntero para ofrecerlo como opcion de enganche
@@ -430,6 +430,7 @@ public static double[] CheckPOI(double xr, double Yr, Entity e)
 
                 }
             }
+            break;
 
              // busco tambien intersecciones
             foreach ( var e2 in gcd.Drawing.Sheet.EntitiesVisibles)
@@ -450,11 +451,11 @@ public static double[] CheckPOI(double xr, double Yr, Entity e)
 
                         }
 
-                    case "LWPOLYLINE", "SOLID":
+                    case "LWPOLYLINE" or "SOLID":
 
                         pInterPoly = puntos.LinePolyIntersection3(e.p, e2.p);
                         pIntersection.Insert(pInterPoly);
-                    case "CIRCLE", "ARC", "SPLINE":
+                    case "CIRCLE" or "ARC" or "SPLINE":
                         pInterPoly2 = puntos.LinePolyIntersection3(e.p, e2.PolyLine);
                         pIntersection.Insert(pInterPoly2);
                 }
@@ -464,7 +465,7 @@ public static double[] CheckPOI(double xr, double Yr, Entity e)
             {
                 iInter = puntos.FindNearest(xr, yr, pIntersection);
                 DistInter = puntos.distancia(xr, yr, pIntersection[iInter], pIntersection[iInter + 1]);
-            }
+            } else {
                 DistInter = 10e10;
             }
 
@@ -498,9 +499,9 @@ public static double[] CheckPOI(double xr, double Yr, Entity e)
 
                 if ( DistCenter >= r )
                 {
-                    Dim rho As double = r / DistCenter;
-                    double ad = rho ^ 2;
-                    double bd = rho * Sqr(1 - rho ^ 2);
+                    double rho = r / DistCenter;
+                    double ad = rho * rho;
+                    double bd = rho * Math.Sqrt(1 - rho * rho);
 
                      // los puntos tangente
                     T1x = Cx + ad * dx + bd * dxr;
@@ -511,20 +512,20 @@ public static double[] CheckPOI(double xr, double Yr, Entity e)
                     if ( (DistCenter / r - 1) < 1E-8 )
                     {
                          //P is on the circumference
-                    } // determino cual de las dos tangentes es la mas cercana
+                    } else { // determino cual de las dos tangentes es la mas cercana
 
-                        if ( puntos.distancia(xr, yr, t1x, t1y) > puntos.distancia(xr, yr, t2x, t2y) )
+                         if ( Puntos.distancia(xr, yr, t1x, t1y) > Puntos.distancia(xr, yr, t2x, t2y) )
                         {
                             Tx = T2x;
                             Ty = T2y;
-                        }
+                        } else {
                             Tx = T1x;
                             Ty = T1y;
 
                         }
-                        DistTang = puntos.distancia(xr, yr, tx, ty);
+                        DistTang = Puntos.distancia(xr, yr, tx, ty);
                     }
-                } // esta dentro del circulo
+                } else { // esta dentro del circulo
 
                     DistTang = 1e6;
                      // No tangent Is Possible
@@ -591,7 +592,7 @@ public static double[] CheckPOI(double xr, double Yr, Entity e)
 
             DistNearest = puntos.distancia(xr, yr, pNea[0], pNea[1]);
 
-        case "Text", "MText":
+        case "TEXT" or "MTEXT":
 
             DistBase = puntos.distancia(e.P[0], e.P[1], xr, yr);
 
@@ -602,7 +603,7 @@ public static double[] CheckPOI(double xr, double Yr, Entity e)
 
             DistNearest = puntos.distancia(xr, yr, pNea[0], pNea[1]);
 
-        case "ELLIPSE", "ARC", "SPLINE":
+        case "ELLIPSE" or "ARC" or "SPLINE":
 
             DistCenter = puntos.distancia(e.P[0], e.P[1], xr, yr);
 
@@ -619,7 +620,7 @@ public static double[] CheckPOI(double xr, double Yr, Entity e)
             }
             DistNearest = puntos.distancia(xr, yr, pNea[0], pNea[1]);
 
-        case "LWPOLYLINE", "SOLID":
+        case "LWPOLYLINE" or "SOLID":
              // tengo que ver cual es el mas cercano
 
             for ( i = 0; i <= e.P.count - 4; i + 2)
@@ -666,21 +667,21 @@ public static double[] CheckPOI(double xr, double Yr, Entity e)
                                 {
                                     puntoA.Add(0);
                                     puntoA.Add(base2);
-                                }
+                                } else {
                                     puntoA.Add(1);
                                     puntoA.Add(pend2 + base2);
 
                                 }
 
                                  // determino la interseccion de ambas
-                                puntoB = puntos.lineLineIntersection(gcd.Drawing.LastPoint, puntoA, [x0, y0], [x1, y1]);
-                            } // la recta es horizontal
+                                puntoB = Puntos.lineLineIntersection(gcd.Drawing.LastPoint, puntoA, [x0, y0], [x1, y1]);
+                            } else { // la recta es horizontal
 
                                 puntoB.Add(gcd.Drawing.LastPoint[0]);
                                 puntoB.Add(y0);
 
-                            }
-                        } // la recta es vertical
+                            } 
+                        } else {// la recta es vertical
 
                             puntoB.Add(x0);
                             puntoB.Add(gcd.Drawing.LastPoint[1]);
@@ -688,11 +689,11 @@ public static double[] CheckPOI(double xr, double Yr, Entity e)
                         }
 
                          // veo si el punto b esta entre los extremos de la linea , aunque deberia estarlo!!!
-                        if ( puntos.onSegment(x0, y0, puntoB[0], puntoB[1], x1, y1) )
+                        if ( Puntos.onSegment(x0, y0, puntoB[0], puntoB[1], x1, y1) )
                         {
 
                              // determino la distancia al puntero para ofrecerlo como opcion de enganche
-                            DistPer = puntos.distancia(puntoB[0], puntoB[1], xr, yr);
+                            DistPer = Puntos.distancia(puntoB[0], puntoB[1], xr, yr);
 
                         }
                     }
@@ -701,9 +702,12 @@ public static double[] CheckPOI(double xr, double Yr, Entity e)
                 }
             }
 
-            pNea = puntos.NearestToPolyLine(xr, yr, e.P);
+            pNea = Puntos.NearestToPolyLine(xr, yr, e.P);
+            DistNearest = Puntos.distancia(xr, yr, pNea[0], pNea[1]);
 
-            DistNearest = puntos.distancia(xr, yr, pNea[0], pNea[1]);
+            default:
+
+
 
     }
 
@@ -887,16 +891,20 @@ public static double[] GetNearestPoint(Entity e, double xr, double Yr)
 
                     return flxIntersec;
 
-                } // la perpendicular es verical
+                } else {// la perpendicular es verical
                     return [xr, e.P[1]];
                 }
-            } // la perpendicular es horizontal
+            } else {// la perpendicular es horizontal
                 return [e.P[0], yr];
 
             }
+        default:
+            flxIntersec = Puntos.NearestToPolyLine(xr, yr, e.PolyLine);
+            return flxIntersec;
 
     }
+    }
+}   
 
-}
 
-}
+

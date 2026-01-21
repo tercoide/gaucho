@@ -15,7 +15,7 @@ public bool Regenerable { get; set; } = false;
             Console.WriteLine("Llamada a diibujar desde la EntityBase");
             return;
         }
- public static void Draw2()
+ public  void Draw2()
         {
             Console.WriteLine("Imprimo desde Base");
             return;
