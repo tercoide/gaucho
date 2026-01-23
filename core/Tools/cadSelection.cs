@@ -30,19 +30,19 @@ public class cadSelection : ToolsBase
  // Create Static
 const string Gender = "SELECT";
 
-private string[] EntityType ;         
+public string[] EntityType ;         
 
-private Grip GripPoint ;         
-private Grip GripHovered ;         
-private bool GripCopying = false;
+public static Grip GripPoint =new Grip();         
+public static Grip GripHovered = new Grip();
+    public static bool GripCopying = false;
  //Public GripCopying As Boolean = false
 
-private double dX ;         
-private double dY ;         
+public double dX ;         
+public double dY ;         
  //Public ToolActive As Boolean = false
-private bool PanActive = false;
-private bool GripActive = false;
-private bool RectActive = false;
+public bool PanActive = false;
+public bool GripActive = false;
+public bool RectActive = false;
 
  // nuevo, para integrar el resto de las tools con esta, que es la principal
 public bool AllowSingleSelection = true;
@@ -104,7 +104,7 @@ public double[] SelectionPoly ;
  // C.2 Derecho -> nada
  // C.3 Medio -> ActionActive = ActionPanActive -> finalizo el paneo
 
-public static bool Start(Variant ElemToBuild, int _Mode= 2)
+public static bool Start(string ElemToBuild, int _Mode= 2)
     {
 
      // Modes:
@@ -113,7 +113,7 @@ public static bool Start(Variant ElemToBuild, int _Mode= 2)
 
     Mode = _Mode;
 
-    Prompt = ("Selected") + " " + Str$(Gcd.Drawing.Sheet.EntitiesSelected.Count) + " " + ("elements") + " " + ("New/Add(Ctrl)/Remove(Shft)/Previous selection");
+    Prompt = ("Selected") + " " + (Gcd.Drawing.Sheet.EntitiesSelected.Count).ToString() + " " + ("elements") + " " + ("New/Add(Ctrl)/Remove(Shft)/Previous selection");
 
      // If Mode = ModeNewSelection Then
      //     fMain.PopupMenu = ""                    // no hay menu contextual
@@ -136,6 +136,7 @@ public static bool Start(Variant ElemToBuild, int _Mode= 2)
     PoiChecking = true;
     Gcd.DrawHoveredEntity = true;
     GripPoint = null;
+    return true;
 
 }
 

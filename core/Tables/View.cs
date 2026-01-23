@@ -197,13 +197,13 @@ public class View
         public int Flags70 { get; set; }
 
         /// <summary>DXF codes 10/20/30: origin (WCS)</summary>
-        public Vector3 Origin { get; set; } = new Vector3();
+        public Punto3d Origin { get; set; } = new Punto3d();
 
         /// <summary>DXF codes 11/21/31: X axis direction (WCS)</summary>
-        public Vector3 XAxis { get; set; } = new Vector3(1, 0, 0);
+        public Punto3d XAxis { get; set; } = new Punto3d();
 
         /// <summary>DXF codes 12/22/32: Y axis direction (WCS)</summary>
-        public Vector3 YAxis { get; set; } = new Vector3(0, 1, 0);
+        public Punto3d YAxis { get; set; } = new Punto3d();
 
         /// <summary>DXF code 79: Valor (often 0)</summary>
         public int Valor79 { get; set; }
@@ -225,7 +225,7 @@ public class View
         /// <summary>
         /// DXF codes 13/23/33: origin relative to this UCS for the specific orthographic type
         /// </summary>
-        public Vector3 OriginForOrthographicType { get; set; } = new Vector3();
+        public Punto3d OriginForOrthographicType { get; set; } = new Punto3d();
 
         public UCS() { }
 

@@ -215,8 +215,8 @@ public abstract class ToolsBase
                     LastY = yt;
 
                     // store last point in drawing
-                    Gcd.Drawing.LastPoint[0] = xt;
-                    Gcd.Drawing.LastPoint[1] = yt;
+                    Gcd.Drawing.LastPoint[0] = (int)xt;
+                    Gcd.Drawing.LastPoint[1] = (int)yt;
 
                     NewParameter("point", Gcd.Drawing.LastPoint, true);
                 }
@@ -259,8 +259,10 @@ public abstract class ToolsBase
             // Find any viewport that contains the clicked point and activate it
             if (Gcd.Drawing.Sheet.Viewports != null)
             {
-                foreach (var v in Gcd.Drawing.Sheet.Viewports)
+                foreach (var v1 in Gcd.Drawing.Sheet.Viewports)
+
                 {
+                    var v = v1.Value;
                     if (SelStartXr >= v.X0 && SelStartXr <= v.X1 && SelStartYr >= v.Y0 && SelStartYr <= v.Y1)
                     {
                         Gcd.Drawing.Sheet.Viewport = v;
@@ -286,12 +288,13 @@ public abstract class ToolsBase
             // POI checking (snaps): pick best POI if available
             if (!Gcd.flgSearchingPOI)
             {
-                var iEntity = clsMouseTracking.CheckBestPOI(x, y);
-                if (iEntity != null && iEntity.Length >= 3 && iEntity[2] > 0)
-                {
-                    x = iEntity[0];
-                    y = iEntity[1];
-                }
+                // TODO: Implement mouse tracking functionality
+                // var iEntity = clsMouseTracking.CheckBestPOI(x, y);
+                // if (iEntity != null && iEntity.Length >= 3 && iEntity[2] > 0)
+                // {
+                //     x = iEntity[0];
+                //     y = iEntity[1];
+                // }
             }
 
             x = Gcd.Near(x);
