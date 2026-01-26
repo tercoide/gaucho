@@ -126,7 +126,7 @@ using Gaucho;
             var list = ToList(answer);
 
             // radius
-            list.Add(distancia(px1, py1, list[0], list[1]));
+            list.Add(Distancia(px1, py1, list[0], list[1]));
 
             // start and end angles
             ang1 = Ang(px1 - list[0], py1 - list[1]);
@@ -294,7 +294,7 @@ using Gaucho;
             double dCloser = 1e100;
             for (int i = 0; i <= arr.Length - 2; i += 2)
             {
-                double d = distancia(xreal, yreal, arr[i], arr[i + 1]);
+                double d = Distancia(xreal, yreal, arr[i], arr[i + 1]);
                 if (d < dCloser) { iCloser = i; dCloser = d; }
             }
             return iCloser;
@@ -302,8 +302,8 @@ using Gaucho;
 
         public static double[] NearestToLine(double xp, double yp, double x1, double y1, double x2, double y2)
         {
-            double d1 = distancia(xp, yp, x1, y1);
-            double d2 = distancia(xp, yp, x2, y2);
+            double d1 = Distancia(xp, yp, x1, y1);
+            double d2 = Distancia(xp, yp, x2, y2);
             double xm = x1 + (x2 - x1) * d1 / (d1 + d2);
             double ym = y1 + (y2 - y1) * d1 / (d1 + d2);
             return new double[] { xm, ym };
@@ -317,7 +317,7 @@ using Gaucho;
             for (int i = 0; i <= fPoly.Length - 4; i += 2)
             {
                 var fret = NearestToLine(xp, yp, fPoly[i], fPoly[i + 1], fPoly[i + 2], fPoly[i + 3]);
-                double dm = distancia(xp, yp, fret[0], fret[1]);
+                double dm = Distancia(xp, yp, fret[0], fret[1]);
                 if (d > dm) { d = dm; xm = fret[0]; ym = fret[1]; }
             }
             return new double[] { xm, ym };
@@ -333,7 +333,7 @@ using Gaucho;
             return -1;
         }
 
-        public static double distancia(double x1, double y1, double x2, double y2) => Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(y2 - y1, 2));
+        public static double Distancia(double x1, double y1, double x2, double y2) => Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(y2 - y1, 2));
 
         public static bool InBetween(double x, double x1, double x2) => (x1 <= x && x2 >= x) || (x1 >= x && x2 <= x);
 
@@ -619,8 +619,8 @@ using Gaucho;
                 Swaped = false;
                 for (int i = iInicial; i <= list.Count - 4; i += 2)
                 {
-                    double d1 = distancia(list[iInicial - 2], list[iInicial - 1], list[iInicial], list[iInicial + 1]);
-                    double d2 = distancia(list[iInicial - 2], list[iInicial - 1], list[i + 2], list[i + 3]);
+                    double d1 = Distancia(list[iInicial - 2], list[iInicial - 1], list[iInicial], list[iInicial + 1]);
+                    double d2 = Distancia(list[iInicial - 2], list[iInicial - 1], list[i + 2], list[i + 3]);
                     if (d1 > d2)
                 {
                     var ddd = list[iInicial];
@@ -724,7 +724,7 @@ using Gaucho;
             var tmpIntersection2 = LinePolyIntersection(flxLine, flxPoly);
             if (tmpIntersection2.Length == 0) return CopyRange(flxLine, 0, flxLine.Length);
 
-            if (distancia(tmpIntersection2[0], tmpIntersection2[1], flxLine[0], flxLine[1]) > distancia(tmpIntersection2[tmpIntersection2.Length - 2], tmpIntersection2[tmpIntersection2.Length - 1], flxLine[0], flxLine[1]))
+            if (Distancia(tmpIntersection2[0], tmpIntersection2[1], flxLine[0], flxLine[1]) > Distancia(tmpIntersection2[tmpIntersection2.Length - 2], tmpIntersection2[tmpIntersection2.Length - 1], flxLine[0], flxLine[1]))
                 tmpIntersection = ToList(InvertPolyline(tmpIntersection2));
             else
                 tmpIntersection = ToList(tmpIntersection2);
@@ -772,7 +772,7 @@ using Gaucho;
 
             if (flxIntersections.Count > 0)
             {
-                if (distancia(flxLine[0], flxLine[1], flxIntersections[0], flxIntersections[1]) > distancia(flxLine[0], flxLine[1], flxIntersections[flxIntersections.Count - 2], flxIntersections[flxIntersections.Count - 1]))
+                if (Distancia(flxLine[0], flxLine[1], flxIntersections[0], flxIntersections[1]) > Distancia(flxLine[0], flxLine[1], flxIntersections[flxIntersections.Count - 2], flxIntersections[flxIntersections.Count - 1]))
                     flxIntersections = ToList(InvertPolyline(ToArray(flxIntersections)));
 
                 if (FirstInsIde)
@@ -946,7 +946,7 @@ using Gaucho;
             double alfa = Ang(vector[0], vector[1]);
             double beta = Ang(wall[0], wall[1]);
             double gamma = beta * 2 - alfa;
-            double l = distancia(0, 0, vector[0], vector[1]);
+            double l = Distancia(0, 0, vector[0], vector[1]);
             return new double[] { Math.Cos(gamma) * l, Math.Sin(gamma) * l };
         }
 
@@ -1096,7 +1096,7 @@ using Gaucho;
             if (points == null) return 0;
             double l = 0;
             for (int i = 0; i <= points.Length - 4; i += 2)
-                l += distancia(points[i], points[i + 1], points[i + 2], points[i + 3]);
+                l += Distancia(points[i], points[i + 1], points[i + 2], points[i + 3]);
             return l;
         }
 
@@ -1166,7 +1166,7 @@ using Gaucho;
             {
                 double X0 = flxStrip[seg], Y0 = flxStrip[seg + 1];
                 double X1 = flxStrip[seg + 2], Y1 = flxStrip[seg + 3];
-                double fTrame = distancia(X0, Y0, X1, Y1);
+                double fTrame = Distancia(X0, Y0, X1, Y1);
 
                 if (bIntercalateLines)
                 {
@@ -1235,7 +1235,7 @@ using Gaucho;
         public static Punto2d ExtendLine2D(Punto2d p0, Punto2d p1, double l)
         {
             var p = new Punto2d();
-            double l0 = distancia(p0.x, p0.y, p1.x, p1.y);
+            double l0 = Distancia(p0.x, p0.y, p1.x, p1.y);
             p.x = p0.x; p.y = p0.y;
             if (p0.x != p1.x) p.x = p0.x + (l0 + l) / l0 * (p1.x - p0.x);
             if (p0.y != p1.y) p.y = p0.y + (l0 + l) / l0 * (p1.y - p0.y);

@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Gaucho
 {
 public static class clsMouseTracking
@@ -20,7 +23,7 @@ public static double LastPointToCursorDistance ;
 public static bool WaitEnabled = true;
 public static bool Searching ;         
 public static Dictionary<string, string> EntitiesSearchables ;         
-public static Entity[] EntitiesFound ;         
+public static List<Entity> EntitiesFound = new List<Entity>();         
 public static int SearchingSpeed = 250;    // la cantidad de entidades que busco por 0.1 segundos
 
     // Recolecto las entidades que estan alrededor del mouse, dentro de una tolerancia
@@ -79,11 +82,11 @@ public static void CollectEntitiesAroundMouse(double Xr, double Yr, int iToleran
 }
 
  // Veo si estoy sobre una entidad y la devuelvo
-public static  Entity[] CheckAboveEntities(double Xr, double Yr, int iTolerance= 12)
+public static List<Entity> CheckAboveEntities(double Xr, double Yr, int iTolerance= 12)
     {
 
 
-     Entity[] fEntities ;         
+     List<Entity> fEntities = new List<Entity>();         
     Entity e ;         
     double t = Timer;
 
@@ -98,7 +101,7 @@ public static  Entity[] CheckAboveEntities(double Xr, double Yr, int iTolerance=
         {
             if ( fEntities.Count > 0 )
             {
-                if ( e == fEntities.First ) Break;
+                if ( e == fEntities.First() ) break;
             }
 
             fEntities.Add(e); // agrego la parte
@@ -115,12 +118,12 @@ public static  Entity[] CheckAboveEntities(double Xr, double Yr, int iTolerance=
 
 }
 
-public static double[] CheckBestPOI(double Xr, double Yr, Entity eExclude = null)
+public static List<double> CheckBestPOI(double Xr, double Yr, Entity eExclude = null)
     {
 
 
-     Float[] CurrentPoint ;         
-     Float[] BestPoint ;         
+     List<double> CurrentPoint = new List<double>();
+     List<double> BestPoint = new List<double>();         
     double d ;         
     double ShortestDistance ;         
     Entity e ;         
@@ -151,7 +154,7 @@ public static double[] CheckBestPOI(double Xr, double Yr, Entity eExclude = null
             d = Puntos.Distancia(Xr, Yr, CurrentPoint[0], CurrentPoint[1]);
 
              //el punto no puede estar lejos del mouse
-            if ( d > Gcd.Metros(Config.SnapDistancePix) ) Continue;
+            if ( d > Gcd.Metros(Config.SnapDistancePix) ) continue;
 
             if ( d < ShortestDistance )
             {
@@ -169,7 +172,7 @@ public static double[] CheckBestPOI(double Xr, double Yr, Entity eExclude = null
 }
 
  // Veo si estoy sobre una entidad y la devuelvo
-public static  Entity[] CheckAboveEntity(double Xr, double Yr, int iTolerance= 12, Entity SkipEntiy = null)
+public static List<Entity> CheckAboveEntity(double Xr, double Yr, int iTolerance= 12, Entity SkipEntiy = null)
     {
 
 
@@ -258,12 +261,12 @@ public static  Entity[] CheckAboveEntity(double Xr, double Yr, int iTolerance= 1
 
  // This is called by MouseMove events, so make sure its fast
  // and its called form there
-public static double[] CheckPOI(double Xr, double Yr, Entity e)
+public static List<double> CheckPOI(double Xr, double Yr, Entity e)
     {
 
 
-     double[] rData ;         
-     double[] CurrentPoint ;         
+     List<double> rData = new List<double>();
+     List<double> CurrentPoint = new List<double>();
     Entity e2 ;         
     Entity ePart ;         
     int indexEntity ;         
@@ -277,13 +280,13 @@ public static double[] CheckPOI(double Xr, double Yr, Entity e)
     double base1 ;         
     double pend2 ;         
     double base2 ;         
-     double[] pNea ;         
-     double[] puntoB ;         
-     double[] puntoA ;         
-     double[] pIntersection ;         
-     double[] pInter ;         
-     double[] pInterPoly ;         
-     double[] pInterPoly2 ;         
+     List<double> pNea = new List<double>();
+     List<double> puntoB = new List<double>();
+     List<double> puntoA = new List<double>();
+     List<double> pIntersection = new List<double>();
+     List<double> pInter = new List<double>();
+     List<double> pInterPoly = new List<double>();
+     List<double> pInterPoly2 = new List<double>();         
     double End1X =0;         
     double End1Y =0;         
     double End2X =0;         
@@ -318,7 +321,7 @@ public static double[] CheckPOI(double Xr, double Yr, Entity e)
 
     tolerance = Gcd.Metros(16);
      //Debug "Checking POI"
-    rData.Insert([0, 0, 0]);
+    rData.AddRange(new double[] {0, 0, 0});
     iPoligon = -1;
     iLine = -1;
 
@@ -327,7 +330,7 @@ public static double[] CheckPOI(double Xr, double Yr, Entity e)
      // rData = Puntos.FindPOI(Xr, Yr, Gcd.CurrDrawing.poiPoints, Gcd.CurrDrawing.Metros(16))
      // i = rData[2]
      // If i >= 0 Then
-     //     rData[2] = Gcd.CurrDrawing.poiType[i]
+     //     rData[2] = Gcd.CurrDrawing.poitype[i]
      //     rData.Add(Gcd.CurrDrawing.poiEntities[i])
      //
      // Else
@@ -360,11 +363,10 @@ public static double[] CheckPOI(double Xr, double Yr, Entity e)
     {
 
         case "INSERT":
-            Stop;
             ShortestDistance = 1e10;
             foreach ( var ePart in e.pBlock.Entities)
             {
-                if (Gcd.flgQuitSearch) Break;
+                if (Gcd.flgQuitSearch) break;
                 if (WaitEnabled) Gb.Wait(0);
                 CurrentPoint = CheckPOI(Xr, Yr, ePart);
 
@@ -412,7 +414,7 @@ public static double[] CheckPOI(double Xr, double Yr, Entity e)
                         }
 
                          // determino la interseccion de ambas
-                        puntoB = Puntos.lineLineIntersection(Gcd.Drawing.LastPoint, puntoA, [e.P[0], e.P[1]], [e.P[2], e.P[3]]);
+                        puntoB = Puntos.lineLineIntersection(Gcd.Drawing.LastPoint, puntoA, new List<double> {e.P[0], e.P[1]}, new List<double> {e.P[2], e.P[3]});
                     } else { // la recta es horizontal
 
                         puntoB.Add(Gcd.Drawing.LastPoint[0]);
@@ -438,11 +440,12 @@ public static double[] CheckPOI(double Xr, double Yr, Entity e)
             break;
 
              // busco tambien intersecciones
-            foreach ( var e2 in Gcd.Drawing.Sheet.EntitiesVisibles)
+            foreach ( var e21 in Gcd.Drawing.Sheet.EntitiesVisibles)
             {
-                if ( Gcd.flgQuitSearch ) Break;
-                if ( WaitEnabled ) Wait;
-                if ( e == e2 ) Continue;
+e2 = e21.Value;
+                if ( Gcd.flgQuitSearch ) break;
+                if ( WaitEnabled ) Gb.Wait(0);
+                if ( e == e2 ) continue;
 
                 switch ( e2.Gender)
                 {
@@ -450,19 +453,22 @@ public static double[] CheckPOI(double Xr, double Yr, Entity e)
                     case "LINE":
                         if ( Puntos.doIntersect(e.P[0], e.P[1], e.P[2], e.P[3], e2.P[0], e2.P[1], e2.P[2], e2.P[3]) )
                         {
-                            pInter = Puntos.lineLineIntersection([e.P[0], e.P[1]], [e.P[2], e.P[3]], [e2.P[0], e2.P[1]], [e2.P[2], e2.P[3]]);
+                            pInter = Puntos.lineLineIntersection(new List<double> {e.P[0], e.P[1]}, new List<double> {e.P[2], e.P[3]}, new List<double> {e2.P[0], e2.P[1]}, new List<double> {e2.P[2], e2.P[3]});
 
-                            pIntersection.Insert(pInter);
+                            pIntersection.AddRange(pInter);
 
                         }
+                        break;
 
                     case "LWPOLYLINE" or "SOLID":
 
                         pInterPoly = Puntos.LinePolyIntersection3(e.p, e2.p);
-                        pIntersection.Insert(pInterPoly);
+                        pIntersection.AddRange(pInterPoly);
+                        break;
                     case "CIRCLE" or "ARC" or "SPLINE":
                         pInterPoly2 = Puntos.LinePolyIntersection3(e.p, e2.PolyLine);
-                        pIntersection.Insert(pInterPoly2);
+                        pIntersection.AddRange(pInterPoly2);
+                        break;
                 }
             }
 
@@ -509,10 +515,10 @@ public static double[] CheckPOI(double Xr, double Yr, Entity e)
                     double bd = rho * Math.Sqrt(1 - rho * rho);
 
                      // los puntos tangente
-                    T1x = Cx + ad * dx + bd * dXr;
-                    T1y = Cy + ad * dy + bd * dYr;
-                    T2x = Cx + ad * dx - bd * dXr;
-                    T2y = Cy + ad * dy - bd * dYr;
+                    t1x = Cx + ad * dx + bd * dXr;
+                    t1y = Cy + ad * dy + bd * dYr;
+                    t2x = Cx + ad * dx - bd * dXr;
+                    t2y = Cy + ad * dy - bd * dYr;
 
                     if ( (DistCenter / r - 1) < 1E-8 )
                     {
@@ -521,11 +527,11 @@ public static double[] CheckPOI(double Xr, double Yr, Entity e)
 
                          if ( Puntos.Distancia(Xr, Yr, t1x, t1y) > Puntos.Distancia(Xr, Yr, t2x, t2y) )
                         {
-                            Tx = T2x;
-                            Ty = T2y;
+                            tx = t2x;
+                            ty = t2y;
                         } else {
-                            Tx = T1x;
-                            Ty = T1y;
+                            tx = t1x;
+                            ty = t1y;
 
                         }
                         DistTang = Puntos.Distancia(Xr, Yr, tx, ty);
@@ -612,14 +618,14 @@ public static double[] CheckPOI(double Xr, double Yr, Entity e)
 
             DistCenter = Puntos.Distancia(e.P[0], e.P[1], Xr, Yr);
 
-            if ( e.PolyLine.count > 0 )
+            if ( e.PolyLine.Length > 0 )
             {
                 DistEnd1 = Puntos.Distancia(e.PolyLine[0], e.PolyLine[1], Xr, Yr);
                 End1X = e.PolyLine[0];
                 End1Y = e.PolyLine[1];
-                DistEnd2 = Puntos.Distancia(e.PolyLine[e.PolyLine.Max - 1], e.PolyLine[e.PolyLine.max], Xr, Yr);
-                End2X = e.PolyLine[e.PolyLine.Max - 1];
-                End2Y = e.PolyLine[e.PolyLine.Max];
+                DistEnd2 = Puntos.Distancia(e.PolyLine[e.PolyLine.Length - 2], e.PolyLine[e.PolyLine.Length - 1], Xr, Yr);
+                End2X = e.PolyLine[e.PolyLine.Length - 2];
+                End2Y = e.PolyLine[e.PolyLine.Length - 1];
 
                 pNea = Puntos.NearestToPolyLine(Xr, Yr, e.PolyLine);
             }
@@ -628,7 +634,7 @@ public static double[] CheckPOI(double Xr, double Yr, Entity e)
         case "LWPOLYLINE" or "SOLID":
              // tengo que ver cual es el mas cercano
 
-            for ( i = 0; i <= e.P.count - 4; i + 2)
+            for ( i = 0; i <= e.P.Length - 4; i+=2)
             {
 
                 x0 = e.P[i + 0];
@@ -856,7 +862,7 @@ public static double[] CheckPOI(double Xr, double Yr, Entity e)
 }
 
  // Devuelve el punto en la entidad que esta mas cercano al provisto
-public static double[] GetNearestPoint(Entity e, double Xr, double Yr)
+public static List<double> GetNearestPoint(Entity e, double Xr, double Yr)
     {
 
 
@@ -869,7 +875,7 @@ public static double[] GetNearestPoint(Entity e, double Xr, double Yr)
     double m1 ;         
     double m2 ;         
     double angle ;         
-    double[] flxIntersec ;         
+    List<double> flxIntersec = new List<double>();         
 
     switch ( e.Gender)
     {
@@ -890,17 +896,17 @@ public static double[] GetNearestPoint(Entity e, double Xr, double Yr)
                     y2 = m2 * x2 + c;
 
                      // obtenemos el punto interseccion
-                    flxIntersec = Puntos.lineLineIntersection([Xr, Yr], [x2, y2], [e.P[0], e.P[1]], [e.P[2], e.P[3]]);
+                    flxIntersec = Puntos.lineLineIntersection(new List<double> {Xr, Yr}, new List<double> {x2, y2}, new List<double> {e.P[0], e.P[1]}, new List<double> {e.P[2], e.P[3]});
 
                      // y salimos
 
                     return flxIntersec;
 
                 } else {// la perpendicular es verical
-                    return [Xr, e.P[1]];
+                    return new List<double> {Xr, e.P[1]};
                 }
             } else {// la perpendicular es horizontal
-                return [e.P[0], Yr];
+                return new List<double> {e.P[0], Yr};
 
             }
         default:
