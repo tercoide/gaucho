@@ -28,15 +28,55 @@ using Gaucho;
         public static double NumericTolerance = 1e-7;
         public const double Pi2 = 6.28318530717959;
 
-        #region List helpers
+        #region Array/List helpers
 
-        private static List<double> CopyRange(List<double> src, int start, int count)
+        private static List<double> ToList(double[] a) => a == null ? new List<double>() : new List<double>(a);
+        private static double[] ToArray(List<double> l) => l == null ? new double[0] : l.ToArray();
+
+        private static double[] CopyRange(double[] src, int start, int count)
         {
-            if (src == null) return new List<double>();
+            if (src == null) return new double[0];
             if (start < 0) start = 0;
-            if (start >= src.Count) return new List<double>();
-            int available = Math.Min(count, src.Count - start);
-            return src.GetRange(start, available);
+            if (start >= src.Length) return new double[0];
+            int available = Math.Min(count, src.Length - start);
+            var dst = new double[available];
+            Array.Copy(src, start, dst, 0, available);
+            return dst;
+        }
+
+        private static double[] RemoveRange(double[] src, int index, int count)
+        {
+            var list = ToList(src);
+            if (index < 0) index = 0;
+            if (index >= list.Count) return src ?? new double[0];
+            int c = Math.Min(count, list.Count - index);
+            list.RemoveRange(index, c);
+            return ToArray(list);
+        }
+
+        private static double[] InsertRangeAt(double[] src, int index, IEnumerable<double> values)
+        {
+            var list = ToList(src);
+            if (index < 0) index = 0;
+            if (index > list.Count) index = list.Count;
+            list.InsertRange(index, values);
+            return ToArray(list);
+        }
+
+        private static double[] Concat(params double[][] arrays)
+        {
+            if (arrays == null) return new double[0];
+            int total = 0;
+            foreach (var a in arrays) if (a != null) total += a.Length;
+            var outArr = new double[total];
+            int pos = 0;
+            foreach (var a in arrays)
+            {
+                if (a == null) continue;
+                Array.Copy(a, 0, outArr, pos, a.Length);
+                pos += a.Length;
+            }
+            return outArr;
         }
 
         private static void Swap(ref double a, ref double b)
@@ -63,9 +103,9 @@ using Gaucho;
 
         #region Geometry functions (public signatures use double[])
 
-        // Returns center, radius, start angle, Count of an arc defined by 3 given points
-        // Returns empty list if cannot compute
-        public static List<double> Arc3Point(double px1, double py1, double px2, double py2, double px3, double py3)
+        // Returns center, radius, start angle, length of an arc defined by 3 given points
+        // Returns empty array if cannot compute
+        public static double[] Arc3Point(double px1, double py1, double px2, double py2, double px3, double py3)
         {
             var mx1 = (px1 + px2) / 2;
             var my1 = (py1 + py2) / 2;
@@ -81,9 +121,9 @@ using Gaucho;
             var ay2 = my2 + 100 * Math.Cos(ang2);
 
             var answer = LineLineIntersection2(mx1, my1, ax1, ay1, mx2, my2, ax2, ay2);
-            if (answer.Count == 0) return new List<double>();
+            if (answer.Length == 0) return new double[0];
 
-            var list = answer;
+            var list = ToList(answer);
 
             // radius
             list.Add(Distancia(px1, py1, list[0], list[1]));
@@ -109,17 +149,17 @@ using Gaucho;
 
             list.Add(ang1);
             list.Add(ang2 - ang1);
-            return list;
+            return ToArray(list);
         }
 
-        // Polygon triangulation (ear clipping-like). Input/Output as List<double> pairs x,y,x,y...
-        public static List<double> PolygonTriangulation(List<double> fPolygon)
+        // Polygon triangulation (ear clipping-like). Input/Output as double[] pairs x,y,x,y...
+        public static double[] PolygonTriangulation(double[] fPolygon)
         {
-            if (fPolygon == null) return new List<double>();
-            var fPoly = new List<double>(fPolygon);
+            if (fPolygon == null) return new double[0];
+            var fPoly = ToList(fPolygon);
             var Triangles = new List<double>();
 
-            if (fPoly.Count <= 6) return fPoly;
+            if (fPoly.Count <= 6) return ToArray(fPoly);
 
             // remove coincident consecutive points
             for (int i = 0; i <= fPoly.Count / 2 - 2; i++)
@@ -140,7 +180,7 @@ using Gaucho;
                     fPoly.RemoveRange(fPoly.Count - 2, 2);
                 }
             }
-            if (fPoly.Count <= 6) return fPoly;
+            if (fPoly.Count <= 6) return ToArray(fPoly);
 
             while (true)
             {
@@ -157,10 +197,10 @@ using Gaucho;
                     double MIdX = (fPoly[PivotIzq * 2] + fPoly[TestPoint * 2]) / 2;
                     double MIdY = (fPoly[PivotIzq * 2 + 1] + fPoly[TestPoint * 2 + 1]) / 2;
 
-                    if (isInsIde(fPoly, MIdX, MIdY))
+                    if (isInsIde(ToArray(fPoly), MIdX, MIdY))
                     {
-                        var intersec = LinePolyIntersection2(new List<double> { fPoly[PivotIzq * 2], fPoly[PivotIzq * 2 + 1], fPoly[PivotDer * 2], fPoly[PivotDer * 2 + 1] }, fPoly);
-                        if (intersec.Count == 0)
+                        var intersec = LinePolyIntersection2(new double[] { fPoly[PivotIzq * 2], fPoly[PivotIzq * 2 + 1], fPoly[PivotDer * 2], fPoly[PivotDer * 2 + 1] }, ToArray(fPoly));
+                        if (intersec.Length == 0)
                         {
                             Triangles.AddRange(new double[] {
                                 fPoly[PivotIzq * 2], fPoly[PivotIzq * 2 + 1],
@@ -178,12 +218,12 @@ using Gaucho;
                     MIdX = (fPoly[PivotDer * 2] + fPoly[TestPoint * 2]) / 2;
                     MIdY = (fPoly[PivotDer * 2 + 1] + fPoly[TestPoint * 2 + 1]) / 2;
 
-                    if (isInsIde(fPoly, MIdX, MIdY))
+                    if (isInsIde(ToArray(fPoly), MIdX, MIdY))
                     {
-                        var intersec = LinePolyIntersection2(new List<double> { fPoly[PivotDer * 2], fPoly[PivotDer * 2 + 1], fPoly[TestPoint * 2], fPoly[TestPoint * 2 + 1] }, fPoly);
-                        if (intersec.Count == 0)
+                        var intersec = LinePolyIntersection2(new double[] { fPoly[PivotDer * 2], fPoly[PivotDer * 2 + 1], fPoly[TestPoint * 2], fPoly[TestPoint * 2 + 1] }, ToArray(fPoly));
+                        if (intersec.Length == 0)
                         {
-                            Triangles.AddRange(new List<double> {
+                            Triangles.AddRange(new double[] {
                                 fPoly[PivotIzq * 2], fPoly[PivotIzq * 2 + 1],
                                 fPoly[PivotDer * 2], fPoly[PivotDer * 2 + 1],
                                 fPoly[TestPoint * 2], fPoly[TestPoint * 2 + 1]
@@ -199,44 +239,44 @@ using Gaucho;
             }
 
             if (fPoly.Count == 6) Triangles.AddRange(fPoly);
-            return Triangles;
+            return ToArray(Triangles);
         }
 
-        public static List<double> ArcTriangulation(List<double> center, List<double> fPolygon)
+        public static double[] ArcTriangulation(double[] center, double[] fPolygon)
         {
-            if (center == null || fPolygon == null) return new List<double>();
+            if (center == null || fPolygon == null) return new double[0];
             var Triangles = new List<double>();
-            for (int i = 0; i <= fPolygon.Count - 4; i += 2)
+            for (int i = 0; i <= fPolygon.Length - 4; i += 2)
             {
                 Triangles.Add(center[0]); Triangles.Add(center[1]);
                 Triangles.Add(fPolygon[i]); Triangles.Add(fPolygon[i + 1]);
                 Triangles.Add(fPolygon[i + 2]); Triangles.Add(fPolygon[i + 3]);
             }
-            return Triangles;
+            return ToArray(Triangles);
         }
 
         // Returns [x,y,index] (index as double) or [xr,yr,-1]
-        public static List<double> FindPOI(double xr, double yr, List<double> arr, double hook)
+        public static double[] FindPOI(double xr, double yr, double[] arr, double hook)
         {
-            if (arr == null) return new List<double> { xr, yr, -1 };
-            for (int i = 0; i <= arr.Count - 2; i += 2)
+            if (arr == null) return new double[] { xr, yr, -1 };
+            for (int i = 0; i <= arr.Length - 2; i += 2)
             {
                 var ax = arr[i]; var ay = arr[i + 1];
                 if (((ax - hook) < xr && (ax + hook) > xr) || ((ax - hook) > xr && (ax + hook) < xr))
                 {
                     if (((ay - hook) < yr && (ay + hook) > yr) || ((ay - hook) > yr && (ay + hook) < yr))
                     {
-                        return new List<double> { ax, ay, i / 2.0 };
+                        return new double[] { ax, ay, i / 2.0 };
                     }
                 }
             }
-            return new List<double> { xr, yr, -1 };
+            return new double[] { xr, yr, -1 };
         }
 
-        public static int FindPOILines(double xreal, double yreal, List<double> arr, double tolerance)
+        public static int FindPOILines(double xreal, double yreal, double[] arr, double tolerance)
         {
             if (arr == null) return -1;
-            for (int i = 0; i <= arr.Count - 4; i += 4)
+            for (int i = 0; i <= arr.Length - 4; i += 4)
             {
                 if (doIntersect(xreal - tolerance / 2, yreal, xreal + tolerance / 2, yreal, arr[i + 0], arr[i + 1], arr[i + 2], arr[i + 3]) ||
                     doIntersect(xreal, yreal - tolerance / 2, xreal, yreal + tolerance / 2, arr[i + 0], arr[i + 1], arr[i + 2], arr[i + 3]))
@@ -247,12 +287,12 @@ using Gaucho;
             return -1;
         }
 
-        public static int FindNearest(double xreal, double yreal, List<double> arr)
+        public static int FindNearest(double xreal, double yreal, double[] arr)
         {
             if (arr == null) return -1;
             int iCloser = -1;
             double dCloser = 1e100;
-            for (int i = 0; i <= arr.Count - 2; i += 2)
+            for (int i = 0; i <= arr.Length - 2; i += 2)
             {
                 double d = Distancia(xreal, yreal, arr[i], arr[i + 1]);
                 if (d < dCloser) { iCloser = i; dCloser = d; }
@@ -260,33 +300,33 @@ using Gaucho;
             return iCloser;
         }
 
-        public static List<double> NearestToLine(double xp, double yp, double x1, double y1, double x2, double y2)
+        public static double[] NearestToLine(double xp, double yp, double x1, double y1, double x2, double y2)
         {
             double d1 = Distancia(xp, yp, x1, y1);
             double d2 = Distancia(xp, yp, x2, y2);
             double xm = x1 + (x2 - x1) * d1 / (d1 + d2);
             double ym = y1 + (y2 - y1) * d1 / (d1 + d2);
-            return new List<double> { xm, ym };
+            return new double[] { xm, ym };
         }
 
-        public static List<double> NearestToPolyLine(double xp, double yp, List<double> fPoly)
+        public static double[] NearestToPolyLine(double xp, double yp, double[] fPoly)
         {
             double d = 1e100;
             double xm = 0, ym = 0;
-            if (fPoly == null || fPoly.Count < 4) return new List<double> { xm, ym };
-            for (int i = 0; i <= fPoly.Count - 4; i += 2)
+            if (fPoly == null || fPoly.Length < 4) return new double[] { xm, ym };
+            for (int i = 0; i <= fPoly.Length - 4; i += 2)
             {
                 var fret = NearestToLine(xp, yp, fPoly[i], fPoly[i + 1], fPoly[i + 2], fPoly[i + 3]);
                 double dm = Distancia(xp, yp, fret[0], fret[1]);
                 if (d > dm) { d = dm; xm = fret[0]; ym = fret[1]; }
             }
-            return new List<double> { xm, ym };
+            return new double[] { xm, ym };
         }
 
-        public static int FindPOIPoligon(double xr, double yr, List<double> arr, List<int> arrIndexes, List<int> arrNElements)
+        public static int FindPOIPoligon(double xr, double yr, double[] arr, int[] arrIndexes, int[] arrNElements)
         {
             if (arrIndexes == null || arrNElements == null) return -1;
-            for (int i = 0; i < arrIndexes.Count; i++)
+            for (int i = 0; i < arrIndexes.Length; i++)
             {
                 if (isInsIde(arr, xr, yr, arrIndexes[i], arrNElements[i])) return i;
             }
@@ -299,13 +339,13 @@ using Gaucho;
 
         public static bool InBetweenNotEqual(double x, double x1, double x2) => (x1 < x && x2 > x) || (x1 > x && x2 < x);
 
-        public static int inPolySegment(List<double> poligon, double px, double py, double tolerance = 0)
+        public static int inPolySegment(double[] poligon, double px, double py, double tolerance = 0)
         {
             if (poligon == null) return -1;
             if (tolerance == 0) tolerance = NumericTolerance;
-            for (int i = 0; i <= poligon.Count - 4; i += 2)
+            for (int i = 0; i <= poligon.Length - 4; i += 2)
             {
-                if (PointToLineDistance(new List<double> { px, py }, poligon.GetRange(i, 4)) <= tolerance) return (i + 2) / 2;
+                if (PointToLineDistance(new double[] { px, py }, CopyRange(poligon, i, 4)) <= tolerance) return (i + 2) / 2;
             }
             return -1;
         }
@@ -345,12 +385,12 @@ using Gaucho;
             return false;
         }
 
-        public static double Sign(List<double> p1, List<double> p2, List<double> p3)
+        public static double Sign(double[] p1, double[] p2, double[] p3)
         {
             return (p1[0] - p3[0]) * (p2[1] - p3[1]) - (p2[0] - p3[0]) * (p1[1] - p3[1]);
         }
 
-        public static bool IsPointInTri(List<double> v1, List<double> v2, List<double> v3, List<double> pt)
+        public static bool IsPointInTri(double[] v1, double[] v2, double[] v3, double[] pt)
         {
             bool b1 = Sign(pt, v1, v2) < 0.0;
             bool b2 = Sign(pt, v2, v3) < 0.0;
@@ -359,10 +399,10 @@ using Gaucho;
         }
 
         // Point in polygon using ray casting improved algorithm
-        public static bool isInsIde(List<double> fPolygon, double px, double py, int StartIndex = 0, int Vertices = 0)
+        public static bool isInsIde(double[] fPolygon, double px, double py, int StartIndex = 0, int Vertices = 0)
         {
             if (fPolygon == null) return false;
-            if (Vertices == 0) Vertices = fPolygon.Count / 2;
+            if (Vertices == 0) Vertices = fPolygon.Length / 2;
             if (Vertices < 3) return false;
 
             double extremeX = 1e11;
@@ -372,7 +412,7 @@ using Gaucho;
             for (int i = StartIndex; i <= Vertices * 2 - 1; i += 2)
             {
                 int next = i + 2;
-                if (i == fPolygon.Count - 2) next = 0;
+                if (i == fPolygon.Length - 2) next = 0;
 
                 if (fPolygon[i] < px && fPolygon[next] < px) continue;
                 if (fPolygon[i + 1] < py && fPolygon[next + 1] < py) continue;
@@ -387,12 +427,12 @@ using Gaucho;
             return (count % 2 == 1);
         }
 
-        public static bool[] PointsInsidePoligon(List<double> fPoints, List<double> fPolygon)
+        public static bool[] PointsInsidePoligon(double[] fPoints, double[] fPolygon)
         {
             if (fPoints == null) return new bool[0];
-            var bInside = new bool[fPoints.Count / 2];
+            var bInside = new bool[fPoints.Length / 2];
             int i2 = 0;
-            for (int i = 0; i <= fPoints.Count - 2; i += 2)
+            for (int i = 0; i <= fPoints.Length - 2; i += 2)
             {
                 bInside[i2] = isInsIde(fPolygon, fPoints[i], fPoints[i + 1]);
                 i2++;
@@ -400,10 +440,10 @@ using Gaucho;
             return bInside;
         }
 
-        public static bool isInsIdePolygons(List<double> fTest, List<double> fAround)
+        public static bool isInsIdePolygons(double[] fTest, double[] fAround)
         {
             if (fTest == null) return true;
-            for (int i = 0; i <= fTest.Count - 2; i += 2)
+            for (int i = 0; i <= fTest.Length - 2; i += 2)
             {
                 if (!isInsIde(fAround, fTest[i], fTest[i + 1])) return false;
             }
@@ -412,10 +452,10 @@ using Gaucho;
 
         public static bool Equal(float v1, float v2) => v1 == v2;
 
-        public static void RotatePointsFromBase(double CenterX, double CenterY, double fAngle, List<double> flxPoints)
+        public static void RotatePointsFromBase(double CenterX, double CenterY, double fAngle, double[] flxPoints)
         {
             if (flxPoints == null) return;
-            for (int i = 0; i <= flxPoints.Count - 2; i += 2)
+            for (int i = 0; i <= flxPoints.Length - 2; i += 2)
             {
                 var n = RotateFromPointWithAngle(CenterX, CenterY, fAngle, flxPoints[i], flxPoints[i + 1]);
                 flxPoints[i] = n[0];
@@ -423,7 +463,7 @@ using Gaucho;
             }
         }
 
-        public static List<double> RotateFromPointWithAngle(double CenterX, double CenterZ, double fAngle, double Px, double Pz)
+        public static double[] RotateFromPointWithAngle(double CenterX, double CenterZ, double fAngle, double Px, double Pz)
         {
             double s = Math.Sin(fAngle);
             double c = Math.Cos(fAngle);
@@ -433,17 +473,17 @@ using Gaucho;
             double ynew = Px * s + Pz * c;
             Px = xnew + CenterX;
             Pz = ynew + CenterZ;
-            return new List<double> { Px, Pz };
+            return new double[] { Px, Pz };
         }
 
-        public static List<double> RotateWithSinCos(double Px, double Pz, double S, double C)
+        public static double[] RotateWithSinCos(double Px, double Pz, double S, double C)
         {
             double xnew = Px * C - Pz * S;
             double ynew = Px * S + Pz * C;
-            return new List<double> { xnew, ynew };
+            return new double[] { xnew, ynew };
         }
 
-        public static List<double> RotateFromPointWithSinCos(double CenterX, double CenterZ, double S, double C, double Px, double Pz)
+        public static double[] RotateFromPointWithSinCos(double CenterX, double CenterZ, double S, double C, double Px, double Pz)
         {
             Px -= CenterX;
             Pz -= CenterZ;
@@ -451,10 +491,10 @@ using Gaucho;
             double ynew = Px * S + Pz * C;
             Px = xnew + CenterX;
             Pz = ynew + CenterZ;
-            return new List<double> { Px, Pz };
+            return new double[] { Px, Pz };
         }
 
-        public static List<double> lineLineIntersection(List<double> A, List<double> B, List<double> C, List<double> D)
+        public static double[] lineLineIntersection(double[] A, double[] B, double[] C, double[] D)
         {
             double a1 = B[1] - A[1];
             double b1 = A[0] - B[0];
@@ -465,13 +505,13 @@ using Gaucho;
             double c2 = a2 * (C[0]) + b2 * (C[1]);
 
             double determinant = a1 * b2 - a2 * b1;
-            if (determinant == 0) return new List<double>();
+            if (determinant == 0) return new double[0];
             double x = (b2 * c1 - b1 * c2) / determinant;
             double y = (a1 * c2 - a2 * c1) / determinant;
-            return new List<double> { x, y };
+            return new double[] { x, y };
         }
 
-        public static List<double> LineLineIntersection2(double ax, double ay, double bx, double by, double cx, double cy, double dx, double dy)
+        public static double[] LineLineIntersection2(double ax, double ay, double bx, double by, double cx, double cy, double dx, double dy)
         {
             double a1 = by - ay;
             double b1 = ax - bx;
@@ -481,16 +521,16 @@ using Gaucho;
             double b2 = cx - dx;
             double c2 = a2 * (cx) + b2 * (cy);
 
-            if (ax == cx && ay == cy) return new List<double> { ax, ay };
-            if (ax == dx && ay == dy) return new List<double> { ax, ay };
-            if (bx == cx && by == cy) return new List<double> { bx, by };
-            if (bx == dx && by == dy) return new List<double> { bx, by };
+            if (ax == cx && ay == cy) return new double[] { ax, ay };
+            if (ax == dx && ay == dy) return new double[] { ax, ay };
+            if (bx == cx && by == cy) return new double[] { bx, by };
+            if (bx == dx && by == dy) return new double[] { bx, by };
 
             double determinant = a1 * b2 - a2 * b1;
-            if (determinant == 0) return new List<double>();
+            if (determinant == 0) return new double[0];
             double x = (b2 * c1 - b1 * c2) / determinant;
             double y = (a1 * c2 - a2 * c1) / determinant;
-            return new List<double> { x, y };
+            return new double[] { x, y };
         }
 
         public static float[] LineLineIntersection2_Single(float ax, float ay, float bx, float by, float cx, float cy, float dx, float dy)
@@ -514,14 +554,14 @@ using Gaucho;
             return new float[] { x, y };
         }
 
-        // Line vs closed poly intersections - returns list of intersection points (x,y,x,y,...)
-        public static List<double> LinePolyIntersection2(List<double> flxLine, List<double> flxPoly)
+        // Line vs closed poly intersections - returns array of intersection points (x,y,x,y,...)
+        public static double[] LinePolyIntersection2(double[] flxLine, double[] flxPoly)
         {
             var flxIntersections = new List<double>();
-            if (flxLine == null || flxPoly == null) return new List<double>();
-            if (flxLine.Count != 4) return new List<double>();
+            if (flxLine == null || flxPoly == null) return new double[0];
+            if (flxLine.Length != 4) return new double[0];
 
-            for (int i = 0; i <= flxPoly.Count - 4; i += 2)
+            for (int i = 0; i <= flxPoly.Length - 4; i += 2)
             {
                 if ((flxLine[0] == flxPoly[i] && flxLine[1] == flxPoly[i + 1]) ||
                     (flxLine[0] == flxPoly[i + 2] && flxLine[1] == flxPoly[i + 3]) ||
@@ -531,63 +571,64 @@ using Gaucho;
                 if (doIntersect(flxLine[0], flxLine[1], flxLine[2], flxLine[3], flxPoly[i], flxPoly[i + 1], flxPoly[i + 2], flxPoly[i + 3]))
                 {
                     var t = LineLineIntersection2(flxLine[0], flxLine[1], flxLine[2], flxLine[3], flxPoly[i], flxPoly[i + 1], flxPoly[i + 2], flxPoly[i + 3]);
-                    if (t.Count > 0) flxIntersections.AddRange(t);
-                    return flxIntersections; // original returns after first found
+                    if (t.Length > 0) flxIntersections.AddRange(ToList(t));
+                    return ToArray(flxIntersections); // original returns after first found
                 }
             }
 
-            if ((flxLine[0] == flxPoly[flxPoly.Count - 2] && flxLine[1] == flxPoly[flxPoly.Count - 1]) ||
+            if ((flxLine[0] == flxPoly[flxPoly.Length - 2] && flxLine[1] == flxPoly[flxPoly.Length - 1]) ||
                 (flxLine[0] == flxPoly[0] && flxLine[1] == flxPoly[1]) ||
-                (flxLine[2] == flxPoly[flxPoly.Count - 2] && flxLine[3] == flxPoly[flxPoly.Count - 1]) ||
-                (flxLine[2] == flxPoly[0] && flxLine[3] == flxPoly[1])) return new List<double>();
+                (flxLine[2] == flxPoly[flxPoly.Length - 2] && flxLine[3] == flxPoly[flxPoly.Length - 1]) ||
+                (flxLine[2] == flxPoly[0] && flxLine[3] == flxPoly[1])) return new double[0];
 
-            if (doIntersect(flxLine[0], flxLine[1], flxLine[2], flxLine[3], flxPoly[flxPoly.Count - 2], flxPoly[flxPoly.Count - 1], flxPoly[0], flxPoly[1]))
+            if (doIntersect(flxLine[0], flxLine[1], flxLine[2], flxLine[3], flxPoly[flxPoly.Length - 2], flxPoly[flxPoly.Length - 1], flxPoly[0], flxPoly[1]))
             {
-                var t = LineLineIntersection2(flxLine[0], flxLine[1], flxLine[2], flxLine[3], flxPoly[flxPoly.Count - 2], flxPoly[flxPoly.Count - 1], flxPoly[0], flxPoly[1]);
-                if (t.Count > 0) flxIntersections.AddRange(t);
+                var t = LineLineIntersection2(flxLine[0], flxLine[1], flxLine[2], flxLine[3], flxPoly[flxPoly.Length - 2], flxPoly[flxPoly.Length - 1], flxPoly[0], flxPoly[1]);
+                if (t.Length > 0) flxIntersections.AddRange(ToList(t));
             }
 
-            return flxIntersections;
+            return ToArray(flxIntersections);
         }
 
-        public static List<double> LinePolyIntersection3(List<double> flxLine, List<double> flxPoly)
+        public static double[] LinePolyIntersection3(double[] flxLine, double[] flxPoly)
         {
             var flxIntersections = new List<double>();
-            if (flxLine == null || flxPoly == null) return new List<double>();
-            if (flxLine.Count != 4) return new List<double>();
+            if (flxLine == null || flxPoly == null) return new double[0];
+            if (flxLine.Length != 4) return new double[0];
 
-            for (int i = 0; i <= flxPoly.Count - 4; i += 2)
+            for (int i = 0; i <= flxPoly.Length - 4; i += 2)
             {
                 var flxTest = LineLineIntersection2(flxLine[0], flxLine[1], flxLine[2], flxLine[3], flxPoly[i], flxPoly[i + 1], flxPoly[i + 2], flxPoly[i + 3]);
-                if (flxTest.Count > 0)
+                if (flxTest.Length > 0)
                 {
                     if (onSegment(flxPoly[i], flxPoly[i + 1], flxTest[0], flxTest[1], flxPoly[i + 2], flxPoly[i + 3]))
-                        flxIntersections.AddRange(flxTest);
+                        flxIntersections.AddRange(ToList(flxTest));
                 }
             }
-            return flxIntersections;
+            return ToArray(flxIntersections);
         }
 
-        public static void SortLineSegments(ref List<double> flxPoly)
+        public static void SortLineSegments(ref double[] flxPoly)
         {
-            if (flxPoly == null) { flxPoly = new List<double>(); return; }
+            if (flxPoly == null) { flxPoly = new double[0]; return; }
+            var list = ToList(flxPoly);
             int iInicial = 2;
             bool Swaped;
             do
             {
                 Swaped = false;
-                for (int i = iInicial; i <= flxPoly.Count - 4; i += 2)
+                for (int i = iInicial; i <= list.Count - 4; i += 2)
                 {
-                    double d1 = Distancia(flxPoly[iInicial - 2], flxPoly[iInicial - 1], flxPoly[iInicial], flxPoly[iInicial + 1]);
-                    double d2 = Distancia(flxPoly[iInicial - 2], flxPoly[iInicial - 1], flxPoly[i + 2], flxPoly[i + 3]);
+                    double d1 = Distancia(list[iInicial - 2], list[iInicial - 1], list[iInicial], list[iInicial + 1]);
+                    double d2 = Distancia(list[iInicial - 2], list[iInicial - 1], list[i + 2], list[i + 3]);
                     if (d1 > d2)
                 {
-                    var ddd = flxPoly[iInicial];
-                    flxPoly[iInicial] = flxPoly[i + 2];
-                    flxPoly[i + 2] = ddd;
-                    ddd = flxPoly[iInicial + 1];
-                    flxPoly[i + 3] = flxPoly[iInicial + 1];
-                    flxPoly[iInicial + 1] = ddd;
+                    var ddd = list[iInicial];
+                    list[iInicial] = list[i + 2];
+                    list[i + 2] = ddd;
+                    ddd = list[iInicial + 1];
+                    list[i + 3] = list[iInicial + 1];
+                    list[iInicial + 1] = ddd;
 
                         Swaped = true;
                         i -= 2;
@@ -596,11 +637,12 @@ using Gaucho;
                 }
                 iInicial += 2;
             } while (Swaped);
+            flxPoly = ToArray(list);
         }
 
-        public static List<double> SortLineSegments2(List<double> flxPoly)
+        public static double[] SortLineSegments2(double[] flxPoly)
         {
-            if (flxPoly == null) return new List<double>();
+            if (flxPoly == null) return new double[0];
             var f = new List<double>();
             var flxLim = Limits(flxPoly);
             double dx = flxLim[2] - flxLim[0];
@@ -611,7 +653,7 @@ using Gaucho;
                 var flxRet = new List<double>();
                 var flxRet0 = new List<double>();
                 var flxRet2 = new List<double>();
-                for (int i = 0; i <= flxPoly.Count - 2; i += 2)
+                for (int i = 0; i <= flxPoly.Length - 2; i += 2)
                 {
                     flxRet.Add(flxPoly[i]);
                     flxRet0.Add(flxPoly[i]);
@@ -638,7 +680,7 @@ using Gaucho;
                 var flxRet = new List<double>();
                 var flxRet0 = new List<double>();
                 var flxRet2 = new List<double>();
-                for (int i = 0; i <= flxPoly.Count - 2; i += 2)
+                for (int i = 0; i <= flxPoly.Length - 2; i += 2)
                 {
                     flxRet.Add(flxPoly[i + 1]);
                     flxRet0.Add(flxPoly[i + 1]);
@@ -660,56 +702,56 @@ using Gaucho;
                     }
                 }
             }
-            return f;
+            return ToArray(f);
         }
 
-        public static List<double> InvertPolyline(List<double> flxPoly)
+        public static double[] InvertPolyline(double[] flxPoly)
         {
-            if (flxPoly == null) return new List<double>();
+            if (flxPoly == null) return new double[0];
             var flxRet = new List<double>();
-            for (int i = flxPoly.Count - 2; i >= 0; i -= 2)
+            for (int i = flxPoly.Length - 2; i >= 0; i -= 2)
             {
                 flxRet.Add(flxPoly[i]);
                 flxRet.Add(flxPoly[i + 1]);
             }
-            return flxRet;
+            return ToArray(flxRet);
         }
 
-        public static List<double> LineHoleIntersection(List<double> flxLine, List<double> flxPoly)
+        public static double[] LineHoleIntersection(double[] flxLine, double[] flxPoly)
         {
             var tmpIntersection = new List<double>();
             bool FirstAdded = false, LastAdded = false;
             var tmpIntersection2 = LinePolyIntersection(flxLine, flxPoly);
-            if (tmpIntersection2.Count == 0) return new List<double>(flxLine);
+            if (tmpIntersection2.Length == 0) return CopyRange(flxLine, 0, flxLine.Length);
 
-            if (Distancia(tmpIntersection2[0], tmpIntersection2[1], flxLine[0], flxLine[1]) > Distancia(tmpIntersection2[tmpIntersection2.Count - 2], tmpIntersection2[tmpIntersection2.Count - 1], flxLine[0], flxLine[1]))
-                tmpIntersection = InvertPolyline(tmpIntersection2);
+            if (Distancia(tmpIntersection2[0], tmpIntersection2[1], flxLine[0], flxLine[1]) > Distancia(tmpIntersection2[tmpIntersection2.Length - 2], tmpIntersection2[tmpIntersection2.Length - 1], flxLine[0], flxLine[1]))
+                tmpIntersection = ToList(InvertPolyline(tmpIntersection2));
             else
-                tmpIntersection = new List<double>(tmpIntersection2);
+                tmpIntersection = ToList(tmpIntersection2);
 
             if (!((tmpIntersection[0] == flxLine[0]) && (tmpIntersection[1] == flxLine[1])))
             {
-                tmpIntersection.InsertRange(0, flxLine.GetRange(0, 2));
+                tmpIntersection.InsertRange(0, ToList(CopyRange(flxLine, 0, 2)));
                 FirstAdded = true;
             }
 
             if (!((tmpIntersection[tmpIntersection.Count - 2] == flxLine[2]) && (tmpIntersection[tmpIntersection.Count - 1] == flxLine[3])))
             {
-                tmpIntersection.AddRange(flxLine.GetRange(2, 2));
+                tmpIntersection.AddRange(ToList(CopyRange(flxLine, 2, 2)));
                 LastAdded = true;
             }
 
-            if (tmpIntersection.Count == 4) return new List<double>();
-            if (FirstAdded) return tmpIntersection.GetRange(0, (tmpIntersection.Count / 4) * 4);
-            if (LastAdded) return tmpIntersection.GetRange(2, tmpIntersection.Count - 2);
-            return new List<double>();
+            if (tmpIntersection.Count == 4) return new double[0];
+            if (FirstAdded) return CopyRange(ToArray(tmpIntersection), 0, (int)(tmpIntersection.Count / 4) * 4);
+            if (LastAdded) return CopyRange(ToArray(tmpIntersection), 2, tmpIntersection.Count - 2);
+            return new double[0];
         }
 
-        public static List<double> LinePolyIntersection(List<double> flxLine, List<double> flxPoly)
+        public static double[] LinePolyIntersection(double[] flxLine, double[] flxPoly)
         {
-            if (flxLine == null || flxPoly == null) return new List<double>();
-            if (flxLine.Count != 4) return new List<double>();
-            if (flxPoly.Count < 6) return flxLine.GetRange(0, 4);
+            if (flxLine == null || flxPoly == null) return new double[0];
+            if (flxLine.Length != 4) return new double[0];
+            if (flxPoly.Length < 6) return CopyRange(flxLine, 0, 4);
 
             bool FirstInsIde = isInsIde(flxPoly, flxLine[0], flxLine[1]);
             bool LastInsIde = isInsIde(flxPoly, flxLine[2], flxLine[3]);
@@ -717,28 +759,28 @@ using Gaucho;
             var flxIntersections = new List<double>();
             var flxRta = new List<double>();
 
-            for (int i = 0; i <= flxPoly.Count - 4; i += 2)
+            for (int i = 0; i <= flxPoly.Length - 4; i += 2)
             {
                 if (doIntersect(flxLine[0], flxLine[1], flxLine[2], flxLine[3], flxPoly[i], flxPoly[i + 1], flxPoly[i + 2], flxPoly[i + 3]))
                 {
                     var flxInter = LineLineIntersection2(flxLine[0], flxLine[1], flxLine[2], flxLine[3], flxPoly[i], flxPoly[i + 1], flxPoly[i + 2], flxPoly[i + 3]);
-                    if (flxInter.Count > 0) flxIntersections.AddRange(flxInter);
+                    if (flxInter.Length > 0) flxIntersections.AddRange(ToList(flxInter));
                 }
             }
 
-            flxIntersections = SortLineSegments2(flxIntersections);
+            flxIntersections = ToList(SortLineSegments2(ToArray(flxIntersections)));
 
             if (flxIntersections.Count > 0)
             {
                 if (Distancia(flxLine[0], flxLine[1], flxIntersections[0], flxIntersections[1]) > Distancia(flxLine[0], flxLine[1], flxIntersections[flxIntersections.Count - 2], flxIntersections[flxIntersections.Count - 1]))
-                    flxIntersections = InvertPolyline(flxIntersections);
+                    flxIntersections = ToList(InvertPolyline(ToArray(flxIntersections)));
 
                 if (FirstInsIde)
                 {
                     if (!EqualPoints(flxLine[0], flxLine[1], flxIntersections[0], flxIntersections[1]))
                     {
                         if (!EqualPoints(flxLine[0], flxLine[1], flxIntersections[flxIntersections.Count - 2], flxIntersections[flxIntersections.Count - 1]))
-                            flxRta.InsertRange(0, flxLine.GetRange(0, 2));
+                            flxRta.InsertRange(0, ToList(CopyRange(flxLine, 0, 2)));
                     }
                 }
 
@@ -749,14 +791,14 @@ using Gaucho;
                     if (!EqualPoints(flxLine[2], flxLine[3], flxIntersections[flxIntersections.Count - 2], flxIntersections[flxIntersections.Count - 1]))
                     {
                         if (!EqualPoints(flxLine[2], flxLine[3], flxIntersections[0], flxIntersections[1]))
-                            flxRta.AddRange(flxLine.GetRange(2, 2));
+                            flxRta.AddRange(ToList(CopyRange(flxLine, 2, 2)));
                     }
                 }
             }
             else
             {
-                if (FirstInsIde) flxRta.InsertRange(0, flxLine.GetRange(0, 2));
-                if (LastInsIde) flxRta.AddRange(flxLine.GetRange(2, 2));
+                if (FirstInsIde) flxRta.InsertRange(0, ToList(CopyRange(flxLine, 0, 2)));
+                if (LastInsIde) flxRta.AddRange(ToList(CopyRange(flxLine, 2, 2)));
             }
 
             // fix duplicates
@@ -771,8 +813,8 @@ using Gaucho;
                     }
                 }
             }
-            if (flxRta.Count == 2) return new List<double>();
-            return flxRta;
+            if (flxRta.Count == 2) return new double[0];
+            return ToArray(flxRta);
         }
 
         public static bool EqualPoints(double x1, double y1, double x2, double y2)
@@ -780,20 +822,20 @@ using Gaucho;
             return ((float)x1 == (float)x2) && ((float)y1 == (float)y2);
         }
 
-        public static List<double> PolyPolyIntersection(List<double> flxPolyOpen, List<double> flxPolyClosed)
+        public static double[] PolyPolyIntersection(double[] flxPolyOpen, double[] flxPolyClosed)
         {
             var flxRta = new List<double>();
-            if (flxPolyOpen == null) return new List<double>();
-            for (int i = 0; i <= flxPolyOpen.Count - 4; i += 2)
+            if (flxPolyOpen == null) return new double[0];
+            for (int i = 0; i <= flxPolyOpen.Length - 4; i += 2)
             {
-                var seg = flxPolyOpen.GetRange(i, 4);
+                var seg = CopyRange(flxPolyOpen, i, 4);
                 var inter = LinePolyIntersection(seg, flxPolyClosed);
-                flxRta.AddRange(inter);
+                flxRta.AddRange(ToList(inter));
             }
-            return flxRta;
+            return ToArray(flxRta);
         }
 
-        public static bool PointOverLine(List<double> fPoint, List<double> fLine, double fTolerance = 1E-3)
+        public static bool PointOverLine(double[] fPoint, double[] fLine, double fTolerance = 1E-3)
         {
             if (fPoint == null || fLine == null) return false;
             double x = fPoint[0], y = fPoint[1];
@@ -850,23 +892,23 @@ using Gaucho;
             return Math.Abs(PointToLineDistance_Single(x, y, x0, y0, x1, y1)) < iTolerance;
         }
 
-        public static bool PointOverPolyLine(List<double> fPoint, List<double> fLine, double fTolerance = 1E-3)
+        public static bool PointOverPolyLine(double[] fPoint, double[] fLine, double fTolerance = 1E-3)
         {
             if (fLine == null) return false;
-            for (int i = 0; i <= fLine.Count - 4; i += 2)
+            for (int i = 0; i <= fLine.Length - 4; i += 2)
             {
-                if (PointOverLine(fPoint, new List<double> { fLine[i], fLine[i + 1], fLine[i + 2], fLine[i + 3] }, fTolerance)) return true;
+                if (PointOverLine(fPoint, new double[] { fLine[i], fLine[i + 1], fLine[i + 2], fLine[i + 3] }, fTolerance)) return true;
             }
             return false;
         }
 
-        public static double PointToLineDistance(List<double> fPoint, List<double> fLine)
+        public static double PointToLineDistance(double[] fPoint, double[] fLine)
         {
             if (fPoint == null || fLine == null) return 0;
             if (fLine[0] == fLine[2]) return Math.Abs(fLine[0] - fPoint[0]);
             else if (fLine[1] == fLine[3]) return Math.Abs(fLine[1] - fPoint[1]);
 
-            var e = lineLineIntersection(new List<double> { fPoint[0], fPoint[1] }, new List<double> { 1e11, fPoint[1] }, new List<double> { fLine[0], fLine[1] }, new List<double> { fLine[2], fLine[3] });
+            var e = lineLineIntersection(new double[] { fPoint[0], fPoint[1] }, new double[] { 1e11, fPoint[1] }, new double[] { fLine[0], fLine[1] }, new double[] { fLine[2], fLine[3] });
             double CE = fPoint[0] - e[0];
             double angE = Math.Atan2(fLine[3] - fLine[1], fLine[2] - fLine[0]);
             return CE * Math.Sin(angE);
@@ -883,7 +925,7 @@ using Gaucho;
             return CE * (float)Math.Sin(angE);
         }
 
-        public static double Angle(List<double> vector1, List<double> vector2)
+        public static double Angle(double[] vector1, double[] vector2)
         {
             double alfa = Ang(vector1[0], vector1[1]);
             double beta = Ang(vector2[0], vector2[1]);
@@ -892,51 +934,51 @@ using Gaucho;
             return gamma;
         }
 
-        public static double Angle2(List<double> vector1, List<double> vector2)
+        public static double Angle2(double[] vector1, double[] vector2)
         {
             double alfa = Ang(vector1[0], vector1[1]);
             double beta = Ang(vector2[0], vector2[1]);
             return beta - alfa;
         }
 
-        public static List<double> ReboundVector(List<double> vector, List<double> wall)
+        public static double[] ReboundVector(double[] vector, double[] wall)
         {
             double alfa = Ang(vector[0], vector[1]);
             double beta = Ang(wall[0], wall[1]);
             double gamma = beta * 2 - alfa;
             double l = Distancia(0, 0, vector[0], vector[1]);
-            return new List<double> { Math.Cos(gamma) * l, Math.Sin(gamma) * l };
+            return new double[] { Math.Cos(gamma) * l, Math.Sin(gamma) * l };
         }
 
-        public static void Normalize(List<double> v)
+        public static void Normalize(double[] v)
         {
             if (v == null) return;
             double l = 0;
-            for (int i = 0; i < v.Count; i++) l += v[i] * v[i];
+            for (int i = 0; i < v.Length; i++) l += v[i] * v[i];
             l = Math.Sqrt(l);
             if (l == 0) return;
-            for (int i = 0; i < v.Count; i++) v[i] /= l;
+            for (int i = 0; i < v.Length; i++) v[i] /= l;
         }
 
-        public static double Dot(List<double> v1, List<double> v2) => v1[0] * v2[0] + v1[1] * v2[1];
+        public static double Dot(double[] v1, double[] v2) => v1[0] * v2[0] + v1[1] * v2[1];
 
-        public static void Translate(List<double> points, double dx, double dy)
+        public static void Translate(double[] points, double dx, double dy)
         {
             if (points == null) return;
-            for (int i = 0; i <= points.Count - 2; i += 2)
+            for (int i = 0; i <= points.Length - 2; i += 2)
             {
                 points[i] += dx;
                 points[i + 1] += dy;
             }
         }
 
-        public static void TranslateConditional(List<double> points, double dx, double dy, List<bool> bCondition)
+        public static void TranslateConditional(double[] points, double dx, double dy, bool[] bCondition)
         {
             if (points == null || bCondition == null) return;
             int i2 = 0;
-            for (int i = 0; i <= points.Count - 2; i += 2)
+            for (int i = 0; i <= points.Length - 2; i += 2)
             {
-                if ((i2 < bCondition.Count) && (bCondition[i2]))
+                if (i2 < bCondition.Length && bCondition[i2])
                 {
                     points[i] += dx;
                     points[i + 1] += dy;
@@ -945,11 +987,11 @@ using Gaucho;
             }
         }
 
-        public static void Rotate(List<double> points, double Radians)
+        public static void Rotate(double[] points, double Radians)
         {
             if (points == null) return;
             double s = Math.Sin(Radians), c = Math.Cos(Radians);
-            for (int i = 0; i <= points.Count - 2; i += 2)
+            for (int i = 0; i <= points.Length - 2; i += 2)
             {
                 double xnew = points[i] * c - points[i + 1] * s;
                 double ynew = points[i] * s + points[i + 1] * c;
@@ -957,20 +999,20 @@ using Gaucho;
             }
         }
 
-        public static void Scale(List<double> points, double Sx, double Sy)
+        public static void Scale(double[] points, double Sx, double Sy)
         {
             if (points == null) return;
-            for (int i = 0; i <= points.Count - 2; i += 2)
+            for (int i = 0; i <= points.Length - 2; i += 2)
             {
                 points[i] *= Sx; points[i + 1] *= Sy;
             }
         }
 
-        public static bool IsPoligonInsIdeRect(List<double> poligon, double x0, double y0, double x1, double y1, int StartIndex = 0, int TotalElements = 0)
+        public static bool IsPoligonInsIdeRect(double[] poligon, double x0, double y0, double x1, double y1, int StartIndex = 0, int TotalElements = 0)
         {
             if (poligon == null) return false;
             TotalElements--;
-            if (TotalElements < 0) TotalElements = poligon.Count - 1;
+            if (TotalElements < 0) TotalElements = poligon.Length - 1;
             for (int i = StartIndex; i <= TotalElements; i += 2)
             {
                 if (poligon[i] < x0) return false;
@@ -981,17 +1023,17 @@ using Gaucho;
             return true;
         }
 
-        public static bool IsPoligonSelfIntersecting(List<double> poligon)
+        public static bool IsPoligonSelfIntersecting(double[] poligon)
         {
             if (poligon == null) return false;
-            if (poligon.Count < 8) return false;
-            for (int i = 0; i <= poligon.Count - 2; i += 2)
+            if (poligon.Length < 8) return false;
+            for (int i = 0; i <= poligon.Length - 2; i += 2)
             {
                 double TestX0, TestY0, TestX1, TestY1;
-                if (i == poligon.Count - 2)
+                if (i == poligon.Length - 2)
                 {
-                    TestX0 = poligon[poligon.Count - 2];
-                    TestY0 = poligon[poligon.Count - 1];
+                    TestX0 = poligon[poligon.Length - 2];
+                    TestY0 = poligon[poligon.Length - 1];
                     TestX1 = poligon[0];
                     TestY1 = poligon[1];
                 }
@@ -1003,11 +1045,11 @@ using Gaucho;
                     TestY1 = poligon[i + 3];
                 }
 
-                for (int ii = 0; ii <= poligon.Count - 4; ii += 2)
+                for (int ii = 0; ii <= poligon.Length - 4; ii += 2)
                 {
                     if (i == ii) continue;
                     var CrossPoint = LineLineIntersection2(TestX0, TestY0, TestX1, TestY1, poligon[ii], poligon[ii + 1], poligon[ii + 2], poligon[ii + 3]);
-                    if (CrossPoint.Count > 0)
+                    if (CrossPoint.Length > 0)
                     {
                         if (InBetweenNotEqual(CrossPoint[0], poligon[ii], poligon[ii + 2]) && InBetweenNotEqual(CrossPoint[1], poligon[ii + 1], poligon[ii + 3]) &&
                             InBetweenNotEqual(CrossPoint[0], TestX0, TestX1) && InBetweenNotEqual(CrossPoint[1], TestY0, TestY1))
@@ -1015,10 +1057,10 @@ using Gaucho;
                     }
                 }
 
-                var CrossPointEdge = LineLineIntersection2(TestX0, TestY0, TestX1, TestY1, poligon[poligon.Count - 2], poligon[poligon.Count - 1], poligon[0], poligon[1]);
-                if (CrossPointEdge.Count > 0)
+                var CrossPointEdge = LineLineIntersection2(TestX0, TestY0, TestX1, TestY1, poligon[poligon.Length - 2], poligon[poligon.Length - 1], poligon[0], poligon[1]);
+                if (CrossPointEdge.Length > 0)
                 {
-                    if (InBetweenNotEqual(CrossPointEdge[0], poligon[poligon.Count - 2], poligon[0]) && InBetweenNotEqual(CrossPointEdge[1], poligon[poligon.Count - 1], poligon[1]) &&
+                    if (InBetweenNotEqual(CrossPointEdge[0], poligon[poligon.Length - 2], poligon[0]) && InBetweenNotEqual(CrossPointEdge[1], poligon[poligon.Length - 1], poligon[1]) &&
                         InBetweenNotEqual(CrossPointEdge[0], TestX0, TestX1) && InBetweenNotEqual(CrossPointEdge[1], TestY0, TestY1))
                         return true;
                 }
@@ -1026,10 +1068,10 @@ using Gaucho;
             return false;
         }
 
-        public static bool IsPoligonCrossingLine(List<double> poligon, double x0, double y0, double x1, double y1, int StartIndex = 0, int TotalElements = 0)
+        public static bool IsPoligonCrossingLine(double[] poligon, double x0, double y0, double x1, double y1, int StartIndex = 0, int TotalElements = 0)
         {
             TotalElements--;
-            if (TotalElements < 0) TotalElements = poligon.Count - 1;
+            if (TotalElements < 0) TotalElements = poligon.Length - 1;
             for (int i = StartIndex; i <= TotalElements - 3; i += 2)
             {
                 if (doIntersect(poligon[i], poligon[i + 1], poligon[i + 2], poligon[i + 3], x0, y0, x1, y1)) return true;
@@ -1038,10 +1080,10 @@ using Gaucho;
             return false;
         }
 
-        public static bool IsPoligonCrossingRect(List<double> poligon, double x0, double y0, double x1, double y1, int StartIndex = 0, int TotalElements = 0)
+        public static bool IsPoligonCrossingRect(double[] poligon, double x0, double y0, double x1, double y1, int StartIndex = 0, int TotalElements = 0)
         {
             if (poligon == null) return false;
-            if (poligon.Count == 0) return false;
+            if (poligon.Length == 0) return false;
             if (IsPoligonCrossingLine(poligon, x0, y0, x1, y0, StartIndex, TotalElements)) return true;
             if (IsPoligonCrossingLine(poligon, x0, y1, x1, y1, StartIndex, TotalElements)) return true;
             if (IsPoligonCrossingLine(poligon, x0, y0, x0, y1, StartIndex, TotalElements)) return true;
@@ -1049,42 +1091,42 @@ using Gaucho;
             return false;
         }
 
-        public static double PoligonCount(List<double> points)
+        public static double PoligonLength(double[] points)
         {
             if (points == null) return 0;
             double l = 0;
-            for (int i = 0; i <= points.Count - 4; i += 2)
+            for (int i = 0; i <= points.Length - 4; i += 2)
                 l += Distancia(points[i], points[i + 1], points[i + 2], points[i + 3]);
             return l;
         }
 
-        public static double PoligonArea(List<double> points)
+        public static double PoligonArea(double[] points)
         {
             if (points == null) return 0;
             double area = 0;
-            for (int i = 0; i <= points.Count - 4; i += 2)
+            for (int i = 0; i <= points.Length - 4; i += 2)
             {
                 area += points[i] * points[i + 3] - points[i + 1] * points[i + 2];
             }
-            area += points[points.Count - 2] * points[1] - points[points.Count - 1] * points[0];
+            area += points[points.Length - 2] * points[1] - points[points.Length - 1] * points[0];
             return Math.Abs(area) / 2.0;
         }
 
-        public static List<double> Limits(List<double> points)
+        public static double[] Limits(double[] points)
         {
-            if (points == null || points.Count == 0) return new List<double> { 0, 0, 0, 0 };
+            if (points == null || points.Length == 0) return new double[] { 0, 0, 0, 0 };
             double Xmenor = 1e100, Ymenor = 1e100, Xmayor = -1e100, Ymayor = -1e100;
-            for (int i = 0; i <= points.Count - 2; i += 2)
+            for (int i = 0; i <= points.Length - 2; i += 2)
             {
                 if (Xmenor > points[i]) Xmenor = points[i];
                 if (Ymenor > points[i + 1]) Ymenor = points[i + 1];
                 if (Xmayor < points[i]) Xmayor = points[i];
                 if (Ymayor < points[i + 1]) Ymayor = points[i + 1];
             }
-            return new List<double> { Xmenor, Ymenor, Xmayor, Ymayor };
+            return new double[] { Xmenor, Ymenor, Xmayor, Ymayor };
         }
 
-        public static void LimitsMax(List<double> BasePoints, List<double> NewPoints)
+        public static void LimitsMax(double[] BasePoints, double[] NewPoints)
         {
             if (BasePoints == null || NewPoints == null) return;
             if (NewPoints[0] < BasePoints[0]) BasePoints[0] = NewPoints[0];
@@ -1093,16 +1135,16 @@ using Gaucho;
             if (NewPoints[3] > BasePoints[3]) BasePoints[3] = NewPoints[3];
         }
 
-        // DashedLineStrip (ported). Returns list of segment pairs [x0,y0,x1,y1,...]
-        public static List<double> DashedLineStrip(List<double> flxStrip, List<double> flxDash, double fScale = 1, double fOffset = 0, bool bInvertDashes = false, bool bIntercalateLines = false, double fWIdth = 1)
+        // DashedLineStrip (ported). Returns array of segment pairs [x0,y0,x1,y1,...]
+        public static double[] DashedLineStrip(double[] flxStrip, double[] flxDash, double fScale = 1, double fOffset = 0, bool bInvertDashes = false, bool bIntercalateLines = false, double fWIdth = 1)
         {
-            if (flxStrip == null || flxDash == null) return new List<double>();
+            if (flxStrip == null || flxDash == null) return new double[0];
             var flxDashes = new List<double>();
             if (bInvertDashes)
             {
-                for (int i = flxDash.Count - 1; i >= 0; i--) flxDashes.Add(flxDash[i]);
+                for (int i = flxDash.Length - 1; i >= 0; i--) flxDashes.Add(flxDash[i]);
             }
-            else flxDashes.AddRange(flxDash);
+            else flxDashes.AddRange(ToList(flxDash));
 
             double fDashTotal = 0;
             for (int i = 0; i < flxDashes.Count; i++)
@@ -1111,8 +1153,8 @@ using Gaucho;
                 fDashTotal += Math.Abs(flxDashes[i]);
             }
 
-            if (fDashTotal == 0) return new List<double>(flxStrip);
-            if (flxStrip.Count < 4) return new List<double>(flxStrip);
+            if (fDashTotal == 0) return CopyRange(flxStrip, 0, flxStrip.Length);
+            if (flxStrip.Length < 4) return CopyRange(flxStrip, 0, flxStrip.Length);
 
             fOffset = FMod(fOffset, fDashTotal);
 
@@ -1120,7 +1162,7 @@ using Gaucho;
             int iDashTrame = 0;
             bool bSkip = false;
 
-            for (int seg = 0; seg <= flxStrip.Count - 4; seg += 2)
+            for (int seg = 0; seg <= flxStrip.Length - 4; seg += 2)
             {
                 double X0 = flxStrip[seg], Y0 = flxStrip[seg + 1];
                 double X1 = flxStrip[seg + 2], Y1 = flxStrip[seg + 3];
@@ -1187,7 +1229,7 @@ using Gaucho;
                 }
             }
 
-            return flxFirstPass;
+            return ToArray(flxFirstPass);
         }
 
         public static Punto2d ExtendLine2D(Punto2d p0, Punto2d p1, double l)
