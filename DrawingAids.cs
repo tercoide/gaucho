@@ -188,9 +188,9 @@ public static void DrawDxDy(double[] p1, double[] p2, int iSizePix= 10)
      //If iTotalLength < Gcd.Pixels(p2[0] - p1[0]) Then // puedo dibujar todo normalmente
      // ================eje X===============================
      // flechas
-    eOblique1 = cadSolid.Entity([0, 0, ArrowSize, ArrowWidth, ArrowSize, -ArrowWidth, 0, 0]);
+    eOblique1 = Gcd.CCC["SOLID"].NewEntity([0, 0, ArrowSize, ArrowWidth, ArrowSize, -ArrowWidth, 0, 0]);
 
-    eOblique2 = cadSolid.Entity([0, 0, -ArrowSize, ArrowWidth, -ArrowSize, -ArrowWidth, 0, 0]);
+    eOblique2 = Gcd.CCC["SOLID"].NewEntity([0, 0, -ArrowSize, ArrowWidth, -ArrowSize, -ArrowWidth, 0, 0]);
     if ( p2[0] < p1[0] )
     {
         Gcd.CCC[eOblique1.Gender].Rotate(eOblique1, Math.PI);
@@ -203,14 +203,14 @@ public static void DrawDxDy(double[] p1, double[] p2, int iSizePix= 10)
     Gcd.CCC[eOblique2.Gender].Translate(eOblique2, p2[0], p1[1]);
 
      // linea principal
-    eLineaPpal = cadLine.NewEntity([p1[0], p1[1], p2[0], p1[1]]);
+    eLineaPpal = Gcd.CCC["LINE"].NewEntity([p1[0], p1[1], p2[0], p1[1]]);
 
      // texto
-    eText = cadMText.Entity([(p2[0] - p1[0]) / 2 + p1[0], p1[1]]);
+    eText = Gcd.CCC["MTEXT"].NewEntity([(p2[0] - p1[0]) / 2 + p1[0], p1[1]]  );
     eText.fParam[cadMText.ipaAttchmPoint] = 8;
     eText.fParam[cadMText.ipaTextHeight] = Gcd.Metros(iSizePix);
 
-    eText.sParam[cadText.sdaText] = sTextX;
+    eText.sParam[cadMText.sdaText] = sTextX;
 
     eOblique1.Colour = Config.WindowAidsColor;
     eOblique2.Colour = Config.WindowAidsColor;
@@ -224,7 +224,7 @@ public static void DrawDxDy(double[] p1, double[] p2, int iSizePix= 10)
 
      // ================eje Y===============================
      // flechas
-    eOblique1 = cadSolid.Entity([0, 0, ArrowSize, ArrowWidth, ArrowSize, -ArrowWidth, 0, 0]);
+    eOblique1 = Gcd.CCC["SOLID"].NewEntity([0, 0, ArrowSize, ArrowWidth, ArrowSize, -ArrowWidth, 0, 0]);
     if ( p2[1] < p1[1] )
     {
         Gcd.CCC[eOblique1.Gender].Rotate(eOblique1, Math.PI * 3 / 2);
@@ -235,7 +235,7 @@ public static void DrawDxDy(double[] p1, double[] p2, int iSizePix= 10)
     }
 
     Gcd.CCC[eOblique1.Gender].Translate(eOblique1, p2[0], p1[1]);
-    eOblique2 = cadSolid.Entity([0, 0, -ArrowSize, ArrowWidth, -ArrowSize, -ArrowWidth, 0, 0]);
+    eOblique2 = Gcd.CCC["SOLID"].NewEntity([0, 0, -ArrowSize, ArrowWidth, -ArrowSize, -ArrowWidth, 0, 0]);
     if ( p2[1] < p1[1] )
     {
         Gcd.CCC[eOblique2.Gender].Rotate(eOblique2, Math.PI * 3 / 2);
@@ -251,7 +251,7 @@ public static void DrawDxDy(double[] p1, double[] p2, int iSizePix= 10)
 
     eLineaPpal.P.Clear();
     eLineaPpal.P.AddRange([p2[0], p1[1], p2[0], p2[1]]);
-    eText.sParam[cadText.sdaText] = sTextY;
+    eText.sParam[cadMText.sdaText] = sTextY;
     eText.P.Clear();
     eText.P.AddRange([p2[0], (p2[1] - p1[1]) / 2 + p1[1]]);
     Gcd.CCC[eOblique1.Gender].Draw(eOblique1);

@@ -3701,11 +3701,11 @@ public static List<string> LoadFonts(string DirPath)
     // string sCoord ;         
     // string aVert ;         
     string sCode ;         
-    string[] sPuntos ;         
+    List<string> sPuntos ;         
      List<string> Lista = new List<string>()  ;         
     int p1 ;         
     bool BulgeAdded ;         
-    string[] sVert ;         
+    List<string> sVert ;         
     // List<double> fltb = new List<double>()  ;         
     // List<double> flt1 ;         
     List<double> flt3 ;         
@@ -3976,7 +3976,7 @@ public static List<string> LoadFonts(string DirPath)
 
         for ( iii = 0; iii <= flxAnswer.Count  -1 - 1; iii += 2)
         {
-            flxAnswer[iii] += flxAnswer[iii + 1] *Math.Sin(Gb.DegreesToRadians(sItalicAngle));
+            flxAnswer[iii] += flxAnswer[iii + 1] *Math.Sin(Gb.Rad(sItalicAngle));
         }
 
     }

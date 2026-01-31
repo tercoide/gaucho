@@ -10,6 +10,13 @@
         string Gender { get; }
         string USEWITH { get; }
 
+         // nuevo, para integrar el resto de las tools con esta, que es la principal
+public bool AllowSingleSelection { get; set; }
+public bool AllowRectSelection { get; set; }
+public bool AllowPolySelection { get; set; }
+public bool AllowGripEdit { get; set; }
+public bool AllowTextInput { get; set; }
+
         // Selection pixel coordinates
         int SelStartX { get; set; }
         int SelStartY { get; set; }

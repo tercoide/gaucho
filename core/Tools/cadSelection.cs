@@ -44,12 +44,7 @@ public bool PanActive = false;
 public bool GripActive = false;
 public bool RectActive = false;
 
- // nuevo, para integrar el resto de las tools con esta, que es la principal
-public bool AllowSingleSelection = true;
-public bool AllowRectSelection = true;
-public bool AllowPolySelection = true;
-public bool AllowGripEdit = true;
-public bool AllowTextInput = true;
+
 
 public bool ReturnOnFirstSelection = true;
 
@@ -62,9 +57,9 @@ const int SelectTypePoly = 3;
 const int SelectTypePoint = 4;
 
 public int SelectMode = 0;
-const int SelectModeNew = 0;
-const int SelectModeAdd = 1;
-const int SelectModeRem = 2;
+public const int SelectModeNew = 0;
+public const int SelectModeAdd = 1;
+public const int SelectModeRem = 2;
 
 public bool SelectCrossing = false;                 // las entidades puedn estar parcialmente dentro del contorno
 

@@ -59,16 +59,16 @@ public static class Gcd
         public static int GrIdModePrev;
         public static bool MultiDraw;          // dibuja repetidamente la misma entidad
 
-    public static Dictionary<string, IEntity> CCC;          // CAD Classes Collection
+        public static Dictionary<string, IEntity> CCC;          // CAD Classes Collection
 
 
-        public static Dictionary<string, ToolsBase> Tools;          // Tools Classes Collection
+        public static Dictionary<string, IToolsBase> Tools;          // Tools Classes Collection
     
-        public static ToolsBase? clsJob;          // what I am doing now, thats either selecting or something else
-        public static ToolsBase? clsJobPrevious;          // what was doing before
-        public static ToolsBase? clsJobPreZoom;          // what was doing before Zooming or Panning
+        public static IToolsBase? clsJob;          // what I am doing now, thats either selecting or something else
+        public static IToolsBase? clsJobPrevious;          // what was doing before
+        public static IToolsBase? clsJobPreZoom;          // what was doing before Zooming or Panning
         public static int clsJobPreviousParam;          // a param to pass to clsJob.Start( param )
-        public static ToolsBase? clsJobCallBack;          // An object to call back after finishing something (like selecting). Must have .Run() sub
+        public static IToolsBase? clsJobCallBack;          // An object to call back after finishing something (like selecting). Must have .Run() sub
         public static int StepsDone;          // una variable de entorno util
                                               //public static  gColor As New Integer[]
 
@@ -1073,7 +1073,7 @@ public static class Gcd
 
 
             
-            string[] slx;
+            List<string> slx;
 
             double f;
 
@@ -1093,7 +1093,7 @@ public static class Gcd
                     return false;
                 }
             }
-            if (slx.Length == 2 || slx.Length == 3)
+            if (slx.Count == 2 || slx.Count == 3)
                 return true;
             else
                 return false;
@@ -1502,7 +1502,7 @@ public static class Gcd
             string s2;
             Pattern p;
             HatchPattern? hp = null;
-            string[] sp;
+            List<string> sp;
             int i;
 
             f = new StreamReader(sFile);
@@ -1543,7 +1543,7 @@ public static class Gcd
                 p.BaseY = Gb.CDbl(sp[2]);
                 p.OffsetX = Gb.CDbl(sp[3]);
                 p.OffsetY = Gb.CDbl(sp[4]);
-                for (i = 5; i <= sp.Length - 1;i++ )
+                for (i = 5; i <= sp.Count - 1;i++ )
                 {
                     if (Gb.Left(sp[i], 1) == "-")
                     {

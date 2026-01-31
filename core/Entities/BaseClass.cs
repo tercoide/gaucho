@@ -33,7 +33,7 @@ public bool Regenerable { get; set; } = false;
     public interface IEntity
     {
 
-        public Entity NewEntity() { return new Entity(); }
+        public Entity NewEntity(List<double> fPoints, bool bNewid = false) { return new Entity(); }
         public Entity ClonEntity(Entity e, bool NewId = false) { return e; }
         public bool Regenerable { get; set; }
         public void Draw(Entity e) { }

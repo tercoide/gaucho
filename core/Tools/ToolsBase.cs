@@ -142,13 +142,13 @@ public interface ToolsBase
                 case "_ADD":
                     Gcd.clsJobPrevious = Gcd.clsJob;
                     Gcd.clsJob = Gcd.Tools["SELECTION"];
-                    Gcd.Tools["SELECTION"].Mode = Gcd.Tools["SELECTION"].ModeAddEntities;
+                    Gcd.Tools["SELECTION"].Mode = cadSelection.SelectModeAdd;
                     return;
                 case "_REM":
                 case "_REMOVE":
                     Gcd.clsJobPrevious = Gcd.clsJob;
                     Gcd.clsJob = Gcd.Tools["SELECTION"];
-                    Gcd.Tools["SELECTION"].Mode = Gcd.Tools["SELECTION"].ModeRemoveEntities;
+                    Gcd.Tools["SELECTION"].Mode = cadSelection.SelectModeRem;
                     return;
                 // Snap commands
                 case "_MIDPOINT":
@@ -332,7 +332,7 @@ public interface ToolsBase
             if (!Gcd.flgSearchingPOI)
             {
                 var iEntity = clsMouseTracking.CheckBestPOI(x, y);
-                if (iEntity != null && iEntity.Length >= 3 && iEntity[2] > 0)
+                if (iEntity != null && iEntity.Count >= 3 && iEntity[2] > 0)
                 {
                     x = iEntity[0];
                     y = iEntity[1];
@@ -449,7 +449,7 @@ public interface ToolsBase
                 Gcd.clsJobPrevious = null;
                 Gcd.clsJobCallBack = null;
                 Gcd.clsJob = Gcd.Tools["SELECTION"];
-                Gcd.Tools["SELECTION"].AllowSingleSelection = true;
+                Gcd.clsJob.AllowSingleSelection = true;
                 Gcd.clsJob.Start();
 
                 DrawingAids.CleanTexts();
