@@ -101,7 +101,7 @@ namespace Gaucho
         /// </summary>
         /// <param name="degrees">The angle in degrees</param>
         /// <returns>The angle in radians</returns>
-        public static double DegreesToRadians(double degrees)
+        public static double Rad(double degrees)
         {
             return degrees * (Math.PI / 180.0);
         }
@@ -111,7 +111,7 @@ namespace Gaucho
         /// </summary>
         /// <param name="radians">The angle in radians</param>
         /// <returns>The angle in degrees</returns>
-        public static double RadiansToDegrees(double radians)
+        public static double Deg(double radians)
         {
             return radians * (180.0 / Math.PI);
         }
@@ -209,16 +209,16 @@ namespace Gaucho
         /// <param name="separator">The separator character or string</param>
         /// <param name="removeEmpty">Whether to remove empty entries (default: false)</param>
         /// <returns>An array of strings</returns>
-        public static string[] Split(string str, string separator, bool removeEmpty = false)
+        public static List<string> Split(string str, string separator, bool removeEmpty = false)
         {
             if (string.IsNullOrEmpty(str))
-                return new string[0];
+                return new List<string>();
                 
             if (string.IsNullOrEmpty(separator))
-                return new string[] { str };
+                return new List<string> { str };
                 
             var options = removeEmpty ? StringSplitOptions.RemoveEmptyEntries : StringSplitOptions.None;
-            return str.Split(new string[] { separator }, options);
+            return str.Split(new string[] { separator }, options).ToList();
         }
 
         /// <summary>
@@ -228,13 +228,13 @@ namespace Gaucho
         /// <param name="separator">The separator character</param>
         /// <param name="removeEmpty">Whether to remove empty entries (default: false)</param>
         /// <returns>An array of strings</returns>
-        public static string[] Split(string str, char separator, bool removeEmpty = false)
+        public static List<string> Split(string str, char separator, bool removeEmpty = false)
         {
             if (string.IsNullOrEmpty(str))
-                return new string[0];
+                return new List<string>();
                 
             var options = removeEmpty ? StringSplitOptions.RemoveEmptyEntries : StringSplitOptions.None;
-            return str.Split(new char[] { separator }, options);
+            return str.Split(new char[] { separator }, options).ToList();
         }
 
         /// <summary>

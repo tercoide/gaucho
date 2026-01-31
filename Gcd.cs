@@ -64,11 +64,11 @@ public static class Gcd
 
         public static Dictionary<string, ToolsBase> Tools;          // Tools Classes Collection
     
-        public static ToolsBase clsJob;          // what I am doing now, thats either selecting or something else
-        public static ToolsBase clsJobPrevious;          // what was doing before
-        public static ToolsBase clsJobPreZoom;          // what was doing before Zooming or Panning
+        public static ToolsBase? clsJob;          // what I am doing now, thats either selecting or something else
+        public static ToolsBase? clsJobPrevious;          // what was doing before
+        public static ToolsBase? clsJobPreZoom;          // what was doing before Zooming or Panning
         public static int clsJobPreviousParam;          // a param to pass to clsJob.Start( param )
-        public static ToolsBase clsJobCallBack;          // An object to call back after finishing something (like selecting). Must have .Run() sub
+        public static ToolsBase? clsJobCallBack;          // An object to call back after finishing something (like selecting). Must have .Run() sub
         public static int StepsDone;          // una variable de entorno util
                                               //public static  gColor As New Integer[]
 
@@ -146,7 +146,7 @@ public static class Gcd
 
         // fonts replacements
 
-        public static Dictionary<string, object> FontReplacements = new Dictionary<string, object>();
+        public static Dictionary<string, string> FontReplacements = new Dictionary<string, string>();
 
         // Entity Flags
         const int flgDWG_Changed = 1;
@@ -676,7 +676,7 @@ public static class Gcd
 
         }
 
-        public static int GetGBColor(int CADcolor, Layer pLayer)
+        public static int GetGBColor(int CADcolor, Layer? pLayer= null)
         {
 
 

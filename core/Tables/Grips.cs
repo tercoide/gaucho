@@ -28,10 +28,10 @@ public class Grip
     public int AsociatedPoint;            //// el punto al que se asocia este grip, cada clase lo sabe porque es la que genera el grip
     public int AsociatedGrip;             //// otro grip que se ve afectado con este grip
     public bool DrawLineToAsociatedGrip = false;
-    public float X;       //// punto del grip
-    public float Y;
-    public float Xr;      //// punto de referencia
-    public float Yr;
+    public double X;       //// punto del grip
+    public double Y;
+    public double Xr;      //// punto de referencia
+    public double Yr;
 
     // public Xn As Float      //// punto nuevo
     // public Yn As Float
@@ -47,7 +47,7 @@ public bool Filled = true;
 public int iFillColor = Colors.Cyan;
 public int iFillColor2 = Colors.Blue;
 public int glList;
-public float Value;     // para los grips que asumen un valor
+public double Value;     // para los grips que asumen un valor
 public int Group;     // para los RadioButton
                             // public Toggle As Boolean    // para los
 public bool Rotate;

@@ -87,33 +87,35 @@ private static Dictionary<string, Dictionary<string, string>> ReadTimes = new Di
 private static Dictionary<string, Dictionary<string, string>> ReadEntities = new Dictionary<string, Dictionary<string, string>>();
 
  // Codigos del DXF
-const string codEntity = "0";
-const string codid = "5";
-const string codidContainer = "330";
-const string codColor = "62";
-const string codLType = "6";
-const string codLayer = "8";
-const string codLWht = "370";
-const string codName = "2";
-const string codX0 = "10";
-const string codY0 = "20";
-const string codZ0 = "30";
-const string codX1 = "11";
-const string codY1 = "21";
-const string codZ1 = "31";
-const string codX2 = "12";
-const string codY2 = "22";
-const string codZ2 = "32";
-const string codX3 = "13";
-const string codY3 = "23";
-const string codZ3 = "33";
-const string codCenterX = "10";
-const string codCenterY = "20";
-const string codCenterZ = "30";
-const string codRadius = "40";
-const string codAngleStart = "50";
-    const string codAngleEnd = "51";
+public const  string codEntity = "0";
+public const  string codid = "5";
+public const  string codidContainer = "330";
+public const  string codColor = "62";
+public const  string codLType = "6";
+public const  string codLayer = "8";
+public const  string codLWht = "370";
+public const  string codName = "2";
+public const  string codX0 = "10";
+public const  string codY0 = "20";
+public const  string codZ0 = "30";
+public const  string codX1 = "11";
+public const  string codY1 = "21";
+public const  string codZ1 = "31";
+public const  string codX2 = "12";
+public const  string codY2 = "22";
+public const  string codZ2 = "32";
+public const  string codX3 = "13";
+public const  string codY3 = "23";
+public const  string codZ3 = "33";
+public const  string codCenterX = "10";
+public const  string codCenterY = "20";
+public const  string codCenterZ = "30";
+public const  string codRadius = "40";
+public const  string codAngleStart = "50";
+    public const  string codAngleEnd = "51";
 
+    public static int NextCodeIndex = 0;
+    
     public static string DWGtoDXF(string sDwgFile)
     {
         string tmpfile;
@@ -2091,7 +2093,7 @@ public static int ReadCode(int iCode, string[] stxClaves, string[] stxValues,  r
     //   iStartPos = la posicion inicial en los array para la busqueda (def = 0)
     //   iEscapeCode = si encuentra este codigo, sale
 
-    public static        int ReadCodePlus(int iExpectedCode, List<string> stxClaves, List<string> stxValues, ref string RetValue, int iStartPos = 0, int iEscapeCode = -1, int iStartCode = -1)
+    public static int ReadCodePlus(int iExpectedCode, List<string> stxClaves, List<string> stxValues, ref string RetValue, int iStartPos = 0, int iEscapeCode = -1, int iStartCode = -1)
     {
 
 
@@ -2106,6 +2108,7 @@ public static int ReadCode(int iCode, string[] stxClaves, string[] stxValues,  r
         // }
         //If ExactPos Then iMax = iStartPos Else imax = stxClaves.Length
         if (iStartCode >= 0) StartOK = false;
+        NextCodeIndex = -1;
         if (iStartPos < 0) return -1;
         for (i = iStartPos; i <= stxClaves.Count; i++)
         {
@@ -2137,7 +2140,7 @@ public static int ReadCode(int iCode, string[] stxClaves, string[] stxValues,  r
                 RetValue = stxValues[i];
 
                 // }
-
+NextCodeIndex = i+1;
                 return i + 1;
             }
             else if (Gb.CInt(stxClaves[i]) == iEscapeCode)
@@ -2156,7 +2159,7 @@ public static int ReadCode(int iCode, string[] stxClaves, string[] stxValues,  r
                 RetValue = "";
 
                 //}
-
+NextCodeIndex = -i;
                 return -i;
                 // Else If iEscapeCode = -1 Then
                 //     Select Case TypeOf(RetValue)
@@ -2175,9 +2178,19 @@ public static int ReadCode(int iCode, string[] stxClaves, string[] stxValues,  r
 
             }
         }
-        return 0;
-
+        
+        NextCodeIndex = 0   ;
+return 0;
     }
+
+    public static string ReadCodePlusNext(int iExpectedCode, List<string> stxClaves, List<string> stxValues, int iStartPos = 0, int iEscapeCode = -1, int iStartCode = -1)
+    {
+        string sRetValue = "";
+        int res = ReadCodePlus(iExpectedCode, stxClaves, stxValues, ref sRetValue, NextCodeIndex, iEscapeCode, iStartCode);
+        return sRetValue;
+    }
+
+
 
 public static int ReadCodePlusI(int iExpectedCode, List<string> stxClaves, List<string> stxValues, ref int RetValue, int iStartPos= 0, int iEscapeCode= -1, int iStartCode= -1)
     {
@@ -2320,11 +2333,18 @@ if (arg is string s)
 
 }
 
-public static void SaveCodeInv(string sValue, int sCode)
+public static void SaveCodeInv(object sValue, int sCode)
     {
 
 
     SaveCode(sCode, sValue);
+
+}
+public static void SaveCodeInv(object sValue, string sCode)
+    {
+
+
+    SaveCode(Gb.CInt(sCode), sValue);
 
 }
 

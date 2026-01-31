@@ -13,8 +13,8 @@ public class Entity
     public Block? pBlock;                   // Pointer to Block or Hatch (or null)
     public LineType? LType;                 // 0=continuous, 1=dashed from flxDash
     public Layer? pLayer;
-    //public TextStyle pStyle;                  //
-    //public DimStyle pDimStyle;                //
+    public TextStyle? pStyle;                  //
+    public DimStyle? pDimStyle;                //
     public bool Visible = true;            // Si esta entidad puede ser mostrada independientmente
     public bool PaperSpace = false;        // Si esta entidad esta en algun paper space
                                            //public Sheet As Sheet                       // La hoja o Layout donde esta dibujada

@@ -13,7 +13,7 @@ namespace Gaucho
     // Entonces puedo crear una instancia de la clase y asignarla a una variable del tipo de la interfaz.
     // En Gb usabamos clsJob , que era una variable global.
 
-    public class cadLine: IEntity
+    public class cadLine: EntityBase,IEntity
     {
         public static string Gender = "LINE";
         
@@ -41,7 +41,7 @@ namespace Gaucho
     }
 
 
-    public class cadCircle: IEntity
+    public class cadCircle: EntityBase,IEntity
     {
         public static string Gender = "CIRCLE";
         
@@ -55,6 +55,12 @@ namespace Gaucho
         public void  Draw()
         {
             Console.WriteLine("Dibujo un circulo");
+            return;
+        }
+
+        public void BuildGeometry(Entity e)
+        {
+            Console.WriteLine("Construyo la geometria del circulo");
             return;
         }
     }

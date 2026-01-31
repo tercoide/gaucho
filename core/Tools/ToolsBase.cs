@@ -10,7 +10,7 @@
 using OpenTK.Graphics.OpenGL;
 using Gaucho;
 
-public abstract class ToolsBase
+public interface ToolsBase
     {
         public const string Gender = "TOOLSBASE";
         public const string USEWITH = "";
@@ -58,8 +58,8 @@ public abstract class ToolsBase
         public static bool PoiChecking = false;
         public static bool EntityChecking = false;
         public static int Mode = 0;
-        public static Entity EntityForEdit = null;
-        public static Entity OriginalEntityForEdit = null;
+        public static Entity? EntityForEdit = null;
+        public static Entity? OriginalEntityForEdit = null;
 
         public static string MenuRightClick = string.Empty;
 
@@ -73,7 +73,7 @@ public abstract class ToolsBase
         public static double[] glScale = new double[] { 1.0, 1.0, 1.0 };     // sX,sY,sZ
 
         public static int cursorX = 0;
-        public static int cursory = 0;
+        public static int cursorY = 0;
         public static bool AllowSingleSelection = false;
         public static int lastCursorX = 0;
         public static int lastCursorY = 0;
@@ -444,7 +444,7 @@ public abstract class ToolsBase
                 Gcd.Drawing.RequiresSaving = true;
 
                 Gcd.Drawing.iEntity.Clear();
-                Gcd.Drawing.iEntity.Insert(new double[] { 0, 0, -1, -1 });
+                Gcd.Drawing.iEntity.AddRange(new double[] { 0, 0, -1, -1 });
 
                 Gcd.clsJobPrevious = null;
                 Gcd.clsJobCallBack = null;
@@ -452,7 +452,7 @@ public abstract class ToolsBase
                 Gcd.Tools["SELECTION"].AllowSingleSelection = true;
                 Gcd.clsJob.Start();
 
-                DrawingAIds.CleanTexts();
+                DrawingAids.CleanTexts();
                 Gcd.StepsDone = 0;
                 Gcd.DrawOriginals = false;
                 Active = false;
@@ -475,7 +475,7 @@ public abstract class ToolsBase
             clsEntities.DeSelection();
             Gcd.clsJob = Gcd.Tools["SELECTION"];
             Gcd.clsJob.Start();
-            DrawingAIds.CleanTexts();
+            DrawingAids.CleanTexts();
             Gcd.Redraw();
         }
 

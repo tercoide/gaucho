@@ -21,6 +21,12 @@ public bool Regenerable { get; set; } = false;
             return;
         }
 
+        public void BuildGeometry(Entity e)
+        {
+            Console.WriteLine("Construyo la geometria desde Base");
+            return;
+        }
+
     }
 
 

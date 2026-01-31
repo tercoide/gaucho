@@ -3040,7 +3040,7 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 }
 
  // Dibuja un serie de lineas
- public static void DrawLines(double[] fVertices,  int colour = 0, double LineWidth = 1, double[] dashes = null)
+ public static void DrawLines(List<double> fVertices,  int colour = 0, double LineWidth = 1, double[] dashes = null)
     {
 
     int i ;         
@@ -3054,10 +3054,10 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
     g = (Gb.Shr(colour, 8) & 255) / 256;
     b = (colour & 255) / 256;
 
-    if ( fVertices.Length  < 2 ) return;
+    if ( fVertices.Count  < 2 ) return;
 
     VboManager.CurrentVBO.SetCurrentPrimitiveType(PrimitiveType.Lines);
-        for ( i = 0; i < fVertices.Length ; i += 2)
+        for ( i = 0; i < fVertices.Count ; i += 2)
         {
             VboManager.CurrentVBO.AppendVertices([fVertices[i], fVertices[i + 1], 0]); //X, Y, Z
            
@@ -3072,7 +3072,7 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 
 
 //  // Dibuja un seria de polilinea
-//  public static void PolygonFilled(double[] vertices,  int colour = 0, int FillColor = 0, double LineWidth = 1, double[] dashes = null)
+//  public static void PolygonFilled(List<double> vertices,  int colour = 0, int FillColor = 0, double LineWidth = 1, double[] dashes = null)
 //     {
 
 //     int i ;         
@@ -3084,7 +3084,7 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 
 //     GL.Begin(GL.POLYGON);
 
-//     for ( i = 0; i <= vertices.Length  -1; i += 2)
+//     for ( i = 0; i <= vertices.Count  -1; i += 2)
 //     {
 //         glColorRGB(colour);
 //         Vertex2D(vertices[i], vertices[i + 1]);

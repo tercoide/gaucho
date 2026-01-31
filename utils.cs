@@ -79,6 +79,12 @@ namespace Gaucho;
             int b = 255 - (color & 0xFF);
             return (r << 16) | (g << 8) | b;
         }
+ public static int Gradient(int color1, int color2)
+        {
+            
+
+            return (Blend(color1, color2, 0.5f))    ;
+        }
 
         /// <summary>
         /// Extracts the alpha component from an ARGB color value
@@ -148,7 +154,7 @@ namespace Gaucho;
     }
 
 
-    public static class Utils
+    public static class Util
     {
 
 
@@ -185,51 +191,51 @@ namespace Gaucho;
         }
 
         /// <summary>
-    /// VB.NET-like DoEvents function - Processes pending UI events and messages
-    /// This allows the UI to remain responsive during long-running operations
-    /// </summary>
-    public static void DoEvents()
-    {
-        try
+        /// VB.NET-like DoEvents function - Processes pending UI events and messages
+        /// This allows the UI to remain responsive during long-running operations
+        /// </summary>
+        public static void DoEvents()
         {
-            // For GTK4, we use GLib.MainContext to process pending events
-            var context = GLib.MainContext.Default();
-            while (context.Pending())
+            try
             {
-                context.Iteration(false);
+                // For GTK4, we use GLib.MainContext to process pending events
+                var context = GLib.MainContext.Default();
+                while (context.Pending())
+                {
+                    context.Iteration(false);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the error but don't let it break the application
+                Console.WriteLine($"DoEvents error: {ex.Message}");
             }
         }
-        catch (Exception ex)
-        {
-            // Log the error but don't let it break the application
-            Console.WriteLine($"DoEvents error: {ex.Message}");
-        }
-    }
 
-    /// <summary>
-    /// VB.NET-like DoEvents function with timeout - Processes pending UI events for a specified duration
-    /// </summary>
-    /// <param name="maxProcessingTimeMs">Maximum time to spend processing events in milliseconds</param>
-    public static void DoEvents(int maxProcessingTimeMs)
-    {
-        try
+        /// <summary>
+        /// VB.NET-like DoEvents function with timeout - Processes pending UI events for a specified duration
+        /// </summary>
+        /// <param name="maxProcessingTimeMs">Maximum time to spend processing events in milliseconds</param>
+        public static void DoEvents(int maxProcessingTimeMs)
         {
-            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-            var context = GLib.MainContext.Default();
-
-            while (context.Pending() && stopwatch.ElapsedMilliseconds < maxProcessingTimeMs)
+            try
             {
-                context.Iteration(false);
-            }
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                var context = GLib.MainContext.Default();
 
-            stopwatch.Stop();
+                while (context.Pending() && stopwatch.ElapsedMilliseconds < maxProcessingTimeMs)
+                {
+                    context.Iteration(false);
+                }
+
+                stopwatch.Stop();
+            }
+            catch (Exception ex)
+            {
+                // Log the error but don't let it break the application
+                Console.WriteLine($"DoEvents error: {ex.Message}");
+            }
         }
-        catch (Exception ex)
-        {
-            // Log the error but don't let it break the application
-            Console.WriteLine($"DoEvents error: {ex.Message}");
-        }
-    }
          #region File Path Helper Functions
 
         /// <summary>
@@ -282,6 +288,111 @@ namespace Gaucho;
         }
 
         #endregion
+
+        public static List<string> SplitComplex(string sToDivIde, string sLargeSeparator,  bool KeepIt = false)
+        {
+            int i =0;         
+            string sResto = "";         
+            List<string> sRespuesta = new List<string>();         
+            string sTab = "";         
+
+            sTab = sLargeSeparator;
+            sResto = sToDivIde;
+            do {
+                i = Gb.InStr(sResto, sTab);
+                if ( i > 0 )
+                {
+
+                    sRespuesta.Add(Gb.Mid(sResto, 1, i - 1));
+                    sResto = Gb.Mid(sResto, i + sTab.Length);
+                } else {
+                    sRespuesta.Add(sResto);
+                    break;
+                }
+            } while ( i > 0 );
+            return sRespuesta;
+
+        }
+         // <b>RAD Extension.</b><br>
+ // Returns a string with all its characters converted to ascii or utf-8 when bad codification ocurr.
+
+        public static string RemoveUnicodes(string s)
+            {
+
+
+            int k = 1;
+            int q = 0;         
+            int r = 0;         
+
+            string uni ="";         
+            List<string> stx = new List<string>();         
+                     
+            string rep ="";         
+            int i = 0;         
+
+            while (Gb.InStr(s, "\\U+", k) == 0 || k > s.Length)
+            {
+                q = Gb.InStr(s, "\\U+", k);
+                if ( q > 0 )
+                {
+                     r++;
+                    uni = Gb.Mid(s, q, 7);
+                    stx.Add(uni);
+                    k = q + ("\\U+").Length;
+                }
+            }
+
+            foreach ( var u in stx)
+            {
+                i = Gb.CInt("&h" + Gb.Mid(u, 4, 4) + "&");
+                rep = Gb.Chr(i).ToString();
+                s = Gb.Replace(s, u, rep);
+            }
+
+            return s;
+
+        }
+
+         public static string ProcessTabs(string s,  int lTab = 6)
+        {
+
+            // reconstruye la string teniendo en cuenta los tabuladfores
+            // "\t" o "^I"
+
+            int i = 0;         
+            int iAnterior = 0;         
+            string sResto = "";         
+            string sRespuesta ="";         
+            string sEspacios ="";         
+            string sTab ="";         
+
+            if ( Gb.InStr(s, "\t") > 0 ) {sTab = "\t"; } else { sTab = "^I";};
+            sResto = s;
+            do {
+                i = Gb.InStr(sResto, sTab);
+                if ( i > 0 )
+                {
+                    if ( iAnterior < lTab )
+                    {
+                        sEspacios = Gb.Space(lTab - iAnterior);
+                        iAnterior = 0;
+                    } else {
+                        int nTabs = (i - 1) / lTab;
+                        int posInTab = (i - 1) - (nTabs * lTab);
+                        sEspacios = Gb.Space(lTab - posInTab);
+                        sEspacios = Gb.Space(lTab);
+                    }
+                    iAnterior = i - 1;
+                    sRespuesta += Gb.Mid(sResto, 1, i - 1) + sEspacios;
+                    sResto = Gb.Mid(sResto, i + 1);
+                } else {
+                    sRespuesta += sResto;
+                    break;
+                }
+            } while ( i > 0 );
+            return sRespuesta;
+
+        }
 
     }
 
