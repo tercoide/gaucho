@@ -74,7 +74,9 @@ public abstract class ToolsBase
 
         public static int cursorX = 0;
         public static int cursory = 0;
-
+        public static bool AllowSingleSelection = false;
+        public static int lastCursorX = 0;
+        public static int lastCursorY = 0;
         public const string ContextMenu = "Finish;_FINISH;;;Cancel;_CANCEL;;";
 
         // Static ctor kept minimal (arrays already initialized above)
@@ -454,6 +456,8 @@ public abstract class ToolsBase
                 Gcd.StepsDone = 0;
                 Gcd.DrawOriginals = false;
                 Active = false;
+                lastCursorX = 0;
+                lastCursorY = 0;
 
                 Gcd.Redraw();
             }

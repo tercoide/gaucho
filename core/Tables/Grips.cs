@@ -42,10 +42,10 @@ public class Grip
     public string ToolTip = "";
 // public Picture Icon;
 public int Shape;             //// 0-Rectangulo 1-Rombo 2-Circulo 3-Triangulo N 4-Triangulo S 5-Triangulo W 6-Triangulo W
-public System.Drawing.Color iColor = System.Drawing.Color.Blue;
+public int iColor = Colors.Blue;
 public bool Filled = true;
-public System.Drawing.Color iFillColor = System.Drawing.Color.LightCyan;
-public System.Drawing.Color iFillColor2 = System.Drawing.Color.Blue;
+public int iFillColor = Colors.Cyan;
+public int iFillColor2 = Colors.Blue;
 public int glList;
 public float Value;     // para los grips que asumen un valor
 public int Group;     // para los RadioButton

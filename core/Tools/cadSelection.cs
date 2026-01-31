@@ -327,7 +327,7 @@ public static void MouseUp()
 
     string s ;         
     string tipo ;         
-    double t = Timer;
+    // double t = Timer;
     Entity e ;         
     Dictionary<string, Entity> cSel =[] ;         
 

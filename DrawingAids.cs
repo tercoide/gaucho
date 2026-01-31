@@ -1,4 +1,5 @@
 using Gaucho;
+using OpenTK.Graphics.OpenGL4;
 class DrawingAids
 {
  // Gambas class file
@@ -40,7 +41,7 @@ public int dashes ;
     public int fHeight; //= 20
 }
 
-public double ScreenDensity = 1080 / 29.5;   // pixele by cm wich gives a 1:100 scale in my monitor
+public static double ScreenDensity = 1080 / 29.5;   // pixele by cm wich gives a 1:100 scale in my monitor
 
 public static HelperSt Helper ;          // Esto se escribe al lado del mouse
 public static string ErrorMessage ;         
@@ -79,7 +80,7 @@ public static string GetHelp(string sTable, string sProperty)
             break;
     }
     if ( s == "" ) s = ("Help unavailable.");
-    fMain.txtHelp.Text = s;
+    // fMain.txtHelp.Text = s;
     return s;
 
 }
@@ -91,9 +92,9 @@ public static void _new()
     Helper.texto = "";
     Helper.dX = 15; //defasaje con respecto al mouse
     Helper.dY = 15;
-    Helper.fColor = Color.black;
+    Helper.fColor = Colors.Black;
     Helper.ShowRect = true;
-    Helper.fRectangulo = Color.ButtonBackground;
+    Helper.fRectangulo = Colors.Blue;
     Helper.fFont = "Arial";
     Helper.fHeight = 10;
 
@@ -101,17 +102,17 @@ public static void _new()
 
  // All text options in one line
  // 0,0 is center
-public static void Texting(string MyText, int posX, int posY, int txtColor= 0, int txtHeight= 12, string FontName)
+public static void Texting(string MyText, int posX, int posY, int txtColor= 0, int txtHeight= 12, string FontName = "romanc")
     {
 
 
-    Gl.PushMatrix();
+    // GL.PushMatrix();
 
-    Gl.LoadIdentity();
+    // GL.LoadIdentity();
 
-    Glx.DrawText(MyText, posX, posY, 0, 10, txtColor);
+    // Glx.DrawText(MyText, posX, posY, 0, 10, txtColor);
 
-    Gl.PopMatrix();
+    // GL.PopMatrix();
 
 }
 
@@ -123,7 +124,7 @@ public static void DibujaHelper()
 
      // If ErrorMessage <> "" Then
      //
-     //     texting(ErrorMessage, 10 - fMain.Glarea1.w / 2, 30 - fMain.Glarea1.h / 2, Color.Red)
+     //     texting(ErrorMessage, 10 - fMain.GLarea1.w / 2, 30 - fMain.GLarea1.h / 2, Color.Red)
      //
      //     If ErrorTimer = 15 Then ErrorMessage = ""
      // Else
@@ -139,19 +140,19 @@ public static void DibujaHelper()
      //
      // fmain.Refresh
 
-     // Texting(trabajoYteclado, 10 - fMain.Glarea1.w / 2, 10 - fMain.Glarea1.h / 2, Gcd.flgWindowInfoColor)
+     // Texting(trabajoYteclado, 10 - fMain.GLarea1.w / 2, 10 - fMain.GLarea1.h / 2, Gcd.flgWindowInfoColor)
 
     HelperDibujo = "";
     if ( Gcd.Orthogonal ) HelperDibujo = "F8-Ortho";
     if ( Gcd.Drawing.GridActive ) HelperDibujo = HelperDibujo + "  F7-Grid = " + Gcd.Drawing.GridMinorSpacing.ToString("0.00 m");
      // and so on...
 
-    Texting(HelperDibujo, 40, 10 - Gcd.Drawing.Sheet.GlSheet.h / 2, Config.WindowInfoColor);
+    Texting(HelperDibujo, 40, 10 - Gcd.Drawing.Sheet.GlSheet.GetHeight() / 2, Config.WindowInfoColor);
 
      // helper del mouse
     if ( Helper.texto.Length == 0 ) return;
 
-    Texting(Helper.Texto, helper.dX + fMain.CursorX - Gcd.Drawing.Sheet.GlSheet.w / 2, helper.dY + -fMain.CursorY + Gcd.Drawing.Sheet.GlSheet.h / 2, Color.Cyan, 10);
+    Texting(Helper.texto, Helper.dX + Mouse.X - Gcd.Drawing.Sheet.GlSheet.GetWidth() / 2, Helper.dY + -Mouse.Y + Gcd.Drawing.Sheet.GlSheet.GetHeight() / 2, Colors.Cyan, 10);
 
 }
 
@@ -166,7 +167,7 @@ public static void DrawDxDy(double[] p1, double[] p2, int iSizePix= 10)
      // el ancho de la flecha es iSizePix/3 y el largo = iPixsize
 
      // Si dX es chico  >--< 3.45
-    double[] flxTextSize ;         
+    List<double> flxTextSize ;         
     int iTotalLength ;          // en pixeles
     string sTextX ;         
     string sTextY ;         
@@ -182,7 +183,7 @@ public static void DrawDxDy(double[] p1, double[] p2, int iSizePix= 10)
 
     flxTextSize = Glx.TextExtends(sTextX, iSizePix);
 
-    iTotalLength = flxTextSize[0] + (2 + 0.6) * iSizePix; // pixeles
+    iTotalLength = (int)(flxTextSize[0] + (2 + 0.6) * iSizePix); // pixeles
 
      //If iTotalLength < Gcd.Pixels(p2[0] - p1[0]) Then // puedo dibujar todo normalmente
      // ================eje X===============================
@@ -192,17 +193,17 @@ public static void DrawDxDy(double[] p1, double[] p2, int iSizePix= 10)
     eOblique2 = cadSolid.Entity([0, 0, -ArrowSize, ArrowWidth, -ArrowSize, -ArrowWidth, 0, 0]);
     if ( p2[0] < p1[0] )
     {
-        Gcd.CCC[eOblique1.Gender].rotate(eOblique1, Math.PI);
+        Gcd.CCC[eOblique1.Gender].Rotate(eOblique1, Math.PI);
 
-        Gcd.CCC[eOblique2.Gender].rotate(eOblique2, Math.PI);
+        Gcd.CCC[eOblique2.Gender].Rotate(eOblique2, Math.PI);
 
     }
 
-    Gcd.CCC[eOblique1.Gender].translate(eOblique1, p1[0], p1[1]);
-    Gcd.CCC[eOblique2.Gender].translate(eOblique2, p2[0], p1[1]);
+    Gcd.CCC[eOblique1.Gender].Translate(eOblique1, p1[0], p1[1]);
+    Gcd.CCC[eOblique2.Gender].Translate(eOblique2, p2[0], p1[1]);
 
      // linea principal
-    eLineaPpal = cadLine.Entity([p1[0], p1[1], p2[0], p1[1]]);
+    eLineaPpal = cadLine.NewEntity([p1[0], p1[1], p2[0], p1[1]]);
 
      // texto
     eText = cadMText.Entity([(p2[0] - p1[0]) / 2 + p1[0], p1[1]]);
@@ -211,7 +212,7 @@ public static void DrawDxDy(double[] p1, double[] p2, int iSizePix= 10)
 
     eText.sParam[cadText.sdaText] = sTextX;
 
-    eOblique1.Colour = config.WindowAidsColor;
+    eOblique1.Colour = Config.WindowAidsColor;
     eOblique2.Colour = Config.WindowAidsColor;
     eLineaPpal.Colour = Config.WindowAidsColor;
     eText.Colour = Config.WindowAidsColor;
@@ -226,34 +227,33 @@ public static void DrawDxDy(double[] p1, double[] p2, int iSizePix= 10)
     eOblique1 = cadSolid.Entity([0, 0, ArrowSize, ArrowWidth, ArrowSize, -ArrowWidth, 0, 0]);
     if ( p2[1] < p1[1] )
     {
-        Gcd.CCC[eOblique1.Gender].rotate(eOblique1, Math.PI * 3 / 2);
+        Gcd.CCC[eOblique1.Gender].Rotate(eOblique1, Math.PI * 3 / 2);
     }
     else
     {
-        Gcd.CCC[eOblique1.Gender].rotate(eOblique1, Math.PI / 2);
+        Gcd.CCC[eOblique1.Gender].Rotate(eOblique1, Math.PI / 2);
     }
 
-    Gcd.CCC[eOblique1.Gender].translate(eOblique1, p2[0], p1[1]);
+    Gcd.CCC[eOblique1.Gender].Translate(eOblique1, p2[0], p1[1]);
     eOblique2 = cadSolid.Entity([0, 0, -ArrowSize, ArrowWidth, -ArrowSize, -ArrowWidth, 0, 0]);
     if ( p2[1] < p1[1] )
     {
-        Gcd.CCC[eOblique2.Gender].rotate(eOblique2, Math.PI * 3 / 2);
+        Gcd.CCC[eOblique2.Gender].Rotate(eOblique2, Math.PI * 3 / 2);
     }
     else
     {
-        Gcd.CCC[eOblique2.Gender].rotate(eOblique2, Math.PI / 2);
+        Gcd.CCC[eOblique2.Gender].Rotate(eOblique2, Math.PI / 2);
     }
 
-    Gcd.CCC[eOblique2.Gender].translate(eOblique2, p2[0], p2[1]);
-    eOblique1.Colour = config.WindowAidsColor;
+    Gcd.CCC[eOblique2.Gender].Translate(eOblique2, p2[0], p2[1]);
+    eOblique1.Colour = Config.WindowAidsColor;
     eOblique2.Colour = Config.WindowAidsColor;
 
-    eLineaPpal.p.Clear();
-    eLineaPpal.p.Insert([p2[0], p1[1], p2[0], p2[1]]);
+    eLineaPpal.P.Clear();
+    eLineaPpal.P.AddRange([p2[0], p1[1], p2[0], p2[1]]);
     eText.sParam[cadText.sdaText] = sTextY;
-    eText.p.Clear();
-    eText.p.Insert([p2[0], (p2[1] - p1[1]) / 2 + p1[1]]);
-
+    eText.P.Clear();
+    eText.P.AddRange([p2[0], (p2[1] - p1[1]) / 2 + p1[1]]);
     Gcd.CCC[eOblique1.Gender].Draw(eOblique1);
     Gcd.CCC[eOblique2.Gender].Draw(eOblique2);
     Gcd.CCC[eLineaPpal.Gender].Draw(eLineaPpal);
@@ -278,7 +278,7 @@ public static void DrawSnapText()
     y = Gcd.Drawing.iEntity[1];
     s = txtFrom + " to " + txtSnapTo;
     Glx.SelectFont(Config.GripTextOnScreenFont);
-    Glx.DrawText(s, x, y, 0, Gcd.Metros(Config.gripTextOnScreenSize), Config.gripTextOnScreenColor);
+    Glx.DrawTextPoly(s, x, y, 0, Gcd.Metros(Config.GripTextOnScreenSize));
 
 }
 
@@ -291,7 +291,7 @@ public static void DrawCoordenadas()
     string l2 ;         
     string lEsc ;         
 
-    l = Gcd.Near(Gcd.Xreal(fMain.cursorX)).ToString("0.00") + " : " + Gcd.Near(Gcd.Yreal(fMain.cursorY)).ToString("0.00");
+    l = Gcd.Near(Gcd.Xreal(Mouse.X)).ToString("0.00") + " : " + Gcd.Near(Gcd.Yreal(Mouse.Y)).ToString("0.00");
 
      //    l2 = "Mouse: " & Str$(puntos.cursorX) & ": " & Str$(puntos.cursorY)
 
@@ -310,11 +310,11 @@ public static void DrawCoordenadas()
     double z ;         
     e = 1080 / 0.29; // pixeles por metro segun el tamaño real de la pantalla
     z = Gcd.Metros(1); // metros por pixel segun la ampliacion del usuario (rueda del mouse)
-    lEsc = "Esc 1:" + (1 / Gcd.Drawing.Sheet.ScaleZoom * 100 * ScreenDensity).ToString("0");
+    lEsc = "Esc 1:" + (1 / Gcd.Drawing.Sheet.ScaleZoom * 100 * Gcd.ScreenDensity).ToString("0");
 
-    Texting(l, 10 - Gcd.Drawing.Sheet.GlSheet.w / 2, Gcd.Drawing.Sheet.GlSheet.h / 2 - 15, Gcd.flgWindowInfoColor);
-    Texting(l2, 10 - Gcd.Drawing.Sheet.GlSheet.w / 2, Gcd.Drawing.Sheet.GlSheet.h / 2 - 35, Gcd.flgWindowInfoColor);
-    Texting(lEsc, Gcd.Drawing.Sheet.GlSheet.w / 2 - 100, 10 - Gcd.Drawing.Sheet.GlSheet.h / 2, Gcd.flgWindowInfoColor);
+    Texting(l, 10 - Gcd.Drawing.Sheet.W / 2, Gcd.Drawing.Sheet.H / 2 - 15, Config.WindowInfoColor);
+    Texting(l2, 10 - Gcd.Drawing.Sheet.W / 2, Gcd.Drawing.Sheet.H / 2 - 35, Config.WindowInfoColor);
+    Texting(lEsc, Gcd.Drawing.Sheet.W / 2 - 100, 10 - Gcd.Drawing.Sheet.H / 2, Config.WindowInfoColor);
 
 }
 
@@ -350,49 +350,49 @@ public static void RebuildGrid()
 
     x0 = Gcd.Near(Gcd.Xreal(0));
     y0 = Gcd.Near(Gcd.Yreal(0));
-    x1 = Gcd.Near(Gcd.Xreal(fmain.GlArea1.W));
-    y1 = Gcd.Near(Gcd.Yreal(fmain.GlArea1.h));
+    x1 = Gcd.Near(Gcd.Xreal(Gcd.Drawing.Sheet.W));
+    y1 = Gcd.Near(Gcd.Yreal(Gcd.Drawing.Sheet.H));
 
     espaciado = Gcd.Drawing.GridMinorSpacing;
 
     do {
         if ( Gcd.Pixels(espaciado) < 5 ) espaciado *= 10;
-    }
+    } while (Math.Abs(Gcd.Pixels(espaciado)) > 5);
 
-    if ( ! Gl.islist(Gcd.Drawing.GlListGrid) ) Gcd.Drawing.GlListGrid = Gl.GenLists(1);
-    Gl.List(Gcd.Drawing.GlListGrid, Gl.COMPILE);
+    // if ( ! GL.islist(Gcd.Drawing.GLListGrid) ) Gcd.Drawing.GLListGrid = GL.GenLists(1);
+    // GL.List(Gcd.Drawing.GLListGrid, GL.COMPILE);
 
     switch ( Gcd.Drawing.GridStyle)
     {
         case 0: // puntos
-            Gl.Begin(Gl.POINTS);
-            Glx.GlColorRGB(Config.WhiteAndBlack);
+            GL.Begin(GL.POINTS);
+            Glx.GLColorRGB(Config.WhiteAndBlack);
             for ( y = y1; y <= y0; y += espaciado)
             {
                 for ( x = x0; x <= x1; x += espaciado)
                 {
-                    Gl.Vertex2f(x, y);
+                    GL.Vertex2f(x, y);
                 }
             }
 
-            Gl.End();
+            
             break;
 
         case 1: // cuadricula
 
             for ( y = y1; y <= y0; y += espaciado)
             {
-                Glx.DrawLines([x0, y, x1, y], Color.Gray, 1);
+                Glx.DrawLines([x0, y, x1, y], Colors.Gray, 1);
             }
 
             for ( x = x0; x <= x1; x += espaciado)
             {
-                Glx.DrawLines([x, y0, x, y1], Color.Gray, 1);
+                Glx.DrawLines([x, y0, x, y1], Colors.Gray, 1);
             }
             break;
 
     }
-    Gl.EndList();
+    
 
     Gcd.Drawing.GridCurentSpacing = espaciado;
 
@@ -406,13 +406,13 @@ public static void DrawCaudricula()
 
      // crossing lines each gridspace and darker each 10m
 
-    float i ;         
-    float xgg ;         
-    float ygg ;         
-    float xg ;         
-    float yg ;         
-    float espaciado ;         
-    float starting ;         
+    double i =0;         
+    double xgg =0;         
+    double ygg =0;         
+    double xg =0;         
+    double yg =0;         
+    double espaciado =0;         
+    double starting =0;         
     int W ;         
     int H ;         
 
@@ -422,24 +422,24 @@ public static void DrawCaudricula()
     xg = Gcd.Near(xg); // punto en mundo real ajustado a grid
     yg = Gcd.Near(yg);
 
-    xg = Gcd.Xpix(xg) - espaciado * 2; // punto inicial en la drawing area
-    yg = Gcd.Ypix(yg) - espaciado * 2;
+    xg = Gcd.XPix(xg) - espaciado * 2; // punto inicial en la drawing area
+    yg = Gcd.YPix(yg) - espaciado * 2;
 
     xgg = xg;
     ygg = yg;
 
-    W = fmain.GlArea1.W;
-    H = fmain.GlArea1.H;
+    W = Gcd.Drawing.Sheet.W;
+    H = Gcd.Drawing.Sheet.H;
 
     starting = yg; // guardo el Y inicial
 
-    if ( ! Gl.islist(Gcd.Drawing.GlListGrid) ) Gcd.Drawing.GlListGrid = Gl.GenLists(1);
-    Gl.List(Gcd.Drawing.GlListGrid, Gl.COMPILE);
+    // if ( ! GL.islist(Gcd.Drawing.GLListGrid) ) Gcd.Drawing.GLListGrid = GL.GenLists(1);
+    // GL.List(Gcd.Drawing.GLListGrid, GL.COMPILE);
 
      // lineas finas
     do { // lineas horizontales
         if ( espaciado < 5 ) break;
-        Glx.DrawLines([xg, yg, xg + W + espaciado, yg], Color.Gray, 1);
+        Glx.DrawLines([xg, yg, xg + W + espaciado, yg], Colors.Gray, 1);
         yg += espaciado - 0.5;
 
     } while (true);
@@ -448,13 +448,13 @@ public static void DrawCaudricula()
     yg = ygg;
     do { // verticales
         if ( espaciado < 5 ) break;
-        Glx.DrawLines([xg, yg, xg, yg + H + espaciado], Color.Gray, 1);
+        Glx.DrawLines([xg, yg, xg, yg + H + espaciado], Colors.Gray, 1);
         xg += espaciado - 0.5;
     } while (true);
 
      // lineas gruesas
 
-    Gl.EndList();
+    
 
 }
 
@@ -462,7 +462,7 @@ public static void DrawCaudricula()
  //
  //     Dim e As Entity
  //     For Each e In Gcd.Drawing.Sheet.EntitiesVisibles
- //         If e.Polygon Then Glx.Polygon(e.Polygon, Color.Blue, 1)
+ //         If e.Polygon Then Glx.Polygon(e.Polygon, Colors.Blue, 1)
  //     Next
  //
  // End
@@ -493,12 +493,12 @@ public static void DrawGrips(Grip[] GlxGrips)
 
     foreach ( var g1 in GlxGrips)
     {
-         //Gl.Rotatef(g.AnGle, 0, 0, 1)
+         //GL.Rotatef(g.AnGLe, 0, 0, 1)
          g = g1;
         switch ( g.Shape)
         {
             case 0:
-                Glx.RectanGle2D(g.X - half, g.Y - half, side, side, g.iFillColor, 0, 0, 0, g.iColor, 1, 0, 1);
+                Glx.Rectangle2D(g.X - half, g.Y - half, side, side, g.iFillColor, 0, 0, 0, g.iColor, 1, [], 1);
                 break;
             case 1:
                 Glx.Rombo2D(g.X, g.Y, side, g.iFillColor, g.iFillColor2);
@@ -508,7 +508,7 @@ public static void DrawGrips(Grip[] GlxGrips)
                 break;
 
         }
-         //Gl.Rotatef(-g.AnGle, 0, 0, 1)
+         //GL.Rotatef(-g.AnGLe, 0, 0, 1)
         if ( g.DrawLineToAsociatedGrip )
         {
             Glx.PolyLines([g.X, g.Y, GlxGrips[g.AsociatedGrip].X, GlxGrips[g.AsociatedGrip].Y], Config.GripLineColor);

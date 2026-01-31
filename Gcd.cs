@@ -35,6 +35,8 @@ public static class Gcd
         // Boston, MA  02110-1301  USA
         // Gambas class file
 
+        public static GLArea? GLArea1;
+
         public static double printingScale = 1;  // This is needed by some clases, like Text and MText.
         public static double ScreenDensity = 1080 / 29.5;   // pixele by cm wich gives a 1:100 scale in my monitor
 
@@ -1309,7 +1311,7 @@ public static class Gcd
         {
 
 
-            double[] limits = [];
+            List<double> limits = new List<double>();
             double szx;
             // ahora calculo donde estaria el centro de este dibujo
 

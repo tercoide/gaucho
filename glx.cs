@@ -2950,7 +2950,7 @@ public const int VERTEX_ARRAY_BINDING = 0x000085B5;
  // Puede dibujar un contorno del mismo de otro color->Bounding
  // Mode: 0=relleno, 1=relleno y recuadro, 2=solo recuadro
 
-public static void Rectangle2D(double x1, double y1, double w, double h, int colour1= Colors.Blue, int colour2= -14, int colour3= -14, int colour4= -14, int BoundingColor= Colors.Blue, int BoundingWIdth= 1, double[] Dashes = null, int mode= 0)
+public static void Rectangle2D(double x1, double y1, double w, double h, int colour1= Colors.Blue, int colour2= -14, int colour3= -14, int colour4= -14, int BoundingColor= Colors.Blue, int BoundingWIdth= 1, List<double> Dashes = null, int mode= 0)
     {
 
 
@@ -3120,7 +3120,7 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
  // Las medidas de los angulo inicial y recorrido estan en RADIANES
 
 
- public static double[] ArcPoly(double xCenter, double yCenter, double radio, double start_angle, double length,  double angle_increment = Math.PI * 2 / 360)
+ public static List<double> ArcPoly(double xCenter, double yCenter, double radio, double start_angle, double length,  double angle_increment = Math.PI * 2 / 360)
 {
     double theta ;         
     double x0 ;         
@@ -3177,27 +3177,27 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
     i++;
      //If flxPoly.Count <> i Then Stop
 
-    return flxPoly.ToArray();
+    return flxPoly;
 
 }
 
- public static void PolyLines(double[] fVertices,  int colour = 0, double LineWidth = 1, double[] dashes = null)
+ public static void PolyLines(List<double> fVertices,  int colour = 0, double LineWidth = 1, List<double> dashes = null)
 {
     int i ;         
-    double[] vertices ;         
-    double[] vertices2 ;         
+    List<double> vertices ;         
+    List<double> vertices2 ;         
    
-    if ( fVertices.Length < 2 ) return;
+    if ( fVertices.Count < 2 ) return;
     
 
-    if ( dashes.Length > 0 )
+    if ( dashes != null && dashes.Count > 0 )
     {
         vertices = Puntos.DashedLineStrip(fVertices, dashes, 1);
 
         VboManager.CurrentVBO.SetCurrentPrimitiveType(PrimitiveType.Lines);
 
  
-        for ( i = 0; i <= vertices.Length  -1; i += 2)
+        for ( i = 0; i <= vertices.Count  -1; i += 2)
         {
              //    glColorRGB(colour)
             Vertex2D(vertices[i], vertices[i + 1],colour);
@@ -3208,7 +3208,7 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
         vertices = fVertices;
         VboManager.CurrentVBO.SetCurrentPrimitiveType(PrimitiveType.LineStrip);
    
-        for ( i = 0; i <= vertices.Length  -1; i += 2)
+        for ( i = 0; i <= vertices.Count  -1; i += 2)
         {
              //glColorRGB(colour)
             Vertex2D(vertices[i], vertices[i + 1],colour);
@@ -3220,14 +3220,14 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 
 }
 
- public static void DrawTriangles(double[] vertices,  int colour = 0, int FillColor = 0, double LineWidth = 1, double[] dashes = null)
+ public static void DrawTriangles(List<double> vertices,  int colour = 0, int FillColor = 0, double LineWidth = 1, List<double> dashes = null)
 {
     int i ;         
 
      //glColorRGB(colour)
     
 
-    if ( dashes != null && dashes.Length > 0 )
+    if ( dashes != null && dashes.Count > 0 )
     {
 
         PolyLines(vertices, colour, LineWidth, dashes);
@@ -3236,7 +3236,7 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 
     VboManager.CurrentVBO.SetCurrentPrimitiveType(PrimitiveType.Triangles);
 
-    for ( i = 0; i <= vertices.Length  -1; i += 2)
+    for ( i = 0; i <= vertices.Count  -1; i += 2)
     {
         glColorRGB(colour);
         Vertex3F(vertices[i], vertices[i + 1], zLevel);
@@ -3268,7 +3268,7 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 
  // Dibuja un circulo
 
-public static void CIRCLE(double[] center, double radious, int colour= 0, bool Filled= false, double LineWidth= 1, double[] dashes= null)
+public static void CIRCLE(double[] center, double radious, int colour= 0, bool Filled= false, double LineWidth= 1, List<double> dashes= null)
     {
 
 
@@ -3311,7 +3311,7 @@ public static void CIRCLE(double[] center, double radious, int colour= 0, bool F
             fVertices.Add(y);
         }
 
-        PolyLines(fVertices.ToArray(), colour, LineWidth, dashes);
+        PolyLines(fVertices, colour, LineWidth, dashes);
 
     }
 
@@ -3848,7 +3848,7 @@ public static List<string> LoadFonts(string DirPath)
 
  // Devuelve una poly con el texto en el contexto actual de acuerdo a los parametros pasados
  // Debe estar definida la Font con nombre y altura
- public static double[] DrawTextPoly(string UTFstring, double textH = 1, double sRotationRad = 0, double sItalicAngle = 0, double fScaleX = 1)
+ public static List<double> DrawTextPoly(string UTFstring, double textH = 1, double sRotationRad = 0, double sItalicAngle = 0, double fScaleX = 1)
 {
     int i =0;         
     int iii =0;         
@@ -3857,7 +3857,7 @@ public static List<string> LoadFonts(string DirPath)
     int LetterIndex =0;         
     double Xadvance=0 ;         
     double xMax =0 ;
-        double[] fArcParams ;
+        List<double> fArcParams ;
         // double[] Glyps ;         
      List<double> Bulges ;         
    List<List<double>> TGlyps ;         
@@ -3877,9 +3877,9 @@ public static List<string> LoadFonts(string DirPath)
     double dX =0;          // donde tengo el cursor
     double dY =0;         
     double alpha =0;         
-     double[] flxArc    = new double[0];         
-     double[] flxGlyps = new double[0];         
-     double[] flxAnswer = new double[0];    
+     List<double> flxArc    = new List<double>();         
+     List<double> flxGlyps = new List<double>();         
+     List<double> flxAnswer = new List<double>();    
 
 
      //SelectFont("romant")
@@ -3928,7 +3928,7 @@ public static List<string> LoadFonts(string DirPath)
                          // // FIXME: arc problem
                          // Continue
                         ang1 = Gb.Ang(Glyps[(i2 + 1) * 2 + 1] - Glyps[i2 * 2 + 1], Glyps[(i2 + 1) * 2] - Glyps[i2 * 2]); // angulo del tramo
-                        Lt = Puntos.distancia(Glyps[i2 * 2], Glyps[i2 * 2 + 1], Glyps[(i2 + 1) * 2], Glyps[(i2 + 1) * 2 + 1]);
+                        Lt = Puntos.Distancia(Glyps[i2 * 2], Glyps[i2 * 2 + 1], Glyps[(i2 + 1) * 2], Glyps[(i2 + 1) * 2 + 1]);
                         if ( Lt == 0 ) continue;
                         mx = (Glyps[(i2 + 1) * 2] + Glyps[i2 * 2]) / 2; // punto medio del tramo
                         my = (Glyps[(i2 + 1) * 2 + 1] + Glyps[i2 * 2 + 1]) / 2;
@@ -3943,14 +3943,14 @@ public static List<string> LoadFonts(string DirPath)
 
                         flxArc = ArcPoly(fArcParams[0] + Xadvance, fArcParams[1], fArcParams[2], fArcParams[3], fArcParams[4], Math.PI / 16);
 
-                        flxAnswer = Gb.AppendArray(flxAnswer, flxArc);
+                        flxAnswer.InsertRange(flxAnswer.Count, flxArc);
 
-                        Array.Clear(fArcParams);
-                        Array.Clear(flxArc);
+                        fArcParams.Clear();
+                        flxArc.Clear();
 
                     } else { // dibujo la linea normalmente
 
-                        flxAnswer = Gb.AppendArray(flxAnswer, new double[] { Glyps[i2 * 2] + Xadvance, Glyps[i2 * 2 + 1], Glyps[(i2 + 1) * 2] + Xadvance, Glyps[(i2 + 1) * 2 + 1] });
+                        flxAnswer.InsertRange(flxAnswer.Count, new double[] { Glyps[i2 * 2] + Xadvance, Glyps[i2 * 2 + 1], Glyps[(i2 + 1) * 2] + Xadvance, Glyps[(i2 + 1) * 2 + 1] });
                     }
 
                 }
@@ -3974,7 +3974,7 @@ public static List<string> LoadFonts(string DirPath)
     if ( sItalicAngle != 0 )
     {
 
-        for ( iii = 0; iii <= flxAnswer.Length  -1 - 1; iii += 2)
+        for ( iii = 0; iii <= flxAnswer.Count  -1 - 1; iii += 2)
         {
             flxAnswer[iii] += flxAnswer[iii + 1] *Math.Sin(Gb.DegreesToRadians(sItalicAngle));
         }
@@ -4114,11 +4114,11 @@ public static List<string> LoadFonts(string DirPath)
 
  // devuelve un rectangulo que contiene al texto
  // [ancho,alto]
- public static double[] TextExtends(string UTFstring, double textH = 1, double sRotationRad = 0, double sItalicAngle = 0)
+ public static List<double> TextExtends(string UTFstring, double textH = 1, double sRotationRad = 0, double sItalicAngle = 0)
     {
 
-     double[] flxText ;         
-     double[] tRect ;         
+     List<double> flxText ;         
+     List<double> tRect ;         
 
     flxText = DrawTextPoly(UTFstring, textH, sRotationRad, sItalicAngle);
     tRect = Puntos.Limits(flxText);

@@ -27,6 +27,11 @@ public class Sheet
     public double RotY = 0;          //// radians
     public double RotZ = 0;
 
+    public int X=0;                     //// PIXELS
+    public int Y=0;                     //// PIXELS
+    public int W=0;                     //// PIXELS
+    public int H=0;                     //// PIXELS
+
     public double ScaleZoom = 1;
     public double ScaleZoomLast = 1;
     //// Escalado para evitar errores de precision matematica

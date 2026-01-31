@@ -76,7 +76,7 @@ namespace Gaucho;
         public static int WindowTextColor;          // Window helper text color
         public static int WindowInfoColor;          // Window helper text colorPublic flgWindowCursorColor As Integer // Window cursor color
         public static int WindowCursorColor;          // Window helper text color
-        public static int WindowAIdsColor = 8;    // CAD color, not Gb
+        public static int WindowAidsColor = 8;    // CAD color, not Gb
 
         public static int WhiteAndBlack;          // El color blanco/negro siempre sera distinto al
         public static int OnScreenHelpColor = 0xD3D3D3; // Color.LightGray equivalent
