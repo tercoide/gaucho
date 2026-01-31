@@ -26,6 +26,9 @@ public bool Regenerable { get; set; } = false;
 
     public interface IEntity
     {
+
+        public Entity NewEntity() { return new Entity(); }
+        public Entity ClonEntity(Entity e, bool NewId = false) { return e; }
         public bool Regenerable { get; set; }
         public void Draw(Entity e) { }
 
@@ -37,6 +40,7 @@ public bool Regenerable { get; set; } = false;
         }
         
         public void SaveDxfData(Entity e ) { }
+        public bool ImportDXF(Entity e , ref List<string> keys, ref List<string> values) { return false;  }
 
          public void DrawSelected(Entity e) { }
 

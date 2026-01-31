@@ -7,7 +7,7 @@ using Gaucho;
 using HarfBuzz;
 
 
-class dxf
+static class dxf
 {
  // Gambas module file
 
@@ -60,31 +60,31 @@ class dxf
  //               handle = hObject1
  //               owner  = HO
 
-public float LoadingPercent ;         
-private float LoadLastPercent ;         
-private int LoadTotalBytes ;         
-private int LoadedBytes ;         
-private int iHandle = 2;
-private StreamReader? fp ;
+public static float LoadingPercent ;         
+private static float LoadLastPercent ;         
+private static int LoadTotalBytes ;         
+private static int LoadedBytes ;         
+private static int iHandle = 2;
+private static StreamReader? fp ;
 
 
 
-        private StreamWriter? hFile ;         
+        private static StreamWriter? hFile ;         
 
-private string lpCode = "";         
-private string lpValue = "";         
+private static string lpCode = "";         
+private static string lpValue = "";         
 
-private int LastCodeReadIndex = 0;
+private static int LastCodeReadIndex = 0;
 
 // Additional properties for DXF processing
-public int VerboseLevel = 0;
-public bool IgnoreHeader = false;
-public bool IgnoreTables = false;
-public bool IgnoreBlocks = false;         
+public static int VerboseLevel = 0;
+public static bool IgnoreHeader = false;
+public static bool IgnoreTables = false;
+public static bool IgnoreBlocks = false;         
 
-public Dictionary<string, Dictionary<string, Entity>> hContainers = new Dictionary<string, Dictionary<string, Entity>>();
-private Dictionary<string, Dictionary<string, string>> ReadTimes = new Dictionary<string, Dictionary<string, string>>();
-private Dictionary<string, Dictionary<string, string>> ReadEntities = new Dictionary<string, Dictionary<string, string>>();
+public static Dictionary<string, Dictionary<string, Entity>> hContainers = new Dictionary<string, Dictionary<string, Entity>>();
+private static Dictionary<string, Dictionary<string, string>> ReadTimes = new Dictionary<string, Dictionary<string, string>>();
+private static Dictionary<string, Dictionary<string, string>> ReadEntities = new Dictionary<string, Dictionary<string, string>>();
 
  // Codigos del DXF
 const string codEntity = "0";
@@ -114,8 +114,7 @@ const string codRadius = "40";
 const string codAngleStart = "50";
     const string codAngleEnd = "51";
 
-    
-    public string DWGtoDXF(string sDwgFile)
+    public static string DWGtoDXF(string sDwgFile)
     {
         string tmpfile;
         // elimino el archivo temporal que hubiese creado
@@ -131,7 +130,7 @@ const string codAngleStart = "50";
 
  // Carga el DXF y lo mete en cModel del dibujo actual
  // Verbose=0 nada, 1=minimo, 2=grupos, 3=todo
-public bool LoadFile(string sfile, Drawing drw, bool ignoretables= false, bool ignoreblocks= false, bool ignoreheader= false, int verboselevel= 0, bool updategraphics= true, bool readobjects= true)
+public static bool LoadFile(string sfile, Drawing drw, bool ignoretables= false, bool ignoreblocks= false, bool ignoreheader= false, int verboselevel= 0, bool updategraphics= true, bool readobjects= true)
 {
     bool IgnoreTables = ignoretables;
     bool IgnoreBlocks = ignoreblocks;
@@ -320,7 +319,7 @@ public bool LoadFile(string sfile, Drawing drw, bool ignoretables= false, bool i
 
 }
 
-private void DiscardBlocks(Drawing drw)
+private static void DiscardBlocks(Drawing drw)
     {
 
 
@@ -337,7 +336,7 @@ private void DiscardBlocks(Drawing drw)
 
 }
 
-private void ReadData()
+private static void ReadData()
     {
 
 
@@ -365,7 +364,7 @@ private void ReadData()
 
 }
 
-private void Load1HeadersDirect(Headers Headers)
+private static void Load1HeadersDirect(Headers Headers)
     {
 
 
@@ -415,7 +414,7 @@ private void Load1HeadersDirect(Headers Headers)
 
 }
 
-private void Load2Classes(Drawing drw)
+private static void Load2Classes(Drawing drw)
     {
 
         // No uso estas clases, pero las leo para no perder informacion
@@ -453,7 +452,7 @@ private void Load2Classes(Drawing drw)
 
 
 
-private void Load3Tables(Drawing drw)
+private static void Load3Tables(Drawing drw)
     {
 
 
@@ -522,7 +521,7 @@ private void Load3Tables(Drawing drw)
 }
  // Lee todas las tables de esta table
 
-private void Load31Table(Drawing drw)
+private static void Load31Table(Drawing drw)
     {
 
 
@@ -645,7 +644,7 @@ private void Load31Table(Drawing drw)
 
 }
 
-private void Load4Blocks(Dictionary<string, Dictionary<string, string>> cBlocks, Drawing drw)
+private static void Load4Blocks(Dictionary<string, Dictionary<string, string>> cBlocks, Drawing drw)
     {
     Block mBlock;         
     string sTableName = "";         
@@ -736,7 +735,7 @@ private void Load4Blocks(Dictionary<string, Dictionary<string, string>> cBlocks,
 
 
 // Lleno la coleccion de entidades
-    private void Load5Entities(Dictionary<string, Dictionary<string, string>> cEntities, Drawing drw)
+    private static void Load5Entities(Dictionary<string, Dictionary<string, string>> cEntities, Drawing drw)
     {
         string sEntidad = "";
         string sKey = "";
@@ -803,7 +802,7 @@ private void Load4Blocks(Dictionary<string, Dictionary<string, string>> cBlocks,
 
     }
 
-private void Load6Objects(Dictionary<string, Dictionary<string, string>> cObjects, Drawing drw)
+private static void Load6Objects(Dictionary<string, Dictionary<string, string>> cObjects, Drawing drw)
     {
     string h = "";         
     Dictionary<string, string> cObject = new Dictionary<string, string>();         
@@ -862,7 +861,7 @@ private void Load6Objects(Dictionary<string, Dictionary<string, string>> cObject
 
 }
 
-private void Load7Thumbnail(Dictionary<string, string> cThumbnail)
+private static void Load7Thumbnail(Dictionary<string, string> cThumbnail)
     {
     int iCode = 0;         
     string Key = "";         
@@ -895,7 +894,7 @@ private void Load7Thumbnail(Dictionary<string, string> cThumbnail)
 
 }
 
-public void ReconstructHandles(Drawing drw)
+public static void ReconstructHandles(Drawing drw)
     {
     // TODO: Fix missing type definitions for DictEntry, DictList
     // Commented out code due to missing type definitions
@@ -951,7 +950,7 @@ public void ReconstructHandles(Drawing drw)
 
 }
 
-public int SaveFile(string sName, Drawing drwToSave, bool LoadMinimal= false, bool SaveHeader= true, bool SaveTables= true, bool SaveBlocks= true, bool SaveThumbnail= true)
+public static int SaveFile(string sName, Drawing drwToSave, bool LoadMinimal= false, bool SaveHeader= true, bool SaveTables= true, bool SaveBlocks= true, bool SaveThumbnail= true)
     {
 
 
@@ -1008,7 +1007,7 @@ public int SaveFile(string sName, Drawing drwToSave, bool LoadMinimal= false, bo
     return 0;
 }
 
-private int Save1HeadersAndVarsDirect(Drawing drwToSave)
+private static int Save1HeadersAndVarsDirect(Drawing drwToSave)
     {
     hFile.WriteLine( "999" + "\n");
     hFile.WriteLine( "GambasCAD" + "\n");
@@ -1035,7 +1034,7 @@ private int Save1HeadersAndVarsDirect(Drawing drwToSave)
 
  // Las classes de cad no las usamos. En teoria, no tienen ninguna utilidad fuera de AutoCAD.
  // Abriendo un DXF, se guadaran todas las classes a efectos de recosntruir el 
-private int Save2Classes(Drawing drwSaving)
+private static int Save2Classes(Drawing drwSaving)
     {
 
 
@@ -1081,7 +1080,7 @@ private int Save2Classes(Drawing drwSaving)
 
 }
 
-private int Save3TablesDirect(Drawing drwToSave)
+private static int Save3TablesDirect(Drawing drwToSave)
     {         
 
      // antes que nada armo el block_record
@@ -1175,7 +1174,7 @@ private int Save3TablesDirect(Drawing drwToSave)
     return 0;
 }
 
-private int Save3TableAppID(Drawing drw)
+private static int Save3TableAppID(Drawing drw)
     {
     string hTableHandle = Handle();
 
@@ -1217,7 +1216,7 @@ private int Save3TableAppID(Drawing drw)
 
 }
 
-private int Save3TableLayers(Drawing drw)
+private static int Save3TableLayers(Drawing drw)
     {
     string hTableHandle = Handle();
 
@@ -1273,7 +1272,7 @@ private int Save3TableLayers(Drawing drw)
     return 0;
 }
 
-private int Save3TableTextStyles(Drawing drw)
+private static int Save3TableTextStyles(Drawing drw)
     {
     string hTableHandle = Handle();
 
@@ -1330,7 +1329,8 @@ private int Save3TableTextStyles(Drawing drw)
 
 }
 
-private int Save3TableDimStyles(Drawing drw)
+
+private static int Save3TableDimStyles(Drawing drw)
     {
     string hTableHandle = Handle(); //Utils.FindItem(drw.Tables, drw.DimStyles)
 
@@ -1441,7 +1441,7 @@ private int Save3TableDimStyles(Drawing drw)
     return 0;
 }
 
-private int Save3TableLineTypes(Drawing drw)
+private static int Save3TableLineTypes(Drawing drw)
     {
     string hTableHandle = Handle(); //Utils.FindItem(drw.Tables, drw.LineTypes)
 
@@ -1491,7 +1491,7 @@ private int Save3TableLineTypes(Drawing drw)
     return 0;
 }
 
-private int Save3TableUCSs(Drawing drw)
+private static int Save3TableUCSs(Drawing drw)
     {
 
 
@@ -1552,7 +1552,7 @@ private int Save3TableUCSs(Drawing drw)
 
 }
 
-private int Save3TableViews(Drawing drw)
+private static int Save3TableViews(Drawing drw)
     {
     string hTableHandle = Handle(); //Utils.FindItem(drw.Tables, drw.Views)
 
@@ -1594,7 +1594,7 @@ private int Save3TableViews(Drawing drw)
 
 }
 
-private int Save3TableViewPorts(Drawing drw)
+private static int Save3TableViewPorts(Drawing drw)
     {
     string hTableHandle = Handle(); //Utils.FindItem(drw.Tables, drw.Viewports)
 
@@ -1635,7 +1635,7 @@ private int Save3TableViewPorts(Drawing drw)
 
 }
 
-private int Save3TableBlockRecords(Drawing drw)
+private static int Save3TableBlockRecords(Drawing drw)
     {
 
 
@@ -1718,7 +1718,7 @@ private int Save3TableBlockRecords(Drawing drw)
 
 }
 
-private int Save4BlocksDirect(Drawing drw)
+private static int Save4BlocksDirect(Drawing drw)
     {
 
 
@@ -1788,7 +1788,8 @@ private int Save4BlocksDirect(Drawing drw)
 
 }
 
-private void DXFSaveCommonEntityData(Entity eEnty)
+
+private static void DXFSaveCommonEntityData(Entity eEnty)
     {
 
 
@@ -1807,7 +1808,7 @@ private void DXFSaveCommonEntityData(Entity eEnty)
 
 }
 
-private int Save5EntitiesDirect(Drawing drwToSAve)
+private static int Save5EntitiesDirect(Drawing drwToSAve)
     {
 
 
@@ -1912,7 +1913,7 @@ eBlock = eBlock2.Value;
  
 }
 
-private bool Save6Objects(Drawing drw)
+private static bool Save6Objects(Drawing drw)
     {
    
 
@@ -1988,7 +1989,7 @@ var de = de2.Value;
 
 }
 
-private int Save7ThumbNail(Gtk.Image imgGLArea)
+private static int Save7ThumbNail(Gtk.Image imgGLArea)
     {
 
 
@@ -2016,7 +2017,7 @@ private int Save7ThumbNail(Gtk.Image imgGLArea)
 }
 
  // Inserta un codigo en una coleccion considerando repeticiones de la Key
-public void InsertCode(int iCode, string sData, Dictionary<string, string> cAcumulator)
+public static void InsertCode(int iCode, string sData, Dictionary<string, string> cAcumulator)
     {
 
 
@@ -2046,7 +2047,7 @@ public void InsertCode(int iCode, string sData, Dictionary<string, string> cAcum
  //   RetValue = el valor a retornar, pasado por referencia
  //   iStartPos = la posivion inicial en los array para la busqueda (def = 0)
  //   ExactPos = si se busca solo en la posicion inicial (def = false)
-public int ReadCode(int iCode, string[] stxClaves, string[] stxValues,  ref string RetValue, int iStartPos= 0, bool ExactPos= false)
+public static int ReadCode(int iCode, string[] stxClaves, string[] stxValues,  ref string RetValue, int iStartPos= 0, bool ExactPos= false)
     {
 
 
@@ -2090,7 +2091,7 @@ public int ReadCode(int iCode, string[] stxClaves, string[] stxValues,  ref stri
     //   iStartPos = la posicion inicial en los array para la busqueda (def = 0)
     //   iEscapeCode = si encuentra este codigo, sale
 
-    public int ReadCodePlus(int iExpectedCode, List<string> stxClaves, List<string> stxValues, ref string RetValue, int iStartPos = 0, int iEscapeCode = -1, int iStartCode = -1)
+    public static        int ReadCodePlus(int iExpectedCode, List<string> stxClaves, List<string> stxValues, ref string RetValue, int iStartPos = 0, int iEscapeCode = -1, int iStartCode = -1)
     {
 
 
@@ -2178,7 +2179,7 @@ public int ReadCode(int iCode, string[] stxClaves, string[] stxValues,  ref stri
 
     }
 
-public int ReadCodePlusI(int iExpectedCode, List<string> stxClaves, List<string> stxValues, ref int RetValue, int iStartPos= 0, int iEscapeCode= -1, int iStartCode= -1)
+public static int ReadCodePlusI(int iExpectedCode, List<string> stxClaves, List<string> stxValues, ref int RetValue, int iStartPos= 0, int iEscapeCode= -1, int iStartCode= -1)
     {
         string sRetValue = "";
         int res = ReadCodePlus(iExpectedCode, stxClaves, stxValues, ref sRetValue, iStartPos, iEscapeCode, iStartCode);
@@ -2188,7 +2189,7 @@ public int ReadCodePlusI(int iExpectedCode, List<string> stxClaves, List<string>
         }
         return res;
     }   
-public int ReadCodePlusD(int iExpectedCode, List<string> stxClaves, List<string> stxValues, ref double RetValue, int iStartPos= 0, int iEscapeCode= -1, int iStartCode= -1)
+public static int ReadCodePlusD(int iExpectedCode, List<string> stxClaves, List<string> stxValues, ref double RetValue, int iStartPos= 0, int iEscapeCode= -1, int iStartCode= -1)
     {
         string sRetValue = "";
         int res = ReadCodePlus(iExpectedCode, stxClaves, stxValues, ref sRetValue, iStartPos, iEscapeCode, iStartCode);
@@ -2203,7 +2204,7 @@ public int ReadCodePlusD(int iExpectedCode, List<string> stxClaves, List<string>
 
 
     // Lee el codigo de la coleccion que se importa del DXF, puede ignorar lo que esta entre llaves {} que es info de ACAD privativa y puede empezar desde el ultimo leido antes
-    public int GoToCodeFromCol(Dictionary<string, string> cDxfEntityData, int iCode, string sValue)
+    public static int GoToCodeFromCol(Dictionary<string, string> cDxfEntityData, int iCode, string sValue)
     {
 
 
@@ -2229,7 +2230,7 @@ public int ReadCodePlusD(int iExpectedCode, List<string> stxClaves, List<string>
     }
 
  // Lee el codigo de la coleccion que se importa del DXF, puede ignorar lo que esta entre llaves {} que es info de ACAD privativa y puede empezar desde el ultimo leido antes
-public string ReadCodeFromCol(Dictionary<string, string> cDxfEntityData, int iCode, bool ReadNext= false, bool IgnoreAcadData= true, string vDefaultValue= "")
+public static string ReadCodeFromCol(Dictionary<string, string> cDxfEntityData, int iCode, bool ReadNext= false, bool IgnoreAcadData= true, string vDefaultValue= "")
     {
 
 
@@ -2295,7 +2296,7 @@ public string ReadCodeFromCol(Dictionary<string, string> cDxfEntityData, int iCo
 
 }
 
-public void SaveCode(int iCode, object arg)
+public static void SaveCode(int iCode, object arg)
         {
         string sValue = "" ;
 if (arg is string s)
@@ -2319,7 +2320,7 @@ if (arg is string s)
 
 }
 
-public void SaveCodeInv(string sValue, int sCode)
+public static void SaveCodeInv(string sValue, int sCode)
     {
 
 
@@ -2327,7 +2328,7 @@ public void SaveCodeInv(string sValue, int sCode)
 
 }
 
-private void SaveColection(Dictionary<string, string> cData)
+private static void SaveColection(Dictionary<string, string> cData)
     {
      
          var lpclave = "" ;
@@ -2360,7 +2361,7 @@ private void SaveColection(Dictionary<string, string> cData)
     // End
 
     // Reads layers Dictionary<string, Dictionary> and puts data in oLayers
-    public void ReadViewports(Dictionary<string, Dictionary<string, string>> cVptData, Drawing drw)
+    public static void ReadViewports(Dictionary<string, Dictionary<string, string>> cVptData, Drawing drw)
     {
 
 
@@ -2395,7 +2396,7 @@ private void SaveColection(Dictionary<string, string> cData)
 
     }
 
-public void ReadBlockRecords(Dictionary<string, Dictionary<string, string>> cBlockRecs, Drawing drw)
+public static void ReadBlockRecords(Dictionary<string, Dictionary<string, string>> cBlockRecs, Drawing drw)
     {
         Block b;
 
@@ -2425,7 +2426,7 @@ public void ReadBlockRecords(Dictionary<string, Dictionary<string, string>> cBlo
     }
 
     // Reads layers Dictionary<string, Dictionary> and puts data in oLayers
-    public void ReadLayers(Dictionary<string, Dictionary<string, string>> cLays, Drawing drw)
+    public static void ReadLayers(Dictionary<string, Dictionary<string, string>> cLays, Drawing drw)
     {
 
 
@@ -2442,7 +2443,7 @@ public void ReadBlockRecords(Dictionary<string, Dictionary<string, string>> cBlo
             hLay.Name = cLay[codName];
             hLay.id = cLay[codid];
             hLay.Visible = Gb.CInt(cLay[codColor]) >= 0;
-            hLay.Colour = Gb.Abs(Gb.CInt(cLay[codColor]));
+            hLay.Colour = (int) Gb.Abs(Gb.CInt(cLay[codColor]));
             hLay.LineType = drw.LineTypes[cLay[codLType]];
 
             try { hLay.LineWt = Gb.CInt(cLay["370"]); } catch { hLay.LineWt = 1; }  // algunos dxf no traen esta info
@@ -2478,7 +2479,7 @@ public void ReadBlockRecords(Dictionary<string, Dictionary<string, string>> cBlo
     }
 
     // Reads Styles and DimStyles Dictionary<string, Dictionary> and puts data in arrStyles
-    public void ReadStyles(Dictionary<string, Dictionary<string, string>> cStyles, Drawing drw)
+    public static void ReadStyles(Dictionary<string, Dictionary<string, string>> cStyles, Drawing drw)
     {
 
         TextStyle hlty;
@@ -2527,7 +2528,7 @@ public void ReadBlockRecords(Dictionary<string, Dictionary<string, string>> cBlo
             drw.CurrTextStyle = drw.TextStyles.First().Value;
         
     }
-    public void ReadDimStyles(Dictionary<string, Dictionary<string, string>> cDims, Drawing drw)
+    public static void ReadDimStyles(Dictionary<string, Dictionary<string, string>> cDims, Drawing drw)
     {
 
         // Leo lo styles de dimensiones
@@ -2587,7 +2588,7 @@ public void ReadBlockRecords(Dictionary<string, Dictionary<string, string>> cBlo
 
 
  // Reads LineTypes Dictionary<string, Dictionary> and puts data in arrLTypes
-public void ReadLTypes(Dictionary<string, Dictionary<string, string>> cLtypes, Drawing drw)
+public static void ReadLTypes(Dictionary<string, Dictionary<string, string>> cLtypes, Drawing drw)
     {
 
     LineType hlty;
@@ -2660,7 +2661,7 @@ public void ReadLTypes(Dictionary<string, Dictionary<string, string>> cLtypes, D
 
 }
 
-    public void ImportBlocksFromDXF(Dictionary<string, Dictionary<string, string>> cBlocks, Drawing drw) //, obxEntities As Entity[]) As Integer
+    public static void ImportBlocksFromDXF(Dictionary<string, Dictionary<string, string>> cBlocks, Drawing drw) //, obxEntities As Entity[]) As Integer
     {
 
 
@@ -2810,7 +2811,7 @@ public static void SecondPass(Drawing drw)
         }
     }
 
-    public void SetViewports(Dictionary<string, Dictionary<string, string>> cDxfData, Drawing drw)
+    public static void SetViewports(Dictionary<string, Dictionary<string, string>> cDxfData, Drawing drw)
     {
 
 
@@ -2997,7 +2998,7 @@ public static void DXFtoEntity(Drawing drw, Dictionary<string, Dictionary<string
 }
 
  // Transforma una coleccion en dos array de strings
-public void DigestColeccion(Dictionary<string, string> c,  ref List<string> sClaves, ref List<string> sValues)
+public static void DigestColeccion(Dictionary<string, string> c,  ref List<string> sClaves, ref List<string> sValues)
     {
 
 
@@ -3022,7 +3023,7 @@ public void DigestColeccion(Dictionary<string, string> c,  ref List<string> sCla
 
 }
 
-public void ReadObjectsFromDXF(Dictionary<string, Dictionary<string, string>> cData, Drawing drw)
+public static void ReadObjectsFromDXF(Dictionary<string, Dictionary<string, string>> cData, Drawing drw)
     {
 
 
@@ -3046,7 +3047,7 @@ public void ReadObjectsFromDXF(Dictionary<string, Dictionary<string, string>> cD
         if ( cObject["0"] == "Dictionary<string, Dictionary>" )
         {
 
-            this.DigestColeccion(cObject, ref sClaves, ref sValues);
+            DigestColeccion(cObject, ref sClaves, ref sValues);
             entry =  new DictEntry();
              //entry.idSoftOwner = ReadCodeFromCol(cObject, 330, true)
             entry.Name = ReadCodeFromCol(cObject, 3, true); // Name
@@ -3121,7 +3122,7 @@ public void ReadObjectsFromDXF(Dictionary<string, Dictionary<string, string>> cD
 }
 
  // busca un bloque con ese block record
-private  Block GetBlock(Dictionary<string, Block> cBlocks, string hBlockRecord)
+private static Block GetBlock(Dictionary<string, Block> cBlocks, string hBlockRecord)
     {
 
 
@@ -3138,7 +3139,7 @@ private  Block GetBlock(Dictionary<string, Block> cBlocks, string hBlockRecord)
 }
 
  // Devuelve una nueva handle que acumula en la var publica hexHandle
-private string Handle( int iStart  = -1) 
+private static string Handle( int iStart  = -1) 
     {
         if ( iStart < 0 )
         {

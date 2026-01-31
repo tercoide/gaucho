@@ -220,18 +220,18 @@
                 if (eEntity == null) return;
                 Gcd.CCC[eEntity.Gender].Translate(eEntity, -Gcd.Drawing.Sheet.PanBaseRealX, -Gcd.Drawing.Sheet.PanBaseRealY);
 
-                if (!GL.islist(eEntity.glDrwList)) eEntity.glDrwList = GL.GenLists(1);
-                GL.NewList(eEntity.glDrwList, GL.COMPILE);
+                // if (!GL.islist(eEntity.glDrwList)) eEntity.glDrwList = GL.GenLists(1);
+                // GL.NewList(eEntity.glDrwList, GL.COMPILE);
                 Gcd.CCC[eEntity.Gender].Draw(eEntity);
                 
 
-                if (!GL.islist(eEntity.glDrwListSel)) eEntity.glDrwListSel = GL.GenLists(1);
-                GL.NewList(eEntity.glDrwListSel, GL.COMPILE);
+                // if (!GL.islist(eEntity.glDrwListSel)) eEntity.glDrwListSel = GL.GenLists(1);
+                // GL.NewList(eEntity.glDrwListSel, GL.COMPILE);
                 Gcd.CCC[eEntity.Gender].DrawSelected(eEntity);
                 
 
-                if (!GL.islist(eEntity.glDrwListRemark)) eEntity.glDrwListRemark = GL.GenLists(1);
-                GL.NewList(eEntity.glDrwListRemark, GL.COMPILE);
+                // if (!GL.islist(eEntity.glDrwListRemark)) eEntity.glDrwListRemark = GL.GenLists(1);
+                // GL.NewList(eEntity.glDrwListRemark, GL.COMPILE);
                 Gcd.CCC[eEntity.Gender].DrawRemark(eEntity);
                 
 
@@ -239,7 +239,7 @@
             }
             else
             {
-                var t = Stopwatch.StartNew();
+                // var t = Stopwatch.StartNew();
                 foreach (var sp in Gcd.Drawing.Sheets)
                 {
                     var s = sp.Value;
@@ -250,24 +250,24 @@
                         e.Generated = true;
                         e.Regenerable = Gcd.CCC[e.Gender].Regenerable;
 
-                        if (!GL.islist(e.glDrwList)) e.glDrwList = GL.GenLists(1);
-                        GL.NewList(e.glDrwList, GL.COMPILE);
+                        // if (!GL.islist(e.glDrwList)) e.glDrwList = GL.GenLists(1);
+                        // GL.NewList(e.glDrwList, GL.COMPILE);
                         Gcd.CCC[e.Gender].Draw(e);
                         
 
-                        if (!GL.islist(e.glDrwListSel)) e.glDrwListSel = GL.GenLists(1);
-                        GL.NewList(e.glDrwListSel, GL.COMPILE);
+                        // if (!GL.islist(e.glDrwListSel)) e.glDrwListSel = GL.GenLists(1);
+                        // GL.NewList(e.glDrwListSel, GL.COMPILE);
                         Gcd.CCC[e.Gender].DrawSelected(e);
                         
 
-                        if (!GL.islist(e.glDrwListRemark)) e.glDrwListRemark = GL.GenLists(1);
-                        GL.NewList(e.glDrwListRemark, GL.COMPILE);
+                        // if (!GL.islist(e.glDrwListRemark)) e.glDrwListRemark = GL.GenLists(1);
+                        // GL.NewList(e.glDrwListRemark, GL.COMPILE);
                         Gcd.CCC[e.Gender].DrawRemark(e);
                         
                     }
                 }
 
-                GlGenDrawListLAyers();
+                GlGenDrawListLayers();
             }
         }
 
@@ -282,15 +282,15 @@
 
         public static void GlGenDrawListSel(bool RegenEntity = false)
         {
-            if (!GL.islist(Gcd.Drawing.GlListEntitiesSelected)) Gcd.Drawing.GlListEntitiesSelected = GL.GenLists(1);
-
-            GL.NewList(Gcd.Drawing.GlListEntitiesSelected, GL.COMPILE);
+            // if (!GL.islist(Gcd.Drawing.GlListEntitiesSelected)) Gcd.Drawing.GlListEntitiesSelected = GL.GenLists(1);
+            // GL.NewList(Gcd.Drawing.GlListEntitiesSelected, GL.COMPILE);
 
             foreach (var ep in Gcd.Drawing.Sheet.EntitiesSelected)
             {
                 var e = ep.Value;
-                if (e.glDrwListSel > 0) GL.CallList(e.glDrwListSel);
-                else Gcd.CCC[e.Gender].DrawSelected(e);
+                // if (e.glDrwListSel > 0) GL.CallList(e.glDrwListSel);
+                // else 
+                    Gcd.CCC[e.Gender].DrawSelected(e);
             }
 
             
@@ -298,14 +298,14 @@
 
         public static void GlGenDrawListAll(bool ExcludeSelected = false)
         {
-            GL.NewList(Gcd.Drawing.Sheet.GlListAllEntities, GL.COMPILE);
+            // GL.NewList(Gcd.Drawing.Sheet.GlListAllEntities, GL.COMPILE);
 
             foreach (var ep in Gcd.Drawing.Sheet.Entities)
             {
                 var e = ep.Value;
                 if (!Gcd.Drawing.Sheet.EntitiesSelected.ContainsKey(e.id))
                 {
-                    if (e.pLayer.Visible) GL.CallList(e.glDrwList);
+                    if (e.pLayer.Visible) Gcd.CCC[e.Gender].Draw(e);//GL.CallList(e.glDrwList);
                 }
             }
 
@@ -316,14 +316,14 @@
         {
             if (aLayer != null)
             {
-                if (!GL.islist(aLayer.glList)) aLayer.glList = GL.GenLists(1);
-                GL.NewList(aLayer.glList, GL.COMPILE);
+                // if (!GL.islist(aLayer.glList)) aLayer.glList = GL.GenLists(1);
+                // GL.NewList(aLayer.glList, GL.COMPILE);
                 foreach (var ep in Gcd.Drawing.Sheet.Entities)
                 {
                     var e = ep.Value;
                     if (e.pLayer == aLayer && !e.PaperSpace)
                     {
-                        GL.CallList(e.glDrwList);
+                        Gcd.CCC[e.Gender].Draw(e);
                     }
                 }
                 
@@ -333,8 +333,8 @@
                 foreach (var ap in Gcd.Drawing.Layers)
                 {
                     var a = ap.Value;
-                    if (!GL.islist(a.glList)) a.glList = GL.GenLists(1);
-                    GL.NewList(a.glList, GL.COMPILE);
+                    // if (!GL.islist(a.glList)) a.glList = GL.GenLists(1);
+                    // GL.NewList(a.glList, GL.COMPILE);
                     foreach (var sp  in Gcd.Drawing.Sheets)
                     {
                         var s = sp.Value;
@@ -345,7 +345,7 @@
                             var e = ep.Value;
                             if (e.pLayer == a)
                             {
-                                GL.CallList(e.glDrwList);
+                                Gcd.CCC[e.Gender].Draw(e);
                             }
                         }
                     }
@@ -356,8 +356,8 @@
                 {
                     var s = sp.Value;
                     if (s.Name== "Model") continue;
-                    if (!GL.islist(s.GlListAllEntities)) s.GlListAllEntities = GL.GenLists(1);
-                    GL.NewList(s.GlListAllEntities, GL.COMPILE);
+                    // if (!GL.islist(s.GlListAllEntities)) s.GlListAllEntities = GL.GenLists(1);
+                    // GL.NewList(s.GlListAllEntities, GL.COMPILE);
                     foreach (var ap in Gcd.Drawing.Layers)
                     {
                         var a = ap.Value;
@@ -366,7 +366,7 @@
                             var e = ep.Value;
                             if (e.pLayer == a)
                             {
-                                GL.CallList(e.glDrwList);
+                                Gcd.CCC[e.Gender].Draw(e);
                             }
                         }
                     }
@@ -391,7 +391,7 @@
                 var e = ep.Value;
                 var eClon = ClonEntity(e, true);
                 if (GenerateGlList) GlGenDrawList(eClon);
-                result.Add(eClon);
+                result.Add(eClon.id, eClon);
             }
             return result;
         }
@@ -419,7 +419,7 @@
                 var e = ep.Value;
                 var clone = ClonEntity(e);
                 clone.id = Gcd.NewId();
-                b.entities.Add(clone);
+                b.entities.Add(clone.id, clone);
             }
 
             return b;
@@ -464,7 +464,7 @@
                     var lay = layp.Value;
                     if (lay.Visible && lay.flgForRegen)
                     {
-                        GlGenDrawListLAyers(lay);
+                        GlGenDrawListLayers(lay);
                         lay.flgForRegen = false;
                     }
                 }
@@ -496,7 +496,7 @@
             if (eEntity == null) return;
             if (andItsPoints && eEntity.Psel != null)
             {
-                for (int i = 0; i < eEntity.Psel.Length; i++) eEntity.Psel[i] = true;
+                for (int i = 0; i < eEntity.Psel.Count; i++) eEntity.Psel[i] = true;
             }
             Gcd.Drawing.Sheet.EntitiesSelected.Add(eEntity.id, eEntity);
         }
@@ -506,7 +506,7 @@
             if (eEntity == null) return;
             if (andItsPoints && eEntity.Psel != null)
             {
-                for (int i = 0; i < eEntity.Psel.Length; i++) eEntity.Psel[i] = false;
+                for (int i = 0; i < eEntity.Psel.Count; i++) eEntity.Psel[i] = false;
             }
             Gcd.Drawing.Sheet.EntitiesSelected.Remove(eEntity.id);
         }
@@ -553,7 +553,7 @@
                 {
                     if (e.Container?.Parent != null) c.Add(e.Container.Parent);
                     else c.Add(e);
-                    e.Psel = Enumerable.Repeat(true, e.Psel.Length).ToArray();
+                    e.Psel = Enumerable.Repeat(true, e.Psel.Count).ToList();
                 }
                 else if (outsideX || outsideY)
                 {
@@ -582,7 +582,7 @@
             return c;
         }
 
-        public static Dictionary<string, Entity> SelectionPoly(double[] poly, bool crossing = false)
+        public static Dictionary<string, Entity> SelectionPoly(List<double> poly, bool crossing = false)
         {
             var c = new Dictionary<string, Entity>();
             foreach (var ep in Gcd.Drawing.Sheet.EntitiesVisibles)
@@ -658,13 +658,13 @@
         }
 
         // Compute limits of a set of entities (returns [minX, minY, maxX, maxY])
-        public static double[] ComputeLimits(Dictionary<string, Entity> entities = null, bool onlyVisibles = true, bool ignorePoints = true, bool onlyModel = true)
+        public static List<double> ComputeLimits(Dictionary<string, Entity> entities = null, bool onlyVisibles = true, bool ignorePoints = true, bool onlyModel = true)
         {
-            var newLimits = new double[] { 1e100, 1e100, -1e100, -1e100 };
+            var newLimits = new List<double> { 1e100, 1e100, -1e100, -1e100 };
 
             var entGroup = entities ?? Gcd.Drawing.Sheet.Entities;
 
-            if (entGroup == null || !entGroup.Any()) return new double[] { 0, 0, 0, 0 };
+            if (entGroup == null || !entGroup.Any()) return new List<double> { 0, 0, 0, 0 };
 
             foreach (var ep in entGroup)
             {
@@ -695,7 +695,9 @@
         {
             // This function depends on dxf parsing utilities and entity factories.
             // Keep the logic and delegate to per-entity importers.
-            var (keys, values) = dxf.DigestColeccion(c);
+            var keys = new List<string>();
+            var values = new List<string>();   
+            dxf.DigestColeccion(c, ref keys, ref values);
             var entityType = c.ContainsKey("0") ? c["0"] : null;
             if (string.IsNullOrEmpty(entityType)) return null;
 
@@ -704,21 +706,21 @@
             e.id = c.ContainsKey("5") ? c["5"] : Gcd.NewId();
 
             if (c.ContainsKey("62")) int.TryParse(c["62"], out int colorVal);
-            if (c.ContainsKey("370")) e.LineWidth = float.Parse(c["370"]);
+            if (c.ContainsKey("370")) e.LineWidth = int.Parse(c["370"]);
 
             if (c.ContainsKey("67") && c["67"] == "1") e.PaperSpace = true;
 
             if (c.ContainsKey("6"))
             {
                 var LT = GetLTypeByName(c["6"]);
-                e.LineType = LT ?? drw.LineTypes.Values.FirstOrDefault();
+                e.LType = LT ?? drw.LineTypes.Values.FirstOrDefault();
             }
             else
             {
-                e.LineType = drw.LineTypes.Values.FirstOrDefault();
+                e.LType = drw.LineTypes.Values.FirstOrDefault();
             }
 
-            if (Gcd.CCC[e.Gender].ImportDXF(e, keys, values))
+            if (Gcd.CCC[e.Gender].ImportDXF(e, ref keys, ref values))
             {
                 if (c.ContainsKey("210")) e.Extrusion[0] = float.Parse(c["210"]);
                 if (c.ContainsKey("220")) e.Extrusion[1] = float.Parse(c["220"]);

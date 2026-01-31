@@ -1,5 +1,6 @@
 // Gambas class file
 using Gaucho;
+using System.Collections.Generic;
 
 public class Sheet
 {
@@ -55,7 +56,7 @@ public class Sheet
     // public Scene3D scene = new Scene3D();
     public bool Shown = false; // esto podria ser una flag, determino si ya la mostre una vez
 
-    public Grip[] Grips = [];
+    public List<Grip> Grips = new List<Grip>();
 
     public Sheet()
     {

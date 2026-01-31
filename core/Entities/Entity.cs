@@ -1,11 +1,13 @@
 using Gaucho;
+using System.Collections.Generic;
+
 public class Entity
 {
     public string Gender="";                 // Type of entity
-    public double[] P = new double[0];                     // X,Y pairs
-    public string[] sParam = new string[0];               // Array of Strings
-    public double[] fParam = new double[0];                // Array of doubles
-    public int[] iParam = new int[0];              // Array of integers
+    public List<double> P = new List<double>();                     // X,Y pairs
+    public List<string> sParam = new List<string>();               // Array of Strings
+    public List<double> fParam = new List<double>();                // Array of doubles
+    public List<int> iParam = new List<int>();              // Array of integers
     public int Colour;                    // CAD color code
     public int LineWidth = -3;            // This is it
     public Block? pBlock;                   // Pointer to Block or Hatch (or null)
@@ -20,11 +22,11 @@ public class Entity
     public string id="";                       // Unique identifier
     public Block? Container;                 // Apunta al contenedor de esta entidad, util para UnDo y Redo
     //public Collection Group;                // Grupos temporales de entidades. Esto apunta al grupo donde estoy o Null
-    public bool[] Psel = new bool[0];                // Selected points
-    public double[] Polygon = new double[0];               // This is a poligon built at element//s contruction that defines a poligon used for detecting points inside me
-    public double[] PolyLine = new double[0];              // This is a polyline built at element//s contruction that defines a poligon used for detecting points inside me
-    public double[] Limits = new double[4];                    // Point of interest
-    public double[] Extrusion = new double[3];
+    public List<bool> Psel = new List<bool>();                // Selected points
+    public List<double> Polygon = new List<double>();               // This is a poligon built at element//s contruction that defines a poligon used for detecting points inside me
+    public List<double> PolyLine = new List<double>();              // This is a polyline built at element//s contruction that defines a poligon used for detecting points inside me
+    public List<double> Limits = new List<double> {0, 0, 0, 0};                    // Point of interest
+    public List<double> Extrusion = new List<double> {0, 0, 0};
     //public PoiType As New Integer[]
     public int glDrwList;                 // OpenGL drawing list
     public int glDrwListSel;              // OpenGL drawing list for selected item

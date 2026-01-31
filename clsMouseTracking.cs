@@ -88,16 +88,16 @@ public static List<Entity> CheckAboveEntities(double Xr, double Yr, int iToleran
 
      List<Entity> fEntities = new List<Entity>();         
     Entity e ;         
-    double t = Timer;
+    // double t = Timer;
 
     Searching = true;
 
      //CollectEntitiesAroundMouse(Xr, Yr, iTolerance)
-    EntitiesFound.Clear;
+    EntitiesFound.Clear();
     do {
-        if ( Gcd.flgQuitSearch ) Break;
+        if ( Gcd.flgQuitSearch ) break;
         e = CheckAboveEntity(Xr, Yr, 12, e);
-        if ( e )
+        if ( e != null )
         {
             if ( fEntities.Count > 0 )
             {
@@ -105,15 +105,15 @@ public static List<Entity> CheckAboveEntities(double Xr, double Yr, int iToleran
             }
 
             fEntities.Add(e); // agrego la parte
-            if ( e.Container.Parent ) fEntities.Add(e.Container.Parent); // y el Insert
+            if ( e.Container.Parent != null ) fEntities.Add(e.Container.Parent); // y el Insert
         } else {
-            Break;
+            break;
         }
-        if ( WaitEnabled ) Wait;
+        // if ( WaitEnabled ) WaitCallback();
     } while ( true );
 
     Searching = false;
-    fMain.benMouseTracking = Timer - t;
+    // fMain.benMouseTracking = Timer - t;
     return fEntities;
 
 }
@@ -269,17 +269,17 @@ public static List<double> CheckPOI(double Xr, double Yr, Entity e)
      List<double> CurrentPoint = new List<double>();
     Entity e2 ;         
     Entity ePart ;         
-    int indexEntity ;         
-    int i ;         
-    int iInter ;         
-    int i2 ;         
-    int iPoligon ;         
-    int iLine ;         
-    int iPoint ;         
-    double pend1 ;          // vars para las ecuacionesde las rectas
-    double base1 ;         
-    double pend2 ;         
-    double base2 ;         
+    int indexEntity =0;         
+    int i =0;         
+    int iInter =0;         
+    int i2 =0;         
+    int iPoligon =0;         
+    int iLine =0;         
+    int iPoint =0;         
+    double pend1 =0;          // vars para las ecuacionesde las rectas
+    double base1 =0;         
+    double pend2 =0;         
+    double base2 =0;         
      List<double> pNea = new List<double>();
      List<double> puntoB = new List<double>();
      List<double> puntoA = new List<double>();
@@ -310,9 +310,9 @@ public static List<double> CheckPOI(double Xr, double Yr, Entity e)
     double DistEnd1B ;         
     double DistEnd2B =1e6;         
     double DistMIdB =1e6;         
-    double tolerance ;         
-    double d ;         
-    double ShortestDistance ;         
+    double tolerance=0;         
+    double d =0;         
+    double ShortestDistance =0;         
 
      // If Me.flgSearchingPOI Then Return   // no nesting this
     Gcd.flgSearchingPOI = true;
@@ -491,12 +491,12 @@ e2 = e21.Value;
                  // Cx, Cy = coordenadas del centro
                 double Cx = e.p[0];
                 double Cy = e.p[1];
-                double tx ;         
-                double ty ;         
-                double t1x ;         
-                double t1y ;         
-                double t2x ;         
-                double t2y ;         
+                double tx =0;         
+                double ty =0;         
+                double t1x =0;         
+                double t1y =0;         
+                double t2x =0;         
+                double t2y =0;         
                 double r = e.fParam[0];
 
                 double Px = Gcd.Drawing.LastPoint[0];
@@ -544,12 +544,12 @@ e2 = e21.Value;
             }
 
              // busco los quadrants
-            double qx ;         
-            double qy ;         
-            double q1 ;         
-            double q2 ;         
-            double q3 ;         
-            double q4 ;         
+            double qx =0;         
+            double qy =0;         
+            double q1 =0;         
+            double q2 =0;         
+            double q3 =0;         
+            double q4 =0;         
             q1 = Puntos.Distancia(e.P[0] - e.fParam[0], e.P[1], Xr, Yr);
             q2 = Puntos.Distancia(e.P[0] + e.fParam[0], e.P[1], Xr, Yr);
             q3 = Puntos.Distancia(e.P[0], e.P[1] - e.fParam[0], Xr, Yr);
@@ -831,8 +831,8 @@ e2 = e21.Value;
 
     if ( Dist == DistQuad )
     {
-        rData[0] = qx;
-        rData[1] = qy;
+        rData[0] = Qx;
+        rData[1] = Qy;
         rData[2] = Gcd.poiQuadrant;
         DrawingAids.txtSnapTo = "Quadrant";
     }
