@@ -6,79 +6,79 @@
     /// </summary>
     public interface IToolsBase
     {
-        // Identity
-        string Gender { get; }
-        string USEWITH { get; }
+        // // Identity
+        // string Gender { get; }
+        // string USEWITH { get; }
 
          // nuevo, para integrar el resto de las tools con esta, que es la principal
-public bool AllowSingleSelection { get; set; }
-public bool AllowRectSelection { get; set; }
-public bool AllowPolySelection { get; set; }
-public bool AllowGripEdit { get; set; }
-public bool AllowTextInput { get; set; }
+        // public bool AllowSingleSelection { get; set; }
+        // public bool AllowRectSelection { get; set; }
+        // public bool AllowPolySelection { get; set; }
+        // public bool AllowGripEdit { get; set; }
+        // public bool AllowTextInput { get; set; }
 
-        // Selection pixel coordinates
-        int SelStartX { get; set; }
-        int SelStartY { get; set; }
-        int SelEndX { get; set; }
-        int SelEndy { get; set; }
+        // // Selection pixel coordinates
+        // int SelStartX { get; set; }
+        // int SelStartY { get; set; }
+        // int SelEndX { get; set; }
+        // int SelEndY { get; set; }
 
-        // Selection pan start (pixels)
-        int SelStartPanX { get; set; }
-        int SelStartPanY { get; set; }
+        // // Selection pan start (pixels)
+        // int SelStartPanX { get; set; }
+        // int SelStartPanY { get; set; }
 
-        // Selection in real coordinates (meters)
-        double SelStartXr { get; set; }
-        double SelStartYr { get; set; }
-        double SelEndXr { get; set; }
-        double SelEndyr { get; set; }
+        // // Selection in real coordinates (meters)
+        // double SelStartXr { get; set; }
+        // double SelStartYr { get; set; }
+        // double SelEndXr { get; set; }
+        // double SelEndyr { get; set; }
 
-        // Start/End in real coordinates for other uses
-        double StartXr { get; set; }
-        double StartYr { get; set; }
-        double EndXr { get; set; }
-        double Endyr { get; set; }
+        // // Start/End in real coordinates for other uses
+        // double StartXr { get; set; }
+        // double StartYr { get; set; }
+        // double EndXr { get; set; }
+        // double Endyr { get; set; }
 
-        // Mouse tracking
-        double LastX { get; set; }
-        double LastY { get; set; }
+        // // Mouse tracking
+        // double LastX { get; set; }
+        // double LastY { get; set; }
 
-        int MouseX { get; set; }
-        int MouseY { get; set; }
-        int MouseButton { get; set; }
-        bool MouseFakeClick { get; set; }
+        // int MouseX { get; set; }
+        // int MouseY { get; set; }
+        // int MouseButton { get; set; }
+        // bool MouseFakeClick { get; set; }
 
-        // Parameters for builders/tools (defaults can be provided by implementations)
-        int PointsDone { get; set; }
-        int PointsTotal { get; set; }
-        string NextParamType { get; set; }      // "P","F","C","S","M" ...
-        object NextParamDefault { get; set; }
-        string NextParam { get; set; }         // description
-        string Prompt { get; set; }
+        // // Parameters for builders/tools (defaults can be provided by implementations)
+        // int PointsDone { get; set; }
+        // int PointsTotal { get; set; }
+        // string NextParamType { get; set; }      // "P","F","C","S","M" ...
+        // object NextParamDefault { get; set; }
+        // string NextParam { get; set; }         // description
+        // string Prompt { get; set; }
 
-        bool Active { get; set; }
-        bool PoiChecking { get; set; }
-        bool EntityChecking { get; set; }
-        int Mode { get; set; }
-        Entity EntityForEdit { get; set; }
-        Entity OriginalEntityForEdit { get; set; }
+        // bool Active { get; set; }
+        // bool PoiChecking { get; set; }
+        // bool EntityChecking { get; set; }
+        // int Mode { get; set; }
+        // Entity EntityForEdit { get; set; }
+        // Entity OriginalEntityForEdit { get; set; }
 
-        string MenuRightClick { get; set; }
+        // string MenuRightClick { get; set; }
 
-        // selected indices (was Integer[] in Gambas)
-        List<int> inxSelected { get; set; }
+        // // selected indices (was Integer[] in Gambas)
+        // List<int> inxSelected { get; set; }
 
-        // transforms used for GL drawing (initialized by implementation)
-        double[] glTranslate { get; set; } // dX,dY,dZ
-        double[] glRotate { get; set; }    // rX,rY,rZ
-        double glAngle { get; set; }       // deg
-        double[] glScale { get; set; }     // sX,sY,sZ
+        // // transforms used for GL drawing (initialized by implementation)
+        // double[] glTranslate { get; set; } // dX,dY,dZ
+        // double[] glRotate { get; set; }    // rX,rY,rZ
+        // double glAngle { get; set; }       // deg
+        // double[] glScale { get; set; }     // sX,sY,sZ
 
-        int cursorX { get; set; }
-        int cursory { get; set; }
+        // int cursorX { get; set; }
+        // int cursory { get; set; }
 
-        // Context menu definition (constant in original)
-        string ContextMenu { get; }
+        // // Context menu definition (constant in original)
+        // string ContextMenu { get; }
 
         // Lifecycle & interaction API
         /// <summary>

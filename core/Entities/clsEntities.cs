@@ -537,9 +537,9 @@
         public static void Scale(Entity e, double sX, double sY) => Gcd.CCC[e.Gender].Scale(e, sX, sY);
 
         // Selection rectangle. Returns collection (List<object>) of selected entities or parents
-        public static List<object> SelectionSquare(double X0, double Y0, double X1, double Y1, bool crossing = false)
+        public static Dictionary<string, Entity> SelectionSquare(double X0, double Y0, double X1, double Y1, bool crossing = false)
         {
-            var c = new List<object>();
+            var c = new Dictionary<string, Entity>();
             foreach (var ep in Gcd.Drawing.Sheet.EntitiesVisibles)
             {
                 var e = ep.Value;
@@ -551,8 +551,8 @@
 
                 if (insideX && insideY)
                 {
-                    if (e.Container?.Parent != null) c.Add(e.Container.Parent);
-                    else c.Add(e);
+                    if (e.Container?.Parent != null) c.Add(e.Container.Parent.id, e.Container.Parent);
+                    else c.Add(e.id, e);
                     e.Psel = Enumerable.Repeat(true, e.Psel.Count).ToList();
                 }
                 else if (outsideX || outsideY)
@@ -565,16 +565,16 @@
                     {
                         if (SelPartial(e, X0, Y0, X1, Y1))
                         {
-                            if (e.Container?.Parent != null) c.Add(e.Container.Parent);
-                            else c.Add(e);
+                            if (e.Container?.Parent != null) c.Add(e.Container.Parent.id, e.Container.Parent);
+                            else c.Add(e.id, e);
                         }
                     }
                     else
                     {
                         if (SelFull(e, X0, Y0, X1, Y1))
                         {
-                            if (e.Container?.Parent != null) c.Add(e.Container.Parent);
-                            else c.Add(e);
+                            if (e.Container?.Parent != null) c.Add(e.Container.Parent.id, e.Container.Parent);
+                            else c.Add(e.id, e);
                         }
                     }
                 }
@@ -595,7 +595,7 @@
                 }
                 else
                 {
-                    if (Gcd.CCC[e.Gender].SelFullPoly(e, poly)) c.Add(e.id,e);
+                    if (Gcd.CCC[e.Gender].SelFullPoly(e, poly)) c.Add(e.id, e);
                 }
             }
             return c;

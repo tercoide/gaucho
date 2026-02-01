@@ -10,6 +10,13 @@ namespace Gaucho
     /// Gambas-style helper functions for type conversion and string manipulation
     /// </summary>
     /// 
+    /// 
+    public static class Key
+    {
+        public static bool Shift = false;
+        public static bool Control = false;
+        public static bool Alt = false;
+    }
     public static class Mouse
 
     {

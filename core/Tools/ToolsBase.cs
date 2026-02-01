@@ -10,7 +10,7 @@
 using OpenTK.Graphics.OpenGL;
 using Gaucho;
 
-public interface ToolsBase
+public class ToolsBase
     {
         public const string Gender = "TOOLSBASE";
         public const string USEWITH = "";
@@ -74,16 +74,21 @@ public interface ToolsBase
 
         public static int cursorX = 0;
         public static int cursorY = 0;
-        public static bool AllowSingleSelection = false;
+        public static bool AllowSingleSelection { get; set; }
+        public static bool AllowRectSelection { get; set; }
+        public static bool AllowPolySelection { get; set; }
+        public static bool AllowGripEdit { get; set; }
+        public static bool AllowTextInput { get; set; }
         public static int lastCursorX = 0;
         public static int lastCursorY = 0;
         public const string ContextMenu = "Finish;_FINISH;;;Cancel;_CANCEL;;";
 
         // Static ctor kept minimal (arrays already initialized above)
-        static ToolsBase()
+        public ToolsBase()
         {
             // All fields have explicit initial values at declaration.
             // This static constructor is retained for future initialization needs.
+            AllowGripEdit = false;
         }
 
         // Start the tool (optionally with an element to build)

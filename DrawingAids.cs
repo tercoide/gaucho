@@ -480,7 +480,7 @@ public static void Refresh()
 
 }
 
-public static void DrawGrips(Grip[] GlxGrips)
+public static void DrawGrips(List<Grip> GlxGrips)
     {
 
 

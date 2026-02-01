@@ -104,11 +104,27 @@ public partial class fMain : ApplicationWindow
 
         bool on_key_pressed(object o, EventControllerKey.KeyPressedSignalArgs args)
         {
+            if (args.Keycode == 65505 || args.Keycode == 65506) // Shift keys
+            {
+                Key.Shift = true;
+                return true; // Event handled
+            }
+            else if (args.Keycode == 65307) // Escape key
+            {
+                // Handle Escape key press
+                Console.WriteLine("Escape key pressed");
+                return true; // Event handled
+            }
             Console.WriteLine($"Key pressed: {args.Keycode}");
             return true;
         }
         void on_key_released(object o, EventControllerKey.KeyReleasedSignalArgs args)
         {
+            if (args.Keycode == 65505 || args.Keycode == 65506) // Shift keys
+            {
+                Key.Shift = false;
+                return;
+            }
             Console.WriteLine($"Key released: {args.Keycode}");
         }
     }

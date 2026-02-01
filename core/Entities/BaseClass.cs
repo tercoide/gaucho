@@ -33,7 +33,7 @@ public bool Regenerable { get; set; } = false;
     public interface IEntity
     {
 
-        public Entity NewEntity(List<double> fPoints, bool bNewid = false) { return new Entity(); }
+        public Entity NewEntity(List<double> fPoints = null, bool bNewid = false) { return new Entity(); }
         public Entity ClonEntity(Entity e, bool NewId = false) { return e; }
         public bool Regenerable { get; set; }
         public void Draw(Entity e) { }
@@ -51,6 +51,8 @@ public bool Regenerable { get; set; } = false;
          public void DrawSelected(Entity e) { }
 
           public void DrawRemark(Entity e) { }
+              public void DrawShadow(Entity e) { }
+              public void DrawEditing(Grip g) { }
            public void Finish(Entity e) { }
 
             public void Translate(Entity e, double dx, double dy,bool OnlyPointSelected=false) { }

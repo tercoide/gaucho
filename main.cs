@@ -185,17 +185,17 @@ namespace Gaucho
             {
                 if (!File.Exists(sDir))
                 {
-                    Utils.Shell("mkdir -p " + sDir);
+                    Gb.Shell("mkdir -p " + sDir);
                 }
                 else
                 {
-                    Utils.Shell("rm -R " + sDir + "/*");
+                    Gb.Shell("rm -R " + sDir + "/*");
                 }
             }
             // Copio lo patterns
             if (!File.Exists(Config.dirPatterns))
             {
-                Utils.Shell("mkdir -p " + Config.dirPatterns);
+                Gb.Shell("mkdir -p " + Config.dirPatterns);
             }
             foreach (var aFile in Directory.GetFiles("./patterns").ToArray())
             {
