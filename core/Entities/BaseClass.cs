@@ -69,6 +69,6 @@ public bool Regenerable { get; set; } = false;
                   public bool SelFull(Entity eTesting, double X1real, double Y1real, double X2real, double Y2real) { return false;  }  
     
     public bool OverMe(Entity eTesting, double Xreal, double Yreal, double tolerance) { return false;  }
-
+public void GripEdit(Grip g) {return;  }
 }
 }

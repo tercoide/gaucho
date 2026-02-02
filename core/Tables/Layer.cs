@@ -14,6 +14,8 @@ public class Layer
     public bool Hidden = false;                // Esta propiedad no puede ser modificada por el user
     public int glList;      // DEPRE
 
+    
+
     public VboContainer? vbo;
     public bool flgForDeletion = false;
     public bool flgForRegen = false;

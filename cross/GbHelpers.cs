@@ -800,6 +800,11 @@ namespace Gaucho
             return result;
         }
 
+        internal static string Space(int v)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
 
     }

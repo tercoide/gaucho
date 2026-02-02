@@ -74,11 +74,11 @@ public class ToolsBase
 
         public static int cursorX = 0;
         public static int cursorY = 0;
-        public static bool AllowSingleSelection { get; set; }
-        public static bool AllowRectSelection { get; set; }
-        public static bool AllowPolySelection { get; set; }
-        public static bool AllowGripEdit { get; set; }
-        public static bool AllowTextInput { get; set; }
+        public bool AllowSingleSelection { get; set; }
+        public  bool AllowRectSelection { get; set; }
+        public  bool AllowPolySelection { get; set; }
+        public  bool AllowGripEdit { get; set; }
+        public  bool AllowTextInput { get; set; }
         public static int lastCursorX = 0;
         public static int lastCursorY = 0;
         public const string ContextMenu = "Finish;_FINISH;;;Cancel;_CANCEL;;";
@@ -92,7 +92,7 @@ public class ToolsBase
         }
 
         // Start the tool (optionally with an element to build)
-        public static bool Start(object ElemToBuild = null, int _mode = 0)
+        public static bool Start(string ElemToBuild = "", int _mode = 0)
         {
             PointsDone = 0;
             Mode = _mode;
@@ -101,7 +101,7 @@ public class ToolsBase
         }
 
         // Called by drawing loop to render tool overlays / selected entities
-        public static void Draw()
+        public void Draw()
         {
             // Translate by sheet pan, then apply tool transforms and call the selected entities GL list.
             // Assumes 'gl' API exists with PushMatrix/PopMatrix/Translatef/Rotatef/Scalef/CallList methods.
@@ -123,12 +123,12 @@ public class ToolsBase
         }
 
         // keyboard hooks (override in specific tools)
-        public static void KeyPress(int iCode, string sKey) { }
-        public static void KeyDown(int iCode) { }
-        public static void KeyUp(int iCode) { }
+        public void KeyPress(int iCode, string sKey) { }
+        public  void KeyDown(int iCode) { }
+        public  void KeyUp(int iCode) { }
 
         // Called when user submits text (Enter)
-        public static void KeyText(string EnteredText)
+        public void KeyText(string EnteredText)
         {
             if (string.IsNullOrWhiteSpace(EnteredText)) return;
 
@@ -239,14 +239,14 @@ public class ToolsBase
         }
 
         // Called by the tool to accept a new parameter (to be implemented by specific tools / entity handlers)
-        public static void NewParameter(string tipo, object vValor, bool Definitive = false)
+        public  void NewParameter(string tipo, object vValor, bool Definitive = false)
         {
             // default implementation does nothing.
             // Specific tools should override / provide callbacks to receive parameters.
         }
 
         // Double click handling: choose viewport under mouse etc.
-        public static void DblClick()
+        public  void DblClick()
         {
             SelStartX = Mouse.X;
             SelStartY = Mouse.Y;
@@ -280,7 +280,7 @@ public class ToolsBase
         }
 
         // Mouse up: handle point selection and parameter submission
-        public static void MouseUp()
+        public void MouseUp()
         {
             // Right click -> cancel via NewParameter
             if (Mouse.Right)
@@ -329,7 +329,7 @@ public class ToolsBase
         }
 
         // Mouse move: update preview parameter with current point
-        public static void MouseMove()
+        public  void MouseMove()
         {
             double x = Gcd.Xreal(Mouse.X);
             double y = Gcd.Yreal(Mouse.Y);
@@ -363,7 +363,7 @@ public class ToolsBase
         }
 
         // Mouse down: mostly handled at higher level; handle right clicks to change jobs etc.
-        public static void MouseDown()
+        public  void MouseDown()
         {
             if (Mouse.Right)
             {
@@ -382,7 +382,7 @@ public class ToolsBase
         }
 
         // Mouse wheel for dynamic zoom, keeping mouse-point stationary in world coordinates
-        public static void MouseWheel()
+        public  void MouseWheel()
         {
             bool outside;
             if (Gcd.Drawing.Sheet.Viewport != null)
@@ -431,11 +431,11 @@ public class ToolsBase
         }
 
         // Finish the tool: cleanup transforms, regenerate lists, reset job to selection
-        public static void Finish()
+        public  void Finish()
         {
             try
             {
-                gl.DeleteLists(Gcd.Drawing.GlListEntitiesSelected, 1);
+                // gl.DeleteLists(Gcd.Drawing.GlListEntitiesSelected, 1);
 
                 glAngle = 0;
                 glTranslate[0] = glTranslate[1] = glTranslate[2] = 0.0;
@@ -473,7 +473,7 @@ public class ToolsBase
         }
 
         // Cancel the tool: revert to selection job
-        public static void Cancel()
+        public  void Cancel()
         {
             Gcd.clsJobPrevious = null;
             Gcd.clsJobCallBack = null;
@@ -485,7 +485,7 @@ public class ToolsBase
         }
 
         // Callback placeholder
-        public static void Run()
+        public  void Run()
         {
             // Implement tool-specific run-loop if needed
         }

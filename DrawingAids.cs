@@ -50,7 +50,10 @@ public static string HelperDibujo ;          // Se escribe abajo "Grid  Ortho" ,
 public static string trabajoYteclado ;         
 
 public static string txtSnapTo ;         
-public static string txtFrom ;         
+public static string txtFrom ;   
+
+public static VboContainer VBO_GridPoints = new VboContainer();
+public static VboContainer VBO_text = new VboContainer();
 
 public static void CleanTexts()
     {
@@ -97,6 +100,8 @@ public static void _new()
     Helper.fRectangulo = Colors.Blue;
     Helper.fFont = "Arial";
     Helper.fHeight = 10;
+
+    VBO_GridPoints = VboManager.CreateVbo(PrimitiveType.Lines);
 
 }
 
@@ -365,13 +370,12 @@ public static void RebuildGrid()
     switch ( Gcd.Drawing.GridStyle)
     {
         case 0: // puntos
-            GL.Begin(GL.POINTS);
-            Glx.GLColorRGB(Config.WhiteAndBlack);
+            
             for ( y = y1; y <= y0; y += espaciado)
             {
                 for ( x = x0; x <= x1; x += espaciado)
                 {
-                    GL.Vertex2f(x, y);
+                    Glx.Vertex2D(x, y,Config.WhiteAndBlack);
                 }
             }
 

@@ -6,12 +6,12 @@
     /// </summary>
     public interface IToolsBase
     {
-        // // Identity
-        // string Gender { get; }
-        // string USEWITH { get; }
+        // Identity
+        string Gender { get; }
+        string USEWITH { get; }
 
          // nuevo, para integrar el resto de las tools con esta, que es la principal
-        // public bool AllowSingleSelection { get; set; }
+         public bool AllowSingleSelection { get; set; }
         // public bool AllowRectSelection { get; set; }
         // public bool AllowPolySelection { get; set; }
         // public bool AllowGripEdit { get; set; }
@@ -59,7 +59,7 @@
         // bool Active { get; set; }
         // bool PoiChecking { get; set; }
         // bool EntityChecking { get; set; }
-        // int Mode { get; set; }
+         int Mode { get; set; }
         // Entity EntityForEdit { get; set; }
         // Entity OriginalEntityForEdit { get; set; }
 

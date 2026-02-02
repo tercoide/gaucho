@@ -120,9 +120,9 @@ public static class Gcd
         public const int ColorByLayer = 257;
 
         // Stipple lines
-        public static double[] stiDashed = new double[] { };
-        public static double[] stiDashedSmall = new double[] { };
-        public static double[] stiAxis = new double[] { };
+        public static List<double> stiDashed = new List<double>();
+        public static List<double> stiDashedSmall = new List<double>();
+        public static List<double> stiAxis = new List<double>();
 
         // Intercambio de datos entre clases y modulos
         public static Dictionary<string, object> cATTDEF = new Dictionary<string, object>();
@@ -200,24 +200,24 @@ public static class Gcd
 
             int i;
 
-            Array.Clear(stiDashed);
-            Array.Clear(stiDashedSmall);
-            Array.Clear(stiAxis);
-            stiDashed = new double[] { 10, -10 };
-            stiDashedSmall = new double[] { 2.5f, -2.5f };
-            stiAxis = new double[] { 10, -2.5f, 2.5f, -2.5f };
+            stiDashed.Clear();
+            stiDashedSmall.Clear();
+            stiAxis.Clear();
+            stiDashed.InsertRange(0, new double[] { 10, -10 });
+            stiDashedSmall.InsertRange(0, new double[] { 2.5f, -2.5f });
+            stiAxis.InsertRange(0, new double[] { 10, -2.5f, 2.5f, -2.5f });
 
-            for (i = 0; i <= stiDashed.Length - 1; i++)
+            for (i = 0; i <= stiDashed.Count - 1; i++)
             {
                 stiDashed[i] *= Metros(1);
             }
 
-            for (i = 0; i <= stiDashedSmall.Length - 1; i++)
+            for (i = 0; i <= stiDashedSmall.Count - 1; i++)
             {
                 stiDashedSmall[i] *= Metros(1);
             }
 
-            for (i = 0; i <= stiAxis.Length - 1; i++)
+            for (i = 0; i <= stiAxis.Count - 1; i++)
             {
                 stiAxis[i] *= Metros(1);
             }

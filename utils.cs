@@ -146,7 +146,7 @@ namespace Gaucho;
         /// <param name="green">Green component (0-255)</param>
         /// <param name="blue">Blue component (0-255)</param>
         /// <returns>The ARGB color value with full opacity</returns>
-        public static int MakeRgb(int red, int green, int blue)
+        public static int RGB(int red, int green, int blue)
         {
             return MakeArgb(255, red, green, blue);
         }
@@ -353,7 +353,7 @@ namespace Gaucho;
 
         }
 
-         public static string ProcessTabs(string s,  int lTab = 6)
+        public static string ProcessTabs(string s,  int lTab = 6)
         {
 
             // reconstruye la string teniendo en cuenta los tabuladfores
@@ -374,13 +374,13 @@ namespace Gaucho;
                 {
                     if ( iAnterior < lTab )
                     {
-                        sEspacios = Gb.Space(lTab - iAnterior);
+                        sEspacios = new string(' ', lTab - iAnterior);
                         iAnterior = 0;
                     } else {
-                        int nTabs = (i - 1) / lTab;
-                        int posInTab = (i - 1) - (nTabs * lTab);
-                        sEspacios = Gb.Space(lTab - posInTab);
-                        sEspacios = Gb.Space(lTab);
+                        // int nTabs = (i - 1) / lTab;
+                        // int posInTab = (i - 1) - (nTabs * lTab);
+                        // sEspacios = new string(' ', lTab - posInTab);
+                        sEspacios = new string(' ', lTab);
                     }
                     iAnterior = i - 1;
                     sRespuesta += Gb.Mid(sResto, 1, i - 1) + sEspacios;
