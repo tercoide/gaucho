@@ -12,76 +12,75 @@ using Gaucho;
 
 public class ToolsBase
     {
-        public const string Gender = "TOOLSBASE";
-        public const string USEWITH = "";
+        public  string Gender { get; } = "TOOLSBASE";
+        public  string USEWITH { get; } = "";
 
         // Selection pixel coordinates (initialize to 0)
-        public static int SelStartX = 0;
-        public static int SelStartY = 0;
-        public static int SelEndX = 0;
-        public static int SelEndY = 0;
+        public  int SelStartX { get; set; } = 0;
+        public  int SelStartY { get; set; } = 0;
+        public  int SelEndX { get; set; } = 0;
+        public  int SelEndY { get; set; } = 0;
 
         // Selection pan start (Pixels)
-        public static int SelStartPanX = 0;
-        public static int SelStartPanY = 0;
+        public  int SelStartPanX { get; set; } = 0;
+        public  int SelStartPanY { get; set; } = 0;
 
         // Selection in real coordinates (meters)
-        public static double SelStartXr = 0.0;
-        public static double SelStartYr = 0.0;
-        public static double SelEndXr = 0.0;
-        public static double SelEndYr = 0.0;
+        public  double SelStartXr { get; set; } = 0.0;
+        public  double SelStartYr { get; set; } = 0.0;
+        public  double SelEndXr { get; set; } = 0.0;
+        public  double SelEndYr { get; set; } = 0.0;
 
         // Start/End in real coordinates for other uses
-        public static double StartXr = 0.0;
-        public static double StartYr = 0.0;
-        public static double EndXr = 0.0;
-        public static double Endyr = 0.0;
+        public  double StartXr { get; set; } = 0.0;
+        public  double StartYr { get; set; } = 0.0;
+        public  double EndXr { get; set; } = 0.0;
+        public  double EndYr { get; set; } = 0.0;
 
         // Mouse tracking
-        public static double LastX = 0.0;
-        public static double LastY = 0.0;
+        public  double LastX { get; set; } = 0.0;
+        public  double LastY { get; set; } = 0.0;
 
-        public static int MouseX = 0;
-        public static int MouseY = 0;
-        public static int MouseButton = 0;
-        public static bool MouseFakeClick = false;
+        public  int MouseX { get; set; } = 0;
+        public  int MouseY { get; set; } = 0;
+        public  int MouseButton { get; set; } = 0;
+        public  bool MouseFakeClick { get; set; } = false;
 
         // Parameters for builders/tools (initialize to sensible defaults)
-        public static int PointsDone = 0;
-        public static int PointsTotal = 0;
-        public static string NextParamType = string.Empty;      // "P","F","C","S","M" ...
-        public static object NextParamDefault = null;
-        public static string NextParam = string.Empty;         // description
-        public static string Prompt = string.Empty;
+        public  int PointsDone { get; set; } = 0;
+        public  int PointsTotal { get; set; } = 0;
+        public  string NextParamType { get; set; } = string.Empty;      // "P","F","C","S","M" ...
+        public  object NextParamDefault { get; set; } = null;
+        public  string NextParam { get; set; } = string.Empty;         // description
+        public  string Prompt { get; set; } = string.Empty;
 
-        public static bool Active = false;
-        public static bool PoiChecking = false;
-        public static bool EntityChecking = false;
-        public static int Mode = 0;
-        public static Entity? EntityForEdit = null;
-        public static Entity? OriginalEntityForEdit = null;
-
-        public static string MenuRightClick = string.Empty;
+        public  bool Active { get; set; } = false;
+        public  bool PoiChecking { get; set; } = false;
+        public  bool EntityChecking { get; set; } = false;
+        public  int Mode { get; set; } = 0;
+        public  Entity? EntityForEdit { get; set; } = null;
+        public  Entity? OriginalEntityForEdit { get; set; } = null;
+        public static string MenuRightClick { get; set; } = string.Empty;
 
         // selected indices (was Integer[] in Gambas)
-        public static List<int> inxSelected = new List<int>();
+        public  List<int> inxSelected { get; set; } = new List<int>();
 
         // transforms used for GL drawing (initialized to identity / defaults)
-        public static double[] glTranslate = new double[] { 0.0, 0.0, 0.0 }; // dX,dY,dZ
-        public static double[] glRotate = new double[] { 0.0, 0.0, 1.0 };    // rX,rY,rZ
-        public static double glAngle = 0.0;                                  // deg
-        public static double[] glScale = new double[] { 1.0, 1.0, 1.0 };     // sX,sY,sZ
+        public  double[] glTranslate { get; set; } = new double[] { 0.0, 0.0, 0.0 }; // dX,dY,dZ
+        public  double[] glRotate { get; set; } = new double[] { 0.0, 0.0, 1.0 };    // rX,rY,rZ
+        public  double glAngle { get; set; } = 0.0;                                  // deg
+        public  double[] glScale { get; set; } = new double[] { 1.0, 1.0, 1.0 };     // sX,sY,sZ
 
-        public static int cursorX = 0;
-        public static int cursorY = 0;
-        public bool AllowSingleSelection { get; set; }
+        public  int cursorX { get; set; } = 0;
+        public  int cursorY { get; set; } = 0;
+        public  bool AllowSingleSelection { get; set; }
         public  bool AllowRectSelection { get; set; }
         public  bool AllowPolySelection { get; set; }
         public  bool AllowGripEdit { get; set; }
         public  bool AllowTextInput { get; set; }
-        public static int lastCursorX = 0;
-        public static int lastCursorY = 0;
-        public const string ContextMenu = "Finish;_FINISH;;;Cancel;_CANCEL;;";
+        public  int lastCursorX { get; set; } = 0;
+        public  int lastCursorY { get; set; } = 0;
+        public  string ContextMenu { get; } = "Finish;_FINISH;;;Cancel;_CANCEL;;";
 
         // Static ctor kept minimal (arrays already initialized above)
         public ToolsBase()
@@ -92,7 +91,7 @@ public class ToolsBase
         }
 
         // Start the tool (optionally with an element to build)
-        public static bool Start(string ElemToBuild = "", int _mode = 0)
+        public bool Start(string ElemToBuild = "", int _mode = 0)
         {
             PointsDone = 0;
             Mode = _mode;

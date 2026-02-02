@@ -8,7 +8,7 @@
     {
         // Identity
         string Gender { get; }
-        string USEWITH { get; }
+        // string USEWITH { get; }
 
          // nuevo, para integrar el resto de las tools con esta, que es la principal
          public bool AllowSingleSelection { get; set; }
@@ -87,7 +87,7 @@
         /// <param name="ElemToBuild">Optional element to build / edit.</param>
         /// <param name="_mode">Optional mode id.</param>
         /// <returns>true if started successfully.</returns>
-        bool Start(object ElemToBuild = null, int _mode = 0);
+        bool Start(string ElemToBuild = "", int _mode = 0);
 
         /// <summary>
         /// Called on each draw frame to render tool overlays / transforms.

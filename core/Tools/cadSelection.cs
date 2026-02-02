@@ -28,7 +28,7 @@ public class cadSelection : ToolsBase, IToolsBase
 
  // this is the Main Job, either we are doing this or other job
  // Create Static
-public const string Gender = "SELECT";
+public string Gender { get; } = "SELECT";
 
 public static string[] EntityType ;         
 
@@ -375,12 +375,14 @@ public void MouseUp()
                 // Else
                 //     crossing = false  <- DEPRE
                 // End If
+            
+            // fixme: revisar esto
+            // if (SelStartX > SelEndX) Gb.Swap(ref SelStartX, ref SelEndX);
+            // if ( SelStartY < SelEndY ) Gb.Swap(ref SelStartY, ref SelEndY); // this is FLIPPED
 
-            if (SelStartX > SelEndX) Gb.Swap(ref SelStartX, ref SelEndX);
-            if ( SelStartY < SelEndY ) Gb.Swap(ref SelStartY, ref SelEndY); // this is FLIPPED
+            // if ( SelStartXr > SelEndXr ) Gb.Swap(ref SelStartXr, ref SelEndXr);
+            // if ( SelStartYr > SelEndYr ) Gb.Swap(ref SelStartYr, ref SelEndYr);
 
-            if ( SelStartXr > SelEndXr ) Gb.Swap(ref SelStartXr, ref SelEndXr);
-            if ( SelStartYr > SelEndYr ) Gb.Swap(ref SelStartYr, ref SelEndYr);
              // veo si el rectangulo es suficientemente grande como para representar una seleccion por rectangulo
             if ( (SelEndX - SelStartX + (-SelEndY + SelStartY)) > 10 )
             {
@@ -797,7 +799,7 @@ public void MouseMove()
 
 }
 
-public void KeyText(string EnteredText)
+public new void KeyText(string EnteredText)
     {
 
 
@@ -1000,7 +1002,7 @@ public void Draw()
 
 }
 
-public static void GripEdit()
+public void GripEdit()
     {
 
 
@@ -1044,7 +1046,7 @@ public static Grip FindGrip(double x, double y)
 
 }
 
-public void KeyDown(int iCode)
+public new void KeyDown(int iCode)
     {
 
 
