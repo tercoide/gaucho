@@ -628,7 +628,7 @@ public void MouseUp()
             {
                 if ( (Gcd.Drawing.Sheet.EntitiesSelected.Count == 1) && (Gcd.clsJobPrevious.Gender == cadEntityBuilder.Gender) )
                 {
-                    if ( cadEntityBuilder.LastEntity !=null )
+                    if ( Gcd.Drawing.LastEntity !=null )
                     {
 
                         Gcd.clsJob = Gcd.clsJobPrevious;

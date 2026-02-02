@@ -112,7 +112,7 @@ public static List<double> MyPolygon ;
 
  // The entity handler receives a user action, and returns the number of expected parameter
  // If definitive = true, means the parameter is set
-public static bool Parameter(Entity eBuild, List<string> vParam, bool Definitive= false)
+public bool NewParameter(Entity eBuild, List<string> vParam, bool Definitive= false)
     {
 
 
@@ -167,7 +167,7 @@ public static bool Parameter(Entity eBuild, List<string> vParam, bool Definitive
 
 
 
-public static void Translate(Entity e, double dx, double dy, bool OnlySelected= false)
+public void Translate(Entity e, double dx, double dy, bool OnlySelected= false)
     {
 
 
@@ -197,7 +197,7 @@ public static void Translate(Entity e, double dx, double dy, bool OnlySelected= 
 
 }
 
-public static void Rotate(Entity e, double radians)
+public void Rotate(Entity e, double radians)
     {
 
 
@@ -210,7 +210,7 @@ public static void Rotate(Entity e, double radians)
 
 }
 
-public static void Scale(Entity e, double sx, double sy)
+public void Scale(Entity e, double sx, double sy)
     {
 
 
@@ -224,7 +224,7 @@ public static void Scale(Entity e, double sx, double sy)
 }
 
  // A fat version of the line
-public static void DrawSelected(Entity oE)
+public void DrawSelected(Entity oE)
     {
 
 
@@ -233,7 +233,7 @@ public static void DrawSelected(Entity oE)
 }
 
  // A fat version of the line
-public static void DrawRemark(Entity oE)
+public void DrawRemark(Entity oE)
     {
 
 
@@ -243,7 +243,7 @@ public static void DrawRemark(Entity oE)
 
 }
 
-public static void Draw2(Entity oE)
+public void Draw2(Entity oE)
     {
 
 
@@ -267,7 +267,7 @@ public static void Draw2(Entity oE)
  //
  // End
 
-public static void Draw(Entity oE)
+public void Draw(Entity oE)
     {
 
 
@@ -279,7 +279,7 @@ public static void Draw(Entity oE)
 
  // Builds the geometry of the entity wthout drwing it
 
-public static void makepolyline(Entity oE)
+public void makepolyline(Entity oE)
     {
 
 
@@ -379,7 +379,7 @@ public static void makepolyline(Entity oE)
      //If oE.id = "1B45BD" Then esperar = True Else esperar = False
     oE.Polygon.Clear();
 
-    cadMText.ProcessText3(oE);
+    ProcessText3(oE);
 
 }
  // Public Function BuildGeometry(oE As Entity, Optional density As Float)
@@ -389,7 +389,7 @@ public static void makepolyline(Entity oE)
  //
  // End
 
-public static void ProcessText3(Entity oE)
+public void ProcessText3(Entity oE)
     {
 
 
@@ -522,7 +522,7 @@ public static void ProcessText3(Entity oE)
 }
 
  // procesa una linea de MText con todos sus modificadores
-public static string ProcessPart3(string sLine)
+public string ProcessPart3(string sLine)
     {
 
 
@@ -983,7 +983,7 @@ public static string ProcessPart3(string sLine)
 
 }
 
-public static bool SaveDxfData(Entity e)
+public bool SaveDxfData(Entity e)
     {
 
 
@@ -1052,7 +1052,7 @@ public static bool SaveDxfData(Entity e)
 
 }
 
-public static bool ImportDXF(Entity e, List<string> sClaves, List<string> sValues)
+public bool ImportDXF(Entity e, List<string> sClaves, List<string> sValues)
     {
 
 
@@ -1102,7 +1102,7 @@ public static bool ImportDXF(Entity e, List<string> sClaves, List<string> sValue
 }
 
  // Genera un conjunto de grips para ser usados por cadSelection
-public static int GenerateGrips(Entity e)
+public int GenerateGrips(Entity e)
     {
 
 
@@ -1219,7 +1219,7 @@ public static int GenerateGrips(Entity e)
 
 }
 
-public static bool GripEdit(Grip g)
+public bool GripEdit(Grip g)
     {
 
 
@@ -1271,7 +1271,7 @@ public static bool GripEdit(Grip g)
             break;
 
     }
-    EntityBase.BuildGeometry(e);
+    BuildGeometry(e);
     Gcd.Drawing.Sheet.Grips.Clear();
     GenerateGrips(e);
     return true;

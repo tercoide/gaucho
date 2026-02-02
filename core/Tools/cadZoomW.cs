@@ -9,7 +9,7 @@ class cadZoomW :  ToolsBase
 
 const string Gender = "ZOOMW";
 
-public static bool Start(string ElemToBuild, int _Mode= 0)
+public bool Start(string ElemToBuild, int _Mode= 0)
     {
 
      // Modes:
@@ -22,7 +22,7 @@ public static bool Start(string ElemToBuild, int _Mode= 0)
 return true;
     }
 
-public static void MouseDown()
+public void MouseDown()
     {
 
 
@@ -41,7 +41,7 @@ public static void MouseDown()
 
     }
 
-    public static void MouseUp()
+    public void MouseUp()
     {
 
 
@@ -49,9 +49,11 @@ public static void MouseDown()
         SelEndY = Mouse.Y;
         Active = false;
 
-        // corrijo para start<end
-        if (SelStartX >SelEndX ) Gb.Swap (ref SelStartX, ref SelEndX);
-        if (SelStartY <SelEndY ) Gb.Swap (ref SelStartY, ref SelEndY); // this is FLIPPED
+        // fixme
+
+        // // corrijo para start<end
+        // if (SelStartX >SelEndX ) Gb.Swap (ref SelStartX, ref SelEndX);
+        // if (SelStartY <SelEndY ) Gb.Swap (ref SelStartY, ref SelEndY); // this is FLIPPED
 
             // Paso a coordenadas reales
         SelStartXr = Gcd.Xreal(SelStartX);
@@ -81,7 +83,7 @@ public static void MouseDown()
 
 
 
-    public static void MouseMove()
+    public void MouseMove()
     {
 
 
@@ -96,7 +98,7 @@ public static void MouseDown()
 
     }
 
-public static void Draw() // esta rutina es llamada por FCAD en el evento DrawingArea_Draw
+public  void Draw() // esta rutina es llamada por FCAD en el evento DrawingArea_Draw
     {
 
      // por ultimo, y para que se vea arriba, la seleccion
@@ -110,7 +112,7 @@ public static void Draw() // esta rutina es llamada por FCAD en el evento Drawin
 
 }
 
-public static void Finish()
+public  void Finish()
     {
 
 

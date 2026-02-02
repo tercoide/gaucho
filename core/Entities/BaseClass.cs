@@ -3,18 +3,26 @@
 // otras clases que necesitan cosas de las entidades, como dibujarse con Draw.
 namespace Gaucho
 {
-    public class EntityBase : IEntity
+    public class EntityBase //: IEntity
     {
         // public  void EntityBase()
         // {
 
         // }
-public bool Regenerable { get; set; } = false;
-        public static void Draw()
-        {
-            Console.WriteLine("Llamada a diibujar desde la EntityBase");
-            return;
-        }
+        public string ParamHelper { get ;  } 
+        public string ParamType { get;  } 
+
+        public string ParamDefault { get;  }
+
+        public string Prompt { get;  }
+
+        public bool Regenerable { get; set; } = false;
+
+        public int LastMode {get; set;} = -1;
+
+        public int iiiMode { get;  } =0;
+
+       
  public  void Draw2()
         {
             Console.WriteLine("Imprimo desde Base");
@@ -36,6 +44,18 @@ public bool Regenerable { get; set; } = false;
         public Entity NewEntity(List<double> fPoints = null, bool bNewid = false) { return new Entity(); }
         public Entity ClonEntity(Entity e, bool NewId = false) { return e; }
         public bool Regenerable { get; set; }
+
+        public string ParamHelper { get ;  } 
+        public string ParamType { get;  } 
+
+        public string ParamDefault { get;  }
+
+        public string Prompt { get;  }
+
+        public int LastMode {get; set;} 
+
+        public int iiiMode { get;  }
+
         public void Draw(Entity e) { }
 
         public void Draw2(Entity e)
@@ -70,5 +90,9 @@ public bool Regenerable { get; set; } = false;
     
     public bool OverMe(Entity eTesting, double Xreal, double Yreal, double tolerance) { return false;  }
 public void GripEdit(Grip g) {return;  }
+
+public bool NewParameter(Entity e, List<string> sParam, bool Definitive = false) { return false;  }  
+
 }
+
 }

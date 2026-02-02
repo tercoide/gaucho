@@ -13,9 +13,133 @@ namespace Gaucho
     /// 
     public static class Key
     {
+        // Modifier key states
         public static bool Shift = false;
         public static bool Control = false;
         public static bool Alt = false;
+        
+        // Function keys (GDK key values)
+        public const int F1 = 0xffbe;   // 65470
+        public const int F2 = 0xffbf;   // 65471
+        public const int F3 = 0xffc0;   // 65472
+        public const int F4 = 0xffc1;   // 65473
+        public const int F5 = 0xffc2;   // 65474
+        public const int F6 = 0xffc3;   // 65475
+        public const int F7 = 0xffc4;   // 65476
+        public const int F8 = 0xffc5;   // 65477
+        public const int F9 = 0xffc6;   // 65478
+        public const int F10 = 0xffc7;  // 65479
+        public const int F11 = 0xffc8;  // 65480
+        public const int F12 = 0xffc9;  // 65481
+        
+        // Number keys (ASCII values, same in GTK)
+        public const int D0 = 0x030;    // 48
+        public const int D1 = 0x031;    // 49
+        public const int D2 = 0x032;    // 50
+        public const int D3 = 0x033;    // 51
+        public const int D4 = 0x034;    // 52
+        public const int D5 = 0x035;    // 53
+        public const int D6 = 0x036;    // 54
+        public const int D7 = 0x037;    // 55
+        public const int D8 = 0x038;    // 56
+        public const int D9 = 0x039;    // 57
+        
+        // Letter keys (ASCII values, same in GTK)
+        public const int A = 0x041;     // 65
+        public const int B = 0x042;     // 66
+        public const int C = 0x043;     // 67
+        public const int D = 0x044;     // 68
+        public const int E = 0x045;     // 69
+        public const int F = 0x046;     // 70
+        public const int G = 0x047;     // 71
+        public const int H = 0x048;     // 72
+        public const int I = 0x049;     // 73
+        public const int J = 0x04a;     // 74
+        public const int K = 0x04b;     // 75
+        public const int L = 0x04c;     // 76
+        public const int M = 0x04d;     // 77
+        public const int N = 0x04e;     // 78
+        public const int O = 0x04f;     // 79
+        public const int P = 0x050;     // 80
+        public const int Q = 0x051;     // 81
+        public const int R = 0x052;     // 82
+        public const int S = 0x053;     // 83
+        public const int T = 0x054;     // 84
+        public const int U = 0x055;     // 85
+        public const int V = 0x056;     // 86
+        public const int W = 0x057;     // 87
+        public const int X = 0x058;     // 88
+        public const int Y = 0x059;     // 89
+        public const int Z = 0x05a;     // 90
+        
+        // Special keys (GDK key values)
+        public const int Enter = 0xff0d;      // 65293
+        public const int Return = 0xff0d;     // 65293
+        public const int Space = 0x020;       // 32
+        public const int Tab = 0xff09;        // 65289
+        public const int Backspace = 0xff08;  // 65288
+        public const int Delete = 0xffff;     // 65535
+        public const int Insert = 0xff63;     // 65379
+        public const int Home = 0xff50;       // 65360
+        public const int End = 0xff57;        // 65367
+        public const int PageUp = 0xff55;     // 65365
+        public const int PageDown = 0xff56;   // 65366
+        public const int Escape = 0xff1b;     // 65307
+        
+        // Arrow keys (GDK key values)
+        public const int Left = 0xff51;       // 65361
+        public const int Up = 0xff52;         // 65362
+        public const int Right = 0xff53;      // 65363
+        public const int Down = 0xff54;       // 65364
+        
+        // Modifier key codes (GDK key values)
+        public const int ShiftKey = 0xffe1;   // 65505 (Shift_L)
+        public const int ControlKey = 0xffe3; // 65507 (Control_L)
+        public const int AltKey = 0xffe9;     // 65513 (Alt_L)
+        public const int LWin = 0xffeb;       // 65515 (Super_L)
+        public const int RWin = 0xffec;       // 65516 (Super_R)
+        
+        // Punctuation and symbol keys (ASCII where applicable)
+        public const int Semicolon = 0x03b;   // 59  ;
+        public const int Equal = 0x03d;       // 61  =
+        public const int Comma = 0x02c;       // 44  ,
+        public const int Minus = 0x02d;       // 45  -
+        public const int Period = 0x02e;      // 46  .
+        public const int Slash = 0x02f;       // 47  /
+        public const int Grave = 0x060;       // 96  `
+        public const int OpenBracket = 0x05b; // 91  [
+        public const int Backslash = 0x05c;   // 92  \
+        public const int CloseBracket = 0x05d;// 93  ]
+        public const int Quote = 0x027;       // 39  '
+        
+        // Numpad keys (GDK key values)
+        public const int Numpad0 = 0xffb0;          // 65456
+        public const int Numpad1 = 0xffb1;          // 65457
+        public const int Numpad2 = 0xffb2;          // 65458
+        public const int Numpad3 = 0xffb3;          // 65459
+        public const int Numpad4 = 0xffb4;          // 65460
+        public const int Numpad5 = 0xffb5;          // 65461
+        public const int Numpad6 = 0xffb6;          // 65462
+        public const int Numpad7 = 0xffb7;          // 65463
+        public const int Numpad8 = 0xffb8;          // 65464
+        public const int Numpad9 = 0xffb9;          // 65465
+        public const int NumpadMultiply = 0xffaa;   // 65450 *
+        public const int NumpadAdd = 0xffab;        // 65451 +
+        public const int NumpadSeparator = 0xffac;  // 65452
+        public const int NumpadSubtract = 0xffad;   // 65453 -
+        public const int NumpadDecimal = 0xffae;    // 65454 .
+        public const int NumpadDivide = 0xffaf;     // 65455 /
+        public const int NumpadEnter = 0xff8d;      // 65421
+        
+        // Lock keys (GDK key values)
+        public const int CapsLock = 0xffe5;     // 65509
+        public const int NumLock = 0xff7f;      // 65407
+        public const int ScrollLock = 0xff14;   // 65300
+        
+        // System keys (GDK key values)
+        public const int PrintScreen = 0xff61; // 65377 (Print)
+        public const int Pause = 0xff13;       // 65299
+        public const int Menu = 0xff67;        // 65383
     }
     public static class Mouse
 

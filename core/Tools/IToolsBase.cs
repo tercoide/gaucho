@@ -12,32 +12,32 @@
 
          // nuevo, para integrar el resto de las tools con esta, que es la principal
          public bool AllowSingleSelection { get; set; }
-        // public bool AllowRectSelection { get; set; }
-        // public bool AllowPolySelection { get; set; }
-        // public bool AllowGripEdit { get; set; }
-        // public bool AllowTextInput { get; set; }
+        public bool AllowRectSelection { get; set; }
+        public bool AllowPolySelection { get; set; }
+        public bool AllowGripEdit { get; set; }
+        public bool AllowTextInput { get; set; }
 
-        // // Selection pixel coordinates
-        // int SelStartX { get; set; }
-        // int SelStartY { get; set; }
-        // int SelEndX { get; set; }
-        // int SelEndY { get; set; }
+        // Selection pixel coordinates
+        int SelStartX { get; set; }
+        int SelStartY { get; set; }
+        int SelEndX { get; set; }
+        int SelEndY { get; set; }
 
-        // // Selection pan start (pixels)
-        // int SelStartPanX { get; set; }
-        // int SelStartPanY { get; set; }
+        // Selection pan start (pixels)
+        int SelStartPanX { get; set; }
+        int SelStartPanY { get; set; }
 
-        // // Selection in real coordinates (meters)
-        // double SelStartXr { get; set; }
-        // double SelStartYr { get; set; }
-        // double SelEndXr { get; set; }
-        // double SelEndyr { get; set; }
+        // Selection in real coordinates (meters)
+        double SelStartXr { get; set; }
+        double SelStartYr { get; set; }
+        double SelEndXr { get; set; }
+        double SelEndYr { get; set; }
 
-        // // Start/End in real coordinates for other uses
-        // double StartXr { get; set; }
-        // double StartYr { get; set; }
-        // double EndXr { get; set; }
-        // double Endyr { get; set; }
+        // Start/End in real coordinates for other uses
+        double StartXr { get; set; }
+        double StartYr { get; set; }
+        double EndXr { get; set; }
+        double EndYr { get; set; }
 
         // // Mouse tracking
         // double LastX { get; set; }
@@ -57,7 +57,7 @@
         // string Prompt { get; set; }
 
         // bool Active { get; set; }
-        // bool PoiChecking { get; set; }
+         bool PoiChecking { get; set; }
         // bool EntityChecking { get; set; }
          int Mode { get; set; }
         // Entity EntityForEdit { get; set; }

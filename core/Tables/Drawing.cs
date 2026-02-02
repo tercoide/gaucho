@@ -99,7 +99,7 @@ public class Drawing
     public Layer? CurrLayer;
     public int CurrColor;
     public LineType? CurrLineType;
-    public double CurrLineWt;                               //// in mm
+    public int CurrLineWt;                               //// in 100xmm
     public int CurrBlockLineWt = -3;                   //// config.deflinewt
     public DimStyle? CurrDimStyle;
     public TextStyle? CurrTextStyle;

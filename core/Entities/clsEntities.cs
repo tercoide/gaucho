@@ -25,7 +25,7 @@
         // Edit properties for a collection of entities
         public static bool EditEntities(string sProperty, string vValue, bool DoRegen = true, Dictionary<string, Entity> cEntities = null)
         {
-            if (cEntities == null) cEntities = Gcd.Drawing.Sheet.EntitiesSelected ?? [];
+            if (cEntities == null) cEntities = Gcd.Drawing.Sheet.EntitiesSelected ?? new Dictionary<string, Entity>();
 
             // Gcd.Drawing.uUndo.OpenUndoStage(sProperty, Undo.TypeModify);
 

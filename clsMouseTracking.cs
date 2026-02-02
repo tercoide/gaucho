@@ -299,7 +299,7 @@ public static List<double> CheckPOI(double Xr, double Yr, Entity e)
     double DistPer = 1e6;
     double DistEnd1 = 1e6;
     double DistEnd2 = 1e6;
-    double DistMId = 1e6;
+    double DistMid = 1e6;
     double DistBase = 1e6;
     double DistTang = 1e6;
     double DistQuad = 1e6;
@@ -309,7 +309,7 @@ public static List<double> CheckPOI(double Xr, double Yr, Entity e)
     double Dist = 1e5;   // el menor
     double DistEnd1B ;         
     double DistEnd2B =1e6;         
-    double DistMIdB =1e6;         
+    double DistMidB =1e6;         
     double tolerance=0;         
     double d =0;         
     double ShortestDistance =0;   
@@ -603,7 +603,7 @@ public static List<double> CheckPOI(double Xr, double Yr, Entity e)
             End2Y = e.P[3];
             DistEnd2 = Puntos.Distancia(e.P[2], e.P[3], Xr, Yr);
 
-            DistMId = Puntos.Distancia((e.P[2] + e.P[0]) / 2, (e.P[3] + e.P[1]) / 2, Xr, Yr);
+            DistMid = Puntos.Distancia((e.P[2] + e.P[0]) / 2, (e.P[3] + e.P[1]) / 2, Xr, Yr);
             i = 0;
 
             pNea = Puntos.NearestToLine(Xr, Yr, e.P[0], e.P[1], e.P[2], e.P[3]);
@@ -666,7 +666,7 @@ public static List<double> CheckPOI(double Xr, double Yr, Entity e)
                     End2X = x1;
                     End2Y = y1;
 
-                    DistMId = Puntos.Distancia((x1 + x0) / 2, (y1 + y0) / 2, Xr, Yr);
+                    DistMid = Puntos.Distancia((x1 + x0) / 2, (y1 + y0) / 2, Xr, Yr);
                      //If DistMid > DistMidB Then DistMid = DistMidB
 
                      // perpendicular
@@ -752,9 +752,9 @@ public static List<double> CheckPOI(double Xr, double Yr, Entity e)
         if ( Dist > DistEnd1 ) Dist = DistEnd1;
         if ( Dist > DistEnd2 ) Dist = DistEnd2;
     }
-    if ( (Gcd.SnapMode & Gcd.poiMIdPoint) == Gcd.poiMIdPoint)
+    if ( (Gcd.SnapMode & Gcd.poiMidPoint) == Gcd.poiMidPoint)
     {
-        if ( Dist > DistMId ) Dist = DistMId;
+        if ( Dist > DistMid ) Dist = DistMid;
     }
     if ( (Gcd.SnapMode & Gcd.poiPerpendicular) == Gcd.poiPerpendicular)
     {
@@ -797,12 +797,12 @@ public static List<double> CheckPOI(double Xr, double Yr, Entity e)
     }
 
      // ofrezco ese punto
-    if ( Dist == DistMId )
+    if ( Dist == DistMid )
     {
         rData[0] = (e.P[i + 2] + e.P[i + 0]) / 2;
         rData[1] = (e.P[i + 3] + e.P[i + 1]) / 2;
-        rData[2] = Gcd.poiMIdPoint;
-        DrawingAids.txtSnapTo = "MIdPoint";
+        rData[2] = Gcd.poiMidPoint;
+        DrawingAids.txtSnapTo = "MidPoint";
     }
 
      // ofrezco ese punto

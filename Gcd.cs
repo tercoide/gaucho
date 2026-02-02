@@ -96,7 +96,7 @@ public static class Gcd
     // Point of Interest
 
     public const int poiEndPoint = 1;
-    public const int poiMIdPoint = 2;
+    public const int poiMidPoint = 2;
     public const int poiQuadrant = 4;
     public const int poiTangent = 8;
     public const int poiCenter = 16;

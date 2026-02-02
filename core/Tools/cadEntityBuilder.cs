@@ -1,66 +1,56 @@
+namespace Gaucho;
    // Port of Gambas cadEntityBuilder.class -> C#
     //
     // Notes:
     // - This is a behavioral translation that relies on other converted classes and global objects:
-    //   Gcd, clsEntities, DrawingAIds, fMain, cadSelection, clsMouseTracking, puntos, etc.
+    //   Gcd, clsEntities, DrawingAids, fMain, cadSelection, clsMouseTracking, Puntos, etc.
     // - Gambas Float -> double, Collections -> List<T> / arrays depending on context.
     // - Entity.P is expected to be double[] (x,y pairs). Adjust if your Entity model differs.
     // - Methods such as Gcd.CCC[gender].NewParameter / Finish / BuildGeometry are called as in the original.
     // - Error handling: Gambas Try blocks are translated to try/catch where sensible.
-    public static class cadEntityBuilder : ToolsBase
+    public class cadEntityBuilder : ToolsBase
     {
-        // Identity
-        public const string Gender = "BUILDER";
+        // identity
+        public new const string Gender = "BUILDER";
 
         // Pixel coordinates
-        public static int LastMouseDownX = 0;
-        public static int LastMouseDownY = 0;
-        public static int SelStartX = 0;
-        public static int SelStartY = 0;
-        public static int SelEndX = 0;
-        public static int SelEndY = 0;
+        public  int LastMouseDownX = 0;
+        public  int LastMouseDownY = 0;
+      
+        public  bool LastPoint = false;
 
-        // Real coordinates (meters) - note: Y used as Z in original
-        public static double SelStartXr = 0.0;
-        public static double SelStartZr = 0.0;
-        public static double SelEndXr = 0.0;
-        public static double SelEndZr = 0.0;
-
-        // Last picked coordinates in real units
-        public static double LastX = 0.0;
-        public static double LastY = 0.0;
-        public static bool LastPoint = false;
-
-        public static int LastMouseX = -1;
-        public static int LastMouseY = -1;
+        public  int LastMouseX = -1;
+        public  int LastMouseY = -1;
 
         // Indicators and parameters
-        public static int StepsTotal = 0;
-        public static int PointsTotal = 0;
-        public static string NextParamType = string.Empty;
-        public static string[] ParamHelperList = new string[0];
-        public static string[] ParamDefault = new string[0];
-        public static string prompt = string.Empty;
+        public  int StepsTotal = 0;
+        public  int PointsTotal = 0;
+        public  string NextParamType = string.Empty;
+        public  string[] ParamHelperList = new string[0];
+        public  string[] ParamDefault = new string[0];
+        public  string prompt = string.Empty;
 
         // indices of parameter arrays
-        public static int iPoints = 0;
-        public static int iFloat = 0;
-        public static int iString = 0;
+        public  int iPoints = 0;
+        public  int iFloat = 0;
+        public  int iString = 0;
 
-        public static int iCounter = 0;
+        public  int iCounter = 0;
 
         // current element being built
-        public static Entity elem = null;
-        public static bool PoiChecking = true;
-        public static bool EntityChecking = false;
-        public static Entity LastEntity = null;
+        public  Entity elem = null;
+        public  bool PoiChecking = true;
+        public  bool EntityChecking = false;
+        public  Entity LastEntity = null;
 
-        public static double[] XYreal = new double[0];
+        public  double[] XYreal = new double[0];
 
         public const string ContextMenu = "Cancel;_CANCEL;;";
 
+        private int StepsDone = 0;
+
         // Start building a new entity or editing an existing type
-        public static bool Start(object ElemToBuild = null, int Mode = -1)
+        public new bool Start(string ElemToBuild = "", int Mode = -1)
         {
             // Reset and prepare builder
             LastPoint = false;
@@ -70,7 +60,7 @@
             clsEntities.GlGenDrawListSel(false);
 
             // Determine element to build
-            if (ElemToBuild == null)
+            if (ElemToBuild == "")
             {
                 if (LastEntity != null)
                 {
@@ -79,42 +69,33 @@
                 }
                 else
                 {
-                    DrawingAIds.ErrorMessage = "Can't create entity";
-                    Gcd.clsJob = cadSelection.Instance;
-                    Gcd.clsJobPrevious = cadSelection.Instance;
+                    DrawingAids.ErrorMessage = "Can't create entity";
+                    Gcd.clsJob = Gcd.Tools["SELECTION"];
+                    Gcd.clsJobPrevious = Gcd.Tools["SELECTION"];
                     return false;
                 }
             }
             else
             {
-                // If the caller passed a class/descriptor that can create an entity
-                // we assume it provides a NewEntity() factory (mirrors Gambas dynamic behavior).
-                try
+                if (Gcd.CCC.ContainsKey(ElemToBuild))
                 {
-                    // if ElemToBuild is an Entity factory object in your port, call .NewEntity()
-                    var factory = ElemToBuild as dynamic;
-                    elem = factory.NewEntity();
-                }
-                catch (Exception)
-                {
-                    // fallback: if provided an Entity instance, clone it
-                    elem = ElemToBuild as Entity;
-                    if (elem == null)
+                    elem = Gcd.CCC[ElemToBuild].NewEntity();
+                    } else 
                     {
-                        DrawingAIds.ErrorMessage = "Can't create entity";
-                        Gcd.clsJob = cadSelection.Instance;
-                        Gcd.clsJobPrevious = cadSelection.Instance;
+                        DrawingAids.ErrorMessage = "Can't create entity";
+                        Gcd.clsJob = Gcd.Tools["SELECTION"];
+                        Gcd.clsJobPrevious = Gcd.Tools["SELECTION"];
                         return false;
-                    }
+                    
                 }
             }
 
             // reset state
-            Gcd.StepsDone = 0;
+            StepsDone = 0;
 
             try
             {
-                elem.Colour = Gcd.CurrentColor();
+                elem.Colour = Gcd.Drawing.CurrColor;
             }
             catch { }
 
@@ -138,14 +119,14 @@
             // PointsTotal: number of x,y pairs in elem.P
             try
             {
-                PointsTotal = (elem.P != null) ? elem.P.Length / 2 : 0;
+                PointsTotal = (elem.P != null) ? elem.P.Count / 2 : 0;
             }
             catch
             {
                 PointsTotal = 0;
             }
 
-            // StepsTotal is length of ParamType string for this gender
+            // StepsTotal is Count of ParamType string for this gender
             try
             {
                 var paramType = Gcd.CCC[elem.Gender].ParamType ?? string.Empty;
@@ -160,7 +141,7 @@
             try
             {
                 var helper = Gcd.CCC[elem.Gender].ParamHelper ?? string.Empty;
-                ParamHelperList = string.IsnullOrEmpty(helper) ? new string[0] : helper.Split(';');
+                ParamHelperList = string.IsNullOrEmpty(helper) ? new string[0] : helper.Split(';');
             }
             catch
             {
@@ -170,7 +151,7 @@
             try
             {
                 var pdef = Gcd.CCC[elem.Gender].ParamDefault ?? string.Empty;
-                ParamDefault = string.IsnullOrEmpty(pdef) ? new string[0] : pdef.Split(';');
+                ParamDefault = string.IsNullOrEmpty(pdef) ? new string[0] : pdef.Split(';');
             }
             catch
             {
@@ -188,28 +169,28 @@
                 NextParamType = "+";
             }
 
-            if (Mode >= 0)
-            {
-                try
-                {
-                    elem.iParam[Gcd.CCC[elem.Gender].iiiMode] = Mode;
-                }
-                catch { }
-            }
+            // if (Mode >= 0)
+            // {
+            //     try
+            //     {
+            //         elem.iParam[Gcd.CCC[elem.Gender].iiiMode] = Mode;
+            //     }
+            //     catch { }
+            // }
 
             if (Gcd.SnapMode != 0)
             {
                 try { Gcd.SnapMode = Config.SnapModeSaved; } catch { }
             }
 
-            // set popup menu for sheet
-            try
-            {
-                Gcd.Drawing.Sheet.GlSheet.PopupMenu = elem.Gender;
-            }
-            catch { }
+            // // set popup menu for sheet
+            // try
+            // {
+            //     Gcd.Drawing.Sheet.GlSheet.PopupMenu = elem.Gender;
+            // }
+            // catch { }
 
-            fMain.KeysAccumulator = string.Empty;
+            // fMain.KeysAccumulator = string.Empty;
             try { prompt = Gcd.CCC[elem.Gender].Prompt; } catch { prompt = string.Empty; }
 
             Gcd.DrawHoveredEntity = false;
@@ -218,9 +199,9 @@
         }
 
         // Entry from command-line/text input
-        public static void KeyText(string EnteredText)
+        public  void KeyText(string EnteredText)
         {
-            if (string.IsnullOrWhiteSpace(EnteredText)) return;
+            if (Gb.Trim(EnteredText) == "") return;
 
             double Xt = 0, yt = 0;
             string sText = null;
@@ -236,9 +217,9 @@
                 case "_CANCEL":
                     Cancel();
                     return;
-                case "_MIDPOINT":
-                case "_MID":
-                    Gcd.SnapMode = Gcd.poiMIdPoint;
+                case "_MidPOINT":
+                case "_Mid":
+                    Gcd.SnapMode = Gcd.poiMidPoint;
                     break;
                 case "_ENDPOINT":
                 case "_END":
@@ -296,7 +277,7 @@
                         double.TryParse(parts[0].Trim(), out Xt) &&
                         double.TryParse(parts[1].Trim(), out yt))
                     {
-                        if (Relative && elem?.P != null && elem.P.Length > 2)
+                        if (Relative && elem?.P != null && elem.P.Count > 2)
                         {
                             Xt += LastX;
                             yt += LastY;
@@ -307,11 +288,11 @@
 
                         try
                         {
-                            if (Gcd.CCC[elem.Gender].NewParameter(elem, new object[] { "point", Xt, yt }, true))
+                            if (Gcd.CCC[elem.Gender].NewParameter(elem,new List<string> { "point", Xt.ToString(), yt.ToString() }, true))
                             {
                                 // save last point to drawing
                                 Gcd.Drawing.LastPoint.Clear();
-                                Gcd.Drawing.LastPoint.Insert(new double[] { Xt, yt });
+                                Gcd.Drawing.LastPoint.AddRange(new double[] { Xt, yt });
                                 AdvanceStep();
                             }
                         }
@@ -322,7 +303,7 @@
                     }
                     else
                     {
-                        DrawingAIds.ErrorMessage = "Bad input" + ErrTxt;
+                        DrawingAids.ErrorMessage = "Bad input" + ErrTxt;
                     }
                 }
                 else
@@ -330,7 +311,7 @@
                     // text input for this parameter
                     try
                     {
-                        if (Gcd.CCC[elem.Gender].NewParameter(elem, new object[] { "text", EnteredText }, true))
+                        if (Gcd.CCC[elem.Gender].NewParameter(elem, new List<string> { "text",  EnteredText }, true))
                             AdvanceStep();
                     }
                     catch { }
@@ -339,13 +320,13 @@
             else if (NextParamType == "T")
             {
                 ErrTxt = ", expected text, not a point";
-                if (string.IsnullOrEmpty(EnteredText))
+                if (Gb.Trim(EnteredText) == "")
                     sText = ParamDefault.Length > Gcd.StepsDone ? ParamDefault[Gcd.StepsDone] : string.Empty;
                 else sText = EnteredText;
 
                 try
                 {
-                    if (Gcd.CCC[elem.Gender].NewParameter(elem, new object[] { "text", sText }, true))
+                    if (Gcd.CCC[elem.Gender].NewParameter(elem, new List<string> { "text", sText }, true))
                         AdvanceStep();
                 }
                 catch { }
@@ -353,12 +334,12 @@
             else if ("FARL".IndexOf(NextParamType) >= 0) // "F", "A", "L", "R"
             {
                 ErrTxt = "enter a valid numeric value";
-                if (string.IsnullOrEmpty(EnteredText) || EnteredText == "U")
+                if (Gb.Trim(EnteredText) == "" || EnteredText == "U")
                 {
                     try
                     {
                         var def = ParamDefault.Length > Gcd.StepsDone ? ParamDefault[Gcd.StepsDone] : "0";
-                        bResult = Gcd.CCC[elem.Gender].NewParameter(elem, new object[] { "float", Utils.ParseDoubleSafe(def) }, true);
+                        bResult = Gcd.CCC[elem.Gender].NewParameter(elem, new List<string> { "float", def.ToString() }, true);
                     }
                     catch { bResult = false; }
                 }
@@ -366,7 +347,7 @@
                 {
                     try
                     {
-                        bResult = Gcd.CCC[elem.Gender].NewParameter(elem, new object[] { "float", Convert.ToDouble(EnteredText) }, true);
+                        bResult = Gcd.CCC[elem.Gender].NewParameter(elem, new List<string> { "float", Convert.ToDouble(EnteredText).ToString() }, true);
                     }
                     catch { bResult = false; }
                 }
@@ -375,25 +356,25 @@
             }
             else if (NextParamType == "C")
             {
-                if (Dialog.SelectColor())
-                {
-                    try
-                    {
-                        elem.fParam[iFloat] = (double)Dialog.Color;
-                        iFloat++;
-                        AdvanceStep();
-                    }
-                    catch { }
-                }
+                // if (Dialog.SelectColor())
+                // {
+                //     try
+                //     {
+                //         elem.fParam[iFloat] = (double)Dialog.Color;
+                //         iFloat++;
+                //         AdvanceStep();
+                //     }
+                //     catch { }
+                // }
             }
         }
 
-        public static void KeyUp(int iCode)
+        public  void KeyUp(int iCode)
         {
             if (iCode == Key.ControlKey) Gcd.Orthogonal = false;
         }
 
-        public static void AdvanceStep()
+        public  void AdvanceStep()
         {
             Gcd.StepsDone++;
             if (Gcd.StepsDone == StepsTotal)
@@ -425,13 +406,13 @@
                 MouseMove();
             }
 
-            fMain.KeysAccumulator = string.Empty;
+            // fMain.KeysAccumulator = string.Empty;
             try { prompt = Gcd.CCC[elem.Gender].Prompt; } catch { }
-            Gcd.redraw();
+            Gcd.Redraw();
         }
 
         // Mouse movement: used for preview and snap logic
-        public static void MouseMove()
+        public void MouseMove()
         {
             double X = 0, Y = 0, f = 0;
             int MouseTry = -1000000;
@@ -460,37 +441,37 @@
             if ("LAPRM".IndexOf(NextParamType) < 0) return;
 
             // special case for SPLINE
-            if (elem != null && elem.Gender == "SPLINE" && (iPoints != ((elem.P != null) ? elem.P.Length / 2 - 1 : 0)))
+            if (elem != null && elem.Gender == "SPLINE" && (iPoints != ((elem.P != null) ? elem.P.Count / 2 - 1 : 0)))
             {
                 iPoints++;
             }
 
             if (NextParamType == "A")
             {
-                f = puntos.Ang(Gcd.Xreal(LastMouseX) - LastX, Gcd.Yreal(LastMouseY) - LastY);
+                f = Puntos.Ang(Gcd.Xreal(LastMouseX) - LastX, Gcd.Yreal(LastMouseY) - LastY);
                 f *= 180.0 / Math.PI;
-                Gcd.CCC[elem.Gender].NewParameter(elem, new object[] { "float", f });
-                Gcd.redraw();
+                Gcd.CCC[elem.Gender].NewParameter(elem, new List<string> { "float", f.ToString() });
+                Gcd.Redraw();
                 return;
             }
 
             if (NextParamType == "R")
             {
-                Gcd.CCC[elem.Gender].NewParameter(elem, new object[] { "point", X, Y });
-                Gcd.redraw();
+                Gcd.CCC[elem.Gender].NewParameter(elem, new List<string> { "point", X.ToString(), Y.ToString() });
+                Gcd.Redraw();
                 return;
             }
 
             if (NextParamType == "L")
             {
-                f = puntos.distancia(Gcd.Xreal(LastMouseX), Gcd.Yreal(LastMouseY), LastX, LastY);
-                Gcd.CCC[elem.Gender].NewParameter(elem, new object[] { "float", f });
-                Gcd.redraw();
+                f = Puntos.Distancia(Gcd.Xreal(LastMouseX), Gcd.Yreal(LastMouseY), LastX, LastY);
+                Gcd.CCC[elem.Gender].NewParameter(elem, new List<string> { "float", f.ToString() });
+                Gcd.Redraw();
                 return;
             }
 
             // If snap engaged, adjust to POI coordinates
-            if (Gcd.Drawing.iEntity != null && Gcd.Drawing.iEntity.Length >= 3 && Gcd.Drawing.iEntity[2] > 0)
+            if (Gcd.Drawing.iEntity != null && Gcd.Drawing.iEntity.Count >= 3 && Gcd.Drawing.iEntity[2] > 0)
             {
                 X = Gcd.Drawing.iEntity[0];
                 Y = Gcd.Drawing.iEntity[1];
@@ -506,17 +487,17 @@
                 }
             }
 
-            Gcd.CCC[elem.Gender].NewParameter(elem, new object[] { "point", X, Y });
-            Gcd.redraw();
+            Gcd.CCC[elem.Gender].NewParameter(elem, new List<string> { "point", X.ToString(), Y.ToString() });
+            Gcd.Redraw();
         }
 
-        public static void KeyPress(int iCode, string sKey)
+        public  void KeyPress(int iCode, string sKey)
         {
             // left intentionally blank; entity-specific behavior may override
         }
 
         // MouseUp: finalize point input or numeric parameter
-        public static void MouseUp()
+        public  void MouseUp()
         {
             if (Mouse.Right)
             {
@@ -524,36 +505,36 @@
                 return;
             }
 
-            DrawingAIds.ErrorMessage = string.Empty;
+            DrawingAids.ErrorMessage = string.Empty;
             if ("LAPRM".IndexOf(NextParamType) < 0) return;
 
             double X = 0, Y = 0, f = 0;
 
             if (NextParamType == "A")
             {
-                f = puntos.Ang(Gcd.Xreal(Mouse.X) - LastX, Gcd.Yreal(Mouse.Y) - LastY) * 180.0 / Math.PI;
-                if (Gcd.CCC[elem.Gender].NewParameter(elem, new object[] { "float", f }, true)) AdvanceStep();
-                Gcd.redraw();
+                f = Puntos.Ang(Gcd.Xreal(Mouse.X) - LastX, Gcd.Yreal(Mouse.Y) - LastY) * 180.0 / Math.PI;
+                if (Gcd.CCC[elem.Gender].NewParameter(elem, new List<string> { "float", f.ToString() }, true)) AdvanceStep();
+                Gcd.Redraw();
                 return;
             }
 
             if (NextParamType == "R")
             {
-                if (Gcd.CCC[elem.Gender].NewParameter(elem, new object[] { "point", Gcd.Xreal(Mouse.X), Gcd.Yreal(Mouse.Y) }, true))
+                if (Gcd.CCC[elem.Gender].NewParameter(elem, new List<string> { "point", Gcd.Xreal(Mouse.X).ToString(), Gcd.Yreal(Mouse.Y).ToString() }, true))
                 {
                     Gcd.Drawing.LastPoint.Clear();
-                    Gcd.Drawing.LastPoint.Insert(new double[] { Gcd.Xreal(Mouse.X), Gcd.Yreal(Mouse.Y) });
+                    Gcd.Drawing.LastPoint.AddRange(new double[] { Gcd.Xreal(Mouse.X), Gcd.Yreal(Mouse.Y) });
                     AdvanceStep();
                 }
-                Gcd.redraw();
+                Gcd.Redraw();
                 return;
             }
 
             if (NextParamType == "L")
             {
-                f = puntos.distancia(Gcd.Xreal(Mouse.X), Gcd.Yreal(Mouse.Y), LastX, LastY);
-                if (Gcd.CCC[elem.Gender].NewParameter(elem, new object[] { "float", f }, true)) AdvanceStep();
-                Gcd.redraw();
+                f = Puntos.Distancia(Gcd.Xreal(Mouse.X), Gcd.Yreal(Mouse.Y), LastX, LastY);
+                if (Gcd.CCC[elem.Gender].NewParameter(elem, new List<string> { "float", f.ToString() }, true)) AdvanceStep();
+                Gcd.Redraw();
                 return;
             }
 
@@ -561,7 +542,7 @@
             X = Gcd.Near(Gcd.Xreal(Mouse.X));
             Y = Gcd.Near(Gcd.Yreal(Mouse.Y));
 
-            if (Gcd.Drawing.iEntity != null && Gcd.Drawing.iEntity.Length >= 3 && Gcd.Drawing.iEntity[2] > 0)
+            if (Gcd.Drawing.iEntity != null && Gcd.Drawing.iEntity.Count >= 3 && Gcd.Drawing.iEntity[2] > 0)
             {
                 X = Gcd.Drawing.iEntity[0];
                 Y = Gcd.Drawing.iEntity[1];
@@ -581,32 +562,32 @@
             LastY = Y;
             LastPoint = true;
 
-            if (Gcd.CCC[elem.Gender].NewParameter(elem, new object[] { "point", X, Y }, true))
+            if (Gcd.CCC[elem.Gender].NewParameter(elem, new List<string> { "point", X.ToString(), Y.ToString() }, true))
             {
                 Gcd.Drawing.LastPoint.Clear();
-                Gcd.Drawing.LastPoint.Insert(new double[] { X, Y });
+                Gcd.Drawing.LastPoint.AddRange(new double[] { X, Y });
                 AdvanceStep();
             }
 
-            Gcd.redraw();
+            Gcd.Redraw();
         }
 
-        public static void MouseDown()
+        public  void MouseDown()
         {
             // No default behavior here - left for higher-level handling
         }
 
-        public static void MouseWheel()
-        {
-            ToolsBase.MouseWheel();
-        }
+        // public  void MouseWheel()
+        // {
+        //     ToolsBase.MouseWheel();
+        // }
 
-        public static void DblClick()
+        public  void DblClick()
         {
             // not used in builder by default
         }
 
-        public static void Draw()
+        public  void Draw()
         {
             try
             {
@@ -620,23 +601,23 @@
         }
 
         // Called when finishing creating the entity
-        public static bool Finish()
+        public  bool Finish()
         {
             if (elem == null) return false;
 
-            // assign id if missing
-            if (string.IsnullOrEmpty(elem.Id)) elem.Id = Gcd.NewId();
+        // assign id if missing
+        if (elem.id == "") elem.id = Gcd.NewId();
 
             try
             {
                 if (Gcd.Drawing.Sheet.IsModel)
                 {
-                    Gcd.Drawing.Sheet.Entities.Add(elem);
-                    Gcd.Drawing.Sheet.EntitiesVisibles.Add(elem);
+                    Gcd.Drawing.Sheet.Entities.Add(elem.id,elem);
+                    Gcd.Drawing.Sheet.EntitiesVisibles.Add(elem.id,elem);
                 }
                 else
                 {
-                    Gcd.Drawing.Sheet.Entities.Add(elem);
+                    Gcd.Drawing.Sheet.Entities.Add(elem.id,elem);
                 }
             }
             catch { /* adapt to your collection API */ }
@@ -645,11 +626,11 @@
 
             try
             {
-                if (elem.pBlock != null && elem.pBlock.name == "*D")
+                if (elem.pBlock != null && elem.pBlock.Name == "*D")
                 {
-                    elem.pBlock.name += elem.Id;
-                    elem.pBlock.Id = Gcd.NewId();
-                    Gcd.Drawing.Blocks.Add(elem.pBlock);
+                    elem.pBlock.Name += elem.id;
+                    elem.pBlock.id = Gcd.NewId();
+                    Gcd.Drawing.Blocks.Add(elem.pBlock.id,elem.pBlock);
                 }
             }
             catch { }
@@ -666,62 +647,54 @@
             LastEntity = elem;
             if (elem.Gender != null && elem.Gender.StartsWith("DIM")) Gcd.Drawing.LastDimension = elem;
 
-            // UNDO
-            Gcd.Drawing.uUndo.OpenUndoStage("Draw a " + elem.Gender, Undo.TypeCreate);
-            Gcd.Drawing.uUndo.AddUndoItem(elem);
-            Gcd.Drawing.uUndo.CloseUndoStage();
+            // // UNDO
+            // Gcd.Drawing.uUndo.OpenUndoStage("Draw a " + elem.Gender, Undo.TypeCreate);
+            // Gcd.Drawing.uUndo.AddUndoItem(elem);
+            // Gcd.Drawing.uUndo.CloseUndoStage();
 
             Gcd.Drawing.RequiresSaving = true;
             Gcd.DrawHoveredEntity = true;
             Gcd.Drawing.iEntity.Clear();
-            Gcd.clsJobPrevious = cadEntityBuilder; // store current builder as previous job
+            Gcd.clsJobPrevious = Gcd.Tools["BUILDER"]; // store current builder as previous job
 
             // select created entity
             Gcd.Drawing.Sheet.EntitiesSelected.Clear();
-            Gcd.Drawing.Sheet.EntitiesSelected.Add(elem);
-            fMain.fp.FillProperties(Gcd.Drawing.Sheet.EntitiesSelected);
+            Gcd.Drawing.Sheet.EntitiesSelected.Add(elem.id,elem);
+            // fMain.fp.FillProperties(Gcd.Drawing.Sheet.EntitiesSelected);
 
             Gcd.Drawing.Sheet.Grips.Clear();
             Gcd.CCC[elem.Gender].GenerateGrips(elem);
 
-            Gcd.clsJob = cadSelection.Instance;
+            Gcd.clsJob = Gcd.Tools["SELECTION"];
             Gcd.clsJob.Start();
 
-            Gcd.Drawing.Sheet.GlSheet.PopupMenu = string.Empty;
-            cadSelection.Instance.PoiChecking = true;
-            DrawingAIds.CleanTexts();
+            // Gcd.Drawing.Sheet.GlSheet.PopupMenu = string.Empty;
+            Gcd.Tools["SELECTION"].PoiChecking = true;
+            DrawingAids.CleanTexts();
 
             // Generate GL lists
             clsEntities.GlGenDrawList(elem);
-            clsEntities.GlGenDrawListLAyers(elem.pLayer);
+            // clsEntities.GlGenDrawListLAyers(elem.pLayer);
 
-            Gcd.redraw();
+            Gcd.Redraw();
 
             return true;
         }
 
-        public static void Cancel()
+        public  void Cancel()
         {
             elem = null;
-            Gcd.clsJobPrevious = cadEntityBuilder;
-            Gcd.clsJob = cadSelection.Instance;
-            DrawingAIds.CleanTexts();
-            Gcd.redraw();
-            try { Gcd.Drawing.Sheet.GlSheet.PopupMenu = string.Empty; } catch { }
+            Gcd.clsJobPrevious = Gcd.Tools["BUILDER"];
+            Gcd.clsJob = Gcd.Tools["SELECTION"];
+            DrawingAids.CleanTexts();
+            Gcd.Redraw();
+            //try { Gcd.Drawing.Sheet.GlSheet.PopupMenu = string.Empty; } catch { }
         }
 
-        public static void KeyDown(int iCode)
+        public  void KeyDown(int iCode)
         {
             if (iCode == Key.ControlKey) Gcd.Orthogonal = true;
         }
     }
 
-    // Utility helpers (small placeholder) - replace with your real implementations
-    internal static class Utils
-    {
-        public static double ParseDoubleSafe(string s)
-        {
-            if (double.TryParse(s, out var v)) return v;
-            return 0.0;
-        }
-    }
+  

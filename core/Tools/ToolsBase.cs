@@ -157,7 +157,7 @@ public class ToolsBase
                 // Snap commands
                 case "_MIDPOINT":
                 case "_MID":
-                    Gcd.SnapMode = Gcd.poiMIdPoint;
+                    Gcd.SnapMode = Gcd.poiMidPoint;
                     return;
                 case "_ENDPOINT":
                 case "_END":
