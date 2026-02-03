@@ -168,20 +168,44 @@ namespace Gaucho
 
         /// <summary>
         /// Converts a string to an integer (similar to VB.NET CInt)
+        /// Supports both decimal and hexadecimal strings (prefixed with 0x or 0X)
         /// </summary>
         /// <param name="str">The string to convert</param>
         /// <returns>The integer value</returns>
         /// <exception cref="FormatException">Thrown when the string is not a valid integer</exception>
         public static int CInt(string str)
         {
-            int result;
-            if (int.TryParse(str, out result))
+            if (string.IsNullOrEmpty(str))
+                throw new FormatException("String cannot be null or empty.");
+
+            str = str.Trim();
+            
+            // Check if it's a hexadecimal string (starts with 0x or 0X)
+            if (str.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
             {
-                return result;
+                try
+                {
+                    // Remove the 0x prefix and parse as hex
+                    string hexPart = str.Substring(2);
+                    return Convert.ToInt32(hexPart, 16);
+                }
+                catch (Exception)
+                {
+                    throw new FormatException($"'{str}' is not a valid hexadecimal integer.");
+                }
             }
             else
             {
-                throw new FormatException($"'{str}' is not a valid integer.");
+                // Try parsing as decimal
+                int result;
+                if (int.TryParse(str, out result))
+                {
+                    return result;
+                }
+                else
+                {
+                    throw new FormatException($"'{str}' is not a valid integer.");
+                }
             }
         }
 

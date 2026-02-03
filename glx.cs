@@ -45,8 +45,8 @@ public static  class Glx
  //Fast 
  // una lbreria de funciones para pasar de Paint a OpenGL
 public static bool Initialized = false;
-public static LFFFonts ActualFont ;          // the class
-public static LFFFonts UnicodeFont ;         
+public static LFFFonts? ActualFont = null;          // the class
+public static LFFFonts? UnicodeFont = null;         
 public static string ActualFontName = "romanc";           // the name
 public static double ActualFontHeigth = 1;                 // the letter heigth
 public static double FontScale = 0.1125;                      // the general scale factor
@@ -62,8 +62,8 @@ public  struct TextureSt
 {
     public static string FileName ="";
     public static string TextureName ="";
-    public static int Id ;
-    public static Image? hImage ;
+    public static int Id = 0;
+    public static Image? hImage = null;
 }
 
 public static  TextureSt[] glTextures =[];
@@ -82,10 +82,10 @@ public static  float[] CurrentColor = new float[4] {1.0f, 1.0f, 1.0f, 1.0f} ;   
  // minimal shaders we need to compile at the GPU
 
 
-public static double escalaGL ;         
+public static double escalaGL = 0.0;         
 
-public static int ViewportWIdth ;         
-public static int ViewportHeight ;         
+public static int ViewportWIdth = 0;         
+public static int ViewportHeight = 0;         
 
 public static  int[] hText =[];         
 
@@ -94,12 +94,12 @@ public static  int[]                        GLDrwList =[];          // all entit
 public static  int[]                 GLDrwListEditing =[];          // all entities on edit by some tool, including new ones
 
  // lineas de puntos
-public static  int[] LineStipples =[];         
-public static  int[] LineStippleScales ;         
+public static  int[] LineStipples = [];         
+public static  int[] LineStippleScales = [];         
 
  // modo inmediato o programado
 public static bool InmediateMode = true;
-public static bool InmediateModeRequired ;         
+public static bool InmediateModeRequired = false;         
 public static bool VBO_present = false;    // si tenemos VBO que dibujar
   
  //
@@ -2950,7 +2950,7 @@ public const int VERTEX_ARRAY_BINDING = 0x000085B5;
  // Puede dibujar un contorno del mismo de otro color->Bounding
  // Mode: 0=relleno, 1=relleno y recuadro, 2=solo recuadro
 
-public static void Rectangle2D(double x1, double y1, double w, double h, int colour1= Colors.Blue, int colour2= -14, int colour3= -14, int colour4= -14, int BoundingColor= Colors.Blue, int BoundingWIdth= 1, List<double> Dashes = null, int mode= 0)
+public static void Rectangle2D(double x1, double y1, double w, double h, int colour1= Colors.Blue, int colour2= -14, int colour3= -14, int colour4= -14, int BoundingColor= Colors.Blue, int BoundingWIdth= 1, List<double>? Dashes = null, int mode= 0)
     {
 
 
@@ -3040,7 +3040,7 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 }
 
  // Dibuja un serie de lineas
- public static void DrawLines(List<double> fVertices,  int colour = 0, double LineWidth = 1, double[] dashes = null)
+ public static void DrawLines(List<double> fVertices,  int colour = 0, double LineWidth = 1, double[]? dashes = null)
     {
 
     int i ;         
@@ -3095,7 +3095,7 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 // }
 
  // Dibuja un seria de polilinea
- public static void Polygon(double[] vertices,  int colour = 0, double LineWidth = 1, double[] dashes = null)
+ public static void Polygon(double[] vertices,  int colour = 0, double LineWidth = 1, double[]? dashes = null)
     {
 
     int i ;         
@@ -3181,7 +3181,7 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 
 }
 
- public static void PolyLines(List<double> fVertices,  int colour = 0, double LineWidth = 1, List<double> dashes = null)
+ public static void PolyLines(List<double> fVertices,  int colour = 0, double LineWidth = 1, List<double>? dashes = null)
 {
     int i ;         
     List<double> vertices ;         
@@ -3220,7 +3220,7 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 
 }
 
- public static void DrawTriangles(List<double> vertices,  int colour = 0, int FillColor = 0, double LineWidth = 1, List<double> dashes = null)
+ public static void DrawTriangles(List<double> vertices,  int colour = 0, int FillColor = 0, double LineWidth = 1, List<double>? dashes = null)
 {
     int i ;         
 
@@ -3268,7 +3268,7 @@ public static void Rombo2D(double x1, double y1, double side, int ColorLeft= Col
 
  // Dibuja un circulo
 
-public static void CIRCLE(double[] center, double radious, int colour= 0, bool Filled= false, double LineWidth= 1, List<double> dashes= null)
+public static void CIRCLE(double[] center, double radious, int colour= 0, bool Filled= false, double LineWidth= 1, List<double>? dashes= null)
     {
 
 
@@ -3714,14 +3714,15 @@ public static List<string> LoadFonts(string DirPath)
     foreach ( var sFilename in Gb.DirFullPath(DirPath, "*.lff"))
     {
 
-         LFFFonts fntNuevas = new LFFFonts();         
-
-        fntNuevas.FileName = sFilename;
-        fntNuevas.WordSpacing = 6.75;
-        fntNuevas.LetterSpacing = 1; //.25
-        fntNuevas.LineSpacingFactor = 1;
-        fntNuevas.Letter = new Dictionary<int, Letters>();
-        using var ffile = new StreamReader(sFilename);
+            LFFFonts fntNuevas = new()
+            {
+                FileName = sFilename,
+                WordSpacing = 6.75,
+                LetterSpacing = 1, //.25
+                LineSpacingFactor = 1,
+                Letter = []
+            };
+            using var ffile = new StreamReader(sFilename);
         
         while ( !ffile.EndOfStream )
         {
@@ -3736,8 +3737,8 @@ public static List<string> LoadFonts(string DirPath)
                 sCode = Gb.Replace(sCode, "[[", "[");
                 sCode = Gb.Mid(sCode, 2, 4);
                 letra.Code = Gb.CInt("0x0000" + sCode); // [0021]!
-                letra.FontGlyps = new List<List<double>>();
-                letra.FontBulges = new List<List<double>>();
+                letra.FontGlyps = [];
+                letra.FontBulges = [];
 
                 while ( sData != "")
                 {
@@ -3777,7 +3778,7 @@ public static List<string> LoadFonts(string DirPath)
                         letra.FontGlyps.Add(flt1);
                         letra.FontBulges.Add(fltb);
 
-                        sPuntos = Gb.Split(sData, ");");
+                        sPuntos = Gb.Split(sData, ";");
 
                         foreach ( var sCoord in sPuntos)
                         {
@@ -3804,9 +3805,8 @@ public static List<string> LoadFonts(string DirPath)
                         }
                     }
                 } // fin de la letra
-                fntNuevas.Letter.Add(letra.Code, letra);
-
-            } // ignoro todos los comentarios
+                fntNuevas.Letter.TryAdd(letra.Code, letra);
+                } // ignoro todos los comentarios
 
         }
         fntNuevas.FontName = Gb.FileWithoutExtension(sFilename);

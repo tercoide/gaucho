@@ -13,6 +13,18 @@ using Gaucho;
     {
         public double x;
         public double y;
+        
+        public Punto2d()
+        {
+            x = 0.0;
+            y = 0.0;
+        }
+        
+        public Punto2d(double x, double y)
+        {
+            this.x = x;
+            this.y = y;
+        }
     }
 
     public struct Punto3d
@@ -20,6 +32,20 @@ using Gaucho;
         public double x;
         public double y;
         public double z;
+        
+        public Punto3d()
+        {
+            x = 0.0;
+            y = 0.0;
+            z = 0.0;
+        }
+        
+        public Punto3d(double x, double y, double z)
+        {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
     }
 
     public static class Puntos

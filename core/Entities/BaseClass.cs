@@ -41,7 +41,7 @@ namespace Gaucho
     public interface IEntity
     {
 
-        public Entity NewEntity(List<double> fPoints = null, bool bNewid = false) { return new Entity(); }
+        public Entity NewEntity(List<double>? fPoints = null, bool bNewid = false) { return new Entity(); }
         public Entity ClonEntity(Entity e, bool NewId = false) { return e; }
         public bool Regenerable { get; set; }
 

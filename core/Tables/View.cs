@@ -229,7 +229,7 @@ public class View
 
         public UCS() { }
 
-        public UCS(string name, string id = null)
+        public UCS(string name, string? id = null)
         {
             Name = name;
             Id = id;

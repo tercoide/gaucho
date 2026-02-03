@@ -11,10 +11,10 @@ namespace Gaucho;
 
         //TINCHO 2023.05.22 > Config.class implementation
         // STANDAR VARIABLES
-        public static string Root="/usr/share/gambascad";
-        public static string Depot="/usr/share/gambascad";
-        public static string Log = "/usr/share/gambascad/log.txt";
-        public static string ConfigFile = "/usr/share/gambascad/config.json";
+        public static string Root= Home + "/.config/gaucho";
+        public static string Depot= Home + "/.config/gaucho";
+        public static string Log = Home + "/.config/gaucho/log.txt";
+        public static string ConfigFile = Home + "/config.json";
 
         // GambasCAD Variables
         // INTERFACE
@@ -35,7 +35,7 @@ namespace Gaucho;
         // Voy a agregar una variable
         //================================SNAP=========================================
         public static int SnapDistancePix = 32;  // Minimal distance to point
-        public static int SnapModeSaved;
+        public static int SnapModeSaved = 0;
         public static int GripSize = 8;
         public static int GripProximityDistance = 16;
         public static double GripTextOnScreenSize = 10;
@@ -53,7 +53,7 @@ namespace Gaucho;
 
         //NEW: Estas variables provienen del formulario main. En dicho formulario se estableceran pero sean guardadas siempre en esta clase y no se alterraran manualmente (de momento)
         //TINCHO 2023.05.22 > Config.class implementation
-        public static string dirResources = Environment.CurrentDirectory;
+        public static string dirResources = Root + "/resources";
         public static string dirDwgIn="";
         public static string dirDxfIn="";
         public static string dirDwgOut="";
@@ -62,7 +62,7 @@ namespace Gaucho;
         public static string dirBlocks="";          //= gcd.dirResources &/ "library"
         public static string dirPrintStyles="";
         public static string dirPatterns="";
-        public static string Home=Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        public static string Home= Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
         //TODO: Estas faltan definir como seran editadas
         // ==============Variables de configuracion a guardar, agregar las necesarias=======================

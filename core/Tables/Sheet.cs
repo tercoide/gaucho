@@ -44,7 +44,7 @@ public class Sheet
 
     public Viewport Viewport = new();                         //// el viewport actual en uso
 
-    public Dictionary<string, Viewport> Viewports = new Dictionary<string, Viewport>(); // of Viewports
+    public Dictionary<string, Viewport> Viewports = []; // of Viewports
     public int TabOrder = 0;
     public Dictionary<string, Entity> Entities = [];                      //// Apunta a .BLock.entities
     public Dictionary<string, Entity> EntitiesSelected = [];
@@ -61,7 +61,7 @@ public class Sheet
     // public Scene3D scene = new Scene3D();
     public bool Shown = false; // esto podria ser una flag, determino si ya la mostre una vez
 
-    public List<Grip> Grips = new List<Grip>();
+    public List<Grip> Grips = [];
 
     public Sheet()
     {

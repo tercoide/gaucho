@@ -3,9 +3,9 @@ using System.Diagnostics;
 
 namespace Gaucho;
 
-    public static class  Colors
-    {
-        public const int Black = 0;
+public static class Colors
+{
+    public const int Black = 0;
         public const int White = 1;
         public const int Red = 2;
         public const int Green = 3;
@@ -79,7 +79,7 @@ namespace Gaucho;
             int b = 255 - (color & 0xFF);
             return (r << 16) | (g << 8) | b;
         }
- public static int Gradient(int color1, int color2)
+    public static int Gradient(int color1, int color2)
         {
             
 
@@ -151,11 +151,11 @@ namespace Gaucho;
             return MakeArgb(255, red, green, blue);
         }
 
-    }
+}
 
 
-    public static class Util
-    {
+public static class Util
+{
 
 
         public static void Swap<T>(ref T a, ref T b)

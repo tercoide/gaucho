@@ -4,7 +4,7 @@ using Gtk;
 
 
 public static class Gcd
-    {
+{
         // Equivale a public static  entities As New Entity[] en Gambas
         // Todos los arrays de clases no nativas se arman como List<TipoDeClase>
 
@@ -50,20 +50,20 @@ public static class Gcd
         public static double ScaleLines = 1;               // la uso en Inserts para evitar lineas gordas
         public static string FormatoCotas = "0.00";
 
-        public static bool ToolActive;
+        public static bool ToolActive = false;
 
         public static int HookSize = 16;                        // for use with poi
         public static bool Orthogonal = false;               // idem Ortho F8 del CAD
-        public static int SnapMode;
-        public static int GrIdMode;
-        public static int GrIdModePrev;
+        public static int SnapMode = 0;
+        public static int GrIdMode = 0;
+        public static int GrIdModePrev = 0;
         public static bool MultiDraw;          // dibuja repetidamente la misma entidad
 
-        public static Dictionary<string, IEntity> CCC;          // CAD Classes Collection
+        public static Dictionary<string, IEntity> CCC = new();          // CAD Classes Collection
 
 
-        public static Dictionary<string, IToolsBase> Tools;          // Tools Classes Collection
-    
+        public static Dictionary<string, IToolsBase> Tools = new();          // Tools Classes Collection
+
         public static IToolsBase? clsJob;          // what I am doing now, thats either selecting or something else
         public static IToolsBase? clsJobPrevious;          // what was doing before
         public static IToolsBase? clsJobPreZoom;          // what was doing before Zooming or Panning
@@ -83,30 +83,30 @@ public static class Gcd
         public static List<string> LineTypes= new List<string>();
 
         // dibujos
-        public static Image picVisibleOn;
-        public static Image picVisibleOff;
-        public static Image picFrozenOn;
-        public static Image picFrozenOff;
-        public static Image picLockedOn;
-        public static Image picLockedOff;
-        public static Image picPrintOn;
-        public static Image picPrintOff;
+        public static Image? picVisibleOn  ;
+        public static Image? picVisibleOff ;
+        public static Image? picFrozenOn ;
+        public static Image? picFrozenOff ;
+        public static Image? picLockedOn ;
+        public static Image? picLockedOff ;
+        public static Image? picPrintOn ;
+        public static Image? picPrintOff ;
 
-    //---------------------------------------------------------------
-    // Point of Interest
+        //---------------------------------------------------------------
+        // Point of Interest
 
-    public const int poiEndPoint = 1;
-    public const int poiMidPoint = 2;
-    public const int poiQuadrant = 4;
-    public const int poiTangent = 8;
-    public const int poiCenter = 16;
-    public const int poiIntersection = 32;
-    public const int poiPerpendicular = 64;
-    public const int poiNearest = 128;
-    public const int poiBasePoint = 256;
-    public const int poiAparentCenter = 512;
+        public const int poiEndPoint = 1;
+        public const int poiMidPoint = 2;
+        public const int poiQuadrant = 4;
+        public const int poiTangent = 8;
+        public const int poiCenter = 16;
+        public const int poiIntersection = 32;
+        public const int poiPerpendicular = 64;
+        public const int poiNearest = 128;
+        public const int poiBasePoint = 256;
+        public const int poiAparentCenter = 512;
 
-    // CAD colors
+        // CAD colors
         public const int ColorBlack = 0;
         public const int ColorRed = 1;
         public const int ColorBlue = 2;
@@ -162,11 +162,11 @@ public static class Gcd
         //variables de ambiente
 
         public static bool flgSearchingAllowed = true;   // impide cuellos de botellla
-        public static bool flgSearchingPOI;
-        public static bool flgShowingLayers;
-        public static bool flgNewPosition;          // seteada cuando hay un cambio en pan o zoom
-        public static bool flgQuitSearch;
-        public static double Chronos;
+        public static bool flgSearchingPOI = false;
+        public static bool flgShowingLayers = false;
+        public static bool flgNewPosition = false;          // seteada cuando hay un cambio en pan o zoom
+        public static bool flgQuitSearch = false;
+        public static double Chronos = 0.0;
 
         public static bool DrawHoveredEntity = false;
 
@@ -174,24 +174,41 @@ public static class Gcd
 
         public static bool DrawingReady = false;
                // public static  New Design Design ;         
-        public static Drawing Drawing = new Drawing();
+        private static Drawing? _drawing;
+        public static Drawing Drawing 
+        { 
+            get 
+            { 
+                if (_drawing == null)
+                {
+                    _drawing = NewDrawing("Untitled");
+                    DrawingReady = true;
+                }
+                return _drawing;
+            }
+            set
+            {
+                _drawing = value;
+                DrawingReady = value != null;
+            }
+        }
 
         public static List<Entity> entities = new();
 
 
         public static Dictionary<string, Drawing> Drawings = new();
         public static Dictionary<string, Entity> EntitiesSelected = new();
-        public static int[] gColor = [];          // Colors list
+        public static List<int> gColor = [];          // Colors list
 
-        public static Gdk.Cursor? CursorCross;
-        public static Gdk.Cursor? CursorSelect;
-        public static Gdk.Cursor? CursorSelectAdd;
-        public static Gdk.Cursor? CursorSelectRem;
-        public static Gdk.Cursor? CursorSelectXchange;
+        public static Gdk.Cursor? CursorCross = null;
+        public static Gdk.Cursor? CursorSelect = null;
+        public static Gdk.Cursor? CursorSelectAdd = null;
+        public static Gdk.Cursor? CursorSelectRem = null;
+        public static Gdk.Cursor? CursorSelectXchange = null;
 
         public static double PrintingScale  = 1;        
 
-        public static DebugWindow fDebug;
+        public static DebugWindow fDebug = null!;
 
 
         public static void SetDashes()
@@ -381,8 +398,8 @@ public static class Gcd
 
         }
             
-            fDebug = new DebugWindow();
-            fDebug.Show();
+            // fDebug = new DebugWindow();
+            // fDebug.Show();
 
             //If WindowBackColor = 0 Then WhiteAndBlack = Color.White Else WhiteAndBlack = Color.Black
             // // armo el array de colores
@@ -391,31 +408,43 @@ public static class Gcd
 
             //FileName = User.Home &/ "autosaveV5.xml"
 
-            debugInfo("Reading fonts from " + System.IO.Path.Combine(Gcd.dirResources, "fonts", "lff"), false, false, true);
-            FontList = Glx.LoadFonts(System.IO.Path.Combine(Gcd.dirResources, "fonts", "lff"));
+            debugInfo("Reading fonts from " + System.IO.Path.Combine(Config.dirResources, "fonts", "lff"), false, false, true);
+            FontList = Glx.LoadFonts(System.IO.Path.Combine(Config.dirResources, "fonts", "lff"));
             //FontList = glx.LoadFonts(Gcd.sFonts)
             Glx.SelectFont("romans");
 
             // agrego la lista a los reemplazos
-            foreach (string s in FontList)
+            if (FontList != null)
             {
-                FontReplacements.Add(s.ToLower(), s.ToLower());
+                foreach (string s in FontList)
+                {
+                    if (!string.IsNullOrEmpty(s))
+                    {
+                        string lowerFont = s.ToLower();
+                        if (!FontReplacements.ContainsKey(lowerFont))
+                        {
+                            FontReplacements.Add(lowerFont, lowerFont);
+                        }
+                    }
+                }
             }
 
-            FontReplacements.Add("kochigothic", "arial");
+            FontReplacements.Add("arial","kochigothic");
             // FIXME
-            // TextureList = glx.LoadTextures(System.IO.Path.Combine(Gcd.dirResources, "textures"));
+            // TextureList = glx.LoadTextures(System.IO.Path.Combine(Config.dirResources, "textures"));
             //texturelist = glx.LoadTextures(Gcd.sTextures)
-
-            // otros recursos
-            picVisibleOn = Image.NewFromFile(System.IO.Path.Combine(Gcd.dirResources, "png", "visible_on.png"));
-            picVisibleOff = Image.NewFromFile(System.IO.Path.Combine(Gcd.dirResources, "png", "visible_off.png"));
-            picFrozenOn = Image.NewFromFile(System.IO.Path.Combine(Gcd.dirResources, "png", "frozen_on.png"));
-            picFrozenOff = Image.NewFromFile(System.IO.Path.Combine(Gcd.dirResources, "png", "frozen_off.png"));
-            picLockedOn = Image.NewFromFile(System.IO.Path.Combine(Gcd.dirResources, "png", "locked_on.png"));
-            picLockedOff = Image.NewFromFile(System.IO.Path.Combine(Gcd.dirResources, "png", "locked_off.png"));
-            picPrintOn = Image.NewFromFile(System.IO.Path.Combine(Gcd.dirResources, "png", "printOn.png"));
-            picPrintOff = Image.NewFromFile(System.IO.Path.Combine(Gcd.dirResources, "png", "printOff.png"));
+            // debugInfo(System.IO.Path.Combine(Config.dirResources, "png", "visible_on.png"), false, false, true);
+            // debugInfo("EXISTE? " + File.Exists(System.IO.Path.Combine(Config.dirResources, "png", "visible_on.png")).ToString(), false, false, true);
+            // // otros recursos
+            picVisibleOn = Image.NewFromFile(System.IO.Path.Combine(Config.dirResources, "png", "visible_on.png"));
+            picVisibleOn.SetPixelSize(24);
+            picVisibleOff = Image.NewFromFile(System.IO.Path.Combine(Config.dirResources, "png", "visible_off.png"));
+            picFrozenOn = Image.NewFromFile(System.IO.Path.Combine(Config.dirResources, "png", "frozen_on.png"));
+            picFrozenOff = Image.NewFromFile(System.IO.Path.Combine(Config.dirResources, "png", "frozen_off.png"));
+            picLockedOn = Image.NewFromFile(System.IO.Path.Combine(Config.dirResources, "png", "locked_on.png"));
+            picLockedOff = Image.NewFromFile(System.IO.Path.Combine(Config.dirResources, "png", "locked_off.png"));
+            picPrintOn = Image.NewFromFile(System.IO.Path.Combine(Config.dirResources, "png", "printOn.png"));
+            picPrintOff = Image.NewFromFile(System.IO.Path.Combine(Config.dirResources, "png", "printOff.png"));
 
             // this is what we are doing now
         //    clsJob = cadSelection;
@@ -444,19 +473,21 @@ public static class Gcd
 
         public static void LoadCommon()
         {
-
-
-            string[] sFiles;
-
-
-            sFiles = System.IO.Directory.GetFiles(System.IO.Path.Combine(Gcd.dirResources, "common"), "*.dxf");
+            if (string.IsNullOrEmpty(dirResources))
+                return;
+                
+            string commonPath = System.IO.Path.Combine(dirResources, "common");
+            if (!System.IO.Directory.Exists(commonPath))
+                return;
+                
+            string[] sFiles = System.IO.Directory.GetFiles(commonPath, "*.dxf");
             if ((sFiles.Length == 0)) return;
+            
             foreach (string sBlocksFiles in sFiles)
             {
                 // FBlocks.AddBlock(System.IO.Path.Combine(Gcd.dirResources, "common", sBlocksFiles), Gb.FileWithoutExtension(sBlocksFiles),Drawing.Blocks);
                 // FIXME
             }
-
         }
 
         public static Layer? GetLayer(string LayerName)
@@ -647,7 +678,7 @@ public static class Gcd
         //     Next
         //
         // End
-        public static double GetLineWt(int iValue, Layer l)
+        public static double GetLineWt(int iValue, Layer? l)
         {
 
             // https://ezdxf.readthedocs.io/en/stable/concepts/lineweights.html
@@ -656,11 +687,11 @@ public static class Gcd
             // -3    LINEWEIGHT_DEFAULT
 
             if (iValue > 1) return iValue / 100;
-            if (l == null) l =Drawing.CurrLayer;
+            l ??= Drawing.CurrLayer;
             if (iValue == -1)
             {
-                if (l.LineWt < 0) return  Config.DefLineWt;
-                return l.LineWt / 100;
+                if (l?.LineWt < 0) return  Config.DefLineWt;
+                return (l?.LineWt ?? 0) / 100;
             }
             else if (iValue == -3)
             {
@@ -791,7 +822,7 @@ public static class Gcd
         // End
 
         // Returns the next available handle
-        public static string NewId(Drawing d = null)
+        public static string NewId(Drawing? d = null)
         {
 
 
@@ -850,18 +881,17 @@ public static class Gcd
 
     // }
 
-    public static string ODA_DWGtoDXF(string sDwgFile)
+        public static string ODA_DWGtoDXF(string sDwgFile)
     {
 
 
-        string str;
         string filebase;
         int steps=0;
 
         try
         {
 
-            filebase = Gb.FileFromPath(sDwgFile);
+            filebase = Gb.FileFromPath(sDwgFile) ?? "";
 
             steps = 0; // elimino el archivo temporal que hubiese creado
 
@@ -916,20 +946,19 @@ public static class Gcd
         }
     }
 
-    public static string ODA_DXFtoDWG(string sDxfFile)
+        public static string ODA_DXFtoDWG(string sDxfFile)
     {
 
 
-        string str="";
         string filebase;
         int steps = 0;
         try
         {
 
-            filebase = Gb.FileFromPath(sDxfFile); // deberia estar en main.dirDxfIn
+            filebase = Gb.FileFromPath(sDxfFile) ?? ""; // deberia estar en main.dirDxfIn
 
             steps = 0; // elimino el archivo temporal que hubiese creado
-            if (File.Exists(System.IO.Path.Combine(Config.dirDxfOut, filebase))) File.Delete(System.IO.Path.Combine(Config.dirDxfOut, filebase));
+            if (!string.IsNullOrEmpty(filebase) && File.Exists(System.IO.Path.Combine(Config.dirDxfOut, filebase))) File.Delete(System.IO.Path.Combine(Config.dirDxfOut, filebase));
 
             steps = 1; // hago una copia previa a la conversion
             if (sDxfFile != (System.IO.Path.Combine(Config.dirDxfOut, filebase))) File.Copy(sDxfFile, System.IO.Path.Combine(Config.dirDxfOut, filebase));
@@ -938,7 +967,7 @@ public static class Gcd
             Gb.Shell("ODAFileConverter; //" + Config.dirDxfOut + "// //" + Config.dirDwgOut + "// //ACAD2010// //DWG// 0 0");
 
 
-            debugInfo(str);
+            debugInfo("Conversion completed");
 
             steps = 3;
             // vacio el directorio de entrada
@@ -1106,7 +1135,7 @@ public static class Gcd
 
             //Return Metros((screenx -Drawing.Sheet.GlSheet.w / 2 - (Gcd.Drawing.Sheet.PanX +Drawing.Sheet.PanBaseX)))
             if (Drawing.Sheet.GlSheet == null) return 0;
-            return Metros((ScreenX -Drawing.Sheet.GlSheet.GetWidth() / 2 - (Gcd.Drawing.Sheet.PanX))) +Drawing.Sheet.PanBaseRealX;
+            return Metros((ScreenX - Drawing.Sheet.GlSheet.GetWidth() / 2 - (Gcd.Drawing.Sheet.PanX))) + Drawing.Sheet.PanBaseRealX;
 
         }
 
@@ -1122,7 +1151,7 @@ public static class Gcd
         public static double XPix(double X)
         {
 
-            return Pixels(X -Drawing.Sheet.PanBaseRealX) +Drawing.Sheet.GlSheet.GetWidth() / 2 +Drawing.Sheet.PanX; //+Drawing.Sheet.PanBaseX
+            return Pixels(X - Drawing.Sheet.PanBaseRealX) + (Drawing.Sheet.GlSheet?.GetWidth() ?? 0) / 2 + Drawing.Sheet.PanX; //+Drawing.Sheet.PanBaseX
 
         }
 
@@ -1130,7 +1159,7 @@ public static class Gcd
         {
 
             //Return Metros((-ScreenY + glarea1.h / 2 -Drawing.PanY))
-            return -(Pixels(Y -Drawing.Sheet.PanBaseRealY) -Drawing.Sheet.GlSheet.GetHeight() / 2 +Drawing.Sheet.PanY); // +Drawing.Sheet.PanBaseY)
+            return -(Pixels(Y - Drawing.Sheet.PanBaseRealY) - (Drawing.Sheet.GlSheet?.GetHeight() ?? 0) / 2 + Drawing.Sheet.PanY); // +Drawing.Sheet.PanBaseY)
 
         }
 
@@ -1164,7 +1193,7 @@ public static class Gcd
         {
 
 
-            return Drawing.Sheet.GlSheet.GetWidth();
+            return Drawing.Sheet.GlSheet?.GetWidth() ?? 0;
 
         }
 
@@ -1172,7 +1201,7 @@ public static class Gcd
         {
 
 
-            return Drawing.Sheet.GlSheet.GetHeight();
+            return Drawing.Sheet.GlSheet?.GetHeight() ?? 0;
 
         }
 
@@ -1215,7 +1244,7 @@ public static class Gcd
         }
 
         // Centra el grafico en una posicion
-        public static void PanTo(double Xr, double Yr, Sheet s  = null)
+        public static void PanTo(double Xr, double Yr, Sheet? s  = null)
         {
 
 
@@ -1223,8 +1252,8 @@ public static class Gcd
             double Ycentro;
             if (s == null) s = Drawing.Sheet;
 
-            Xcentro = Xreal(s.GlSheet.GetWidth() / 2);
-            Ycentro = Yreal(s.GlSheet.GetHeight() / 2);
+            Xcentro = Xreal((s.GlSheet?.GetWidth() ?? 0) / 2);
+            Ycentro = Yreal((s.GlSheet?.GetHeight() ?? 0) / 2);
 
             // drw.Model.PanBaseRealX = -Xcentro
             // drw.Model.PanBaseRealY = -Ycentro
@@ -1237,7 +1266,7 @@ public static class Gcd
 
         }
 
-        public static void PanToOrigin(Sheet s = null)
+        public static void PanToOrigin(Sheet? s = null)
         {
 
 
@@ -1327,9 +1356,9 @@ public static class Gcd
 
             if (cx == 0) cx = 0.00001;
             if (cy == 0) cy = 0.00001;
-            s.ScaleZoom = s.GlSheet.GetHeight() / cy * 0.9;
+            s.ScaleZoom = (s.GlSheet?.GetHeight() ?? 1) / cy * 0.9;
 
-            szx = s.GlSheet.GetWidth() / cx * 0.9;
+            szx = (s.GlSheet?.GetWidth() ?? 1) / cx * 0.9;
 
             if (szx < s.ScaleZoom) s.ScaleZoom = szx;
 
@@ -1348,22 +1377,21 @@ public static class Gcd
 
         }
 
-    public static string LibreDWGtoDXF(string sDwgFile)
+        public static string LibreDWGtoDXF(string sDwgFile)
     {
 
 
-        string str = "";
         string filebase;
         int steps = 0;
 
         try
         {
 
-            filebase = Gb.FileFromPath(sDwgFile);
+            filebase = Gb.FileFromPath(sDwgFile) ?? "";
             //filebase = sDwgFile
             steps = 0; // elimino el archivo temporal que hubiese creado
 
-            if (File.Exists(System.IO.Path.Combine(Config.dirDwgIn, filebase))) File.Delete(System.IO.Path.Combine(Config.dirDwgIn, filebase));
+            if (!string.IsNullOrEmpty(filebase) && File.Exists(System.IO.Path.Combine(Config.dirDwgIn, filebase))) File.Delete(System.IO.Path.Combine(Config.dirDwgIn, filebase));
 
             steps = 1; // hago una copia previa a la conversion
             File.Copy(sDwgFile, System.IO.Path.Combine(Config.dirDwgIn, filebase));
@@ -1509,7 +1537,7 @@ public static class Gcd
 
         do
         {
-            s = f.ReadLine();
+            s = f.ReadLine() ?? "";
 
             s = Gb.Replace(s, "\r", "");
 
@@ -1555,7 +1583,7 @@ public static class Gcd
                     }
                     p.DashLength.Append(Gb.CDbl(sp[i]));
                 }
-                hp.patterns.Add(p);
+                hp?.patterns.Add(p);
 
             }
 
@@ -1611,7 +1639,7 @@ public static class Gcd
             }
             else
             {
-                txt = ": " + txt + "/n";
+                txt = ": " + txt ;
             }
 
             if (LogToFile)
@@ -1620,37 +1648,37 @@ public static class Gcd
                     DateTime.Now.ToString("HH:mm:ss") + " -> " + txt + Environment.NewLine);
             }
 
-    if (MismaLineaAnterior)
-    {
-        // fDebug.txtDebug.Undo;
-
-    } // no voy a loguear lineas repetidas
-    else
-    {
-        //hlog(txt)
-        Chronos = DateTime.Now.Ticks;
-    }
-
-            fDebug.AddLogMessage(txt);
-           
-
-            // txt = ": "
-            // txtDebug.Insert(txt)
-            //txtDebug.EnsureVisible
-
-            //txtDebug.Insert(": ")
-            //lastPos = txtDebug.Length
-            // en caso que el ususario tenga cerrada esta ventana, le muestro la linea en
-            //lblAyudaRapida.text = Gb.Left$(txt, -2)
-
-            //itsTime = false
-            if (forzar)
+            if (MismaLineaAnterior)
             {
-                // fdebug.txtDebug.Refresh;
-                // Wait 0;
+                // fDebug.txtDebug.Undo;
+
+            } // no voy a loguear lineas repetidas
+            else
+            {
+                //hlog(txt)
+                Chronos = DateTime.Now.Ticks;
             }
 
-            Gb.DoEvents();
+            // fDebug.AddLogMessage(txt);
+           
+
+            // // txt = ": "
+            // // txtDebug.Insert(txt)
+            // //txtDebug.EnsureVisible
+
+            // //txtDebug.Insert(": ")
+            // //lastPos = txtDebug.Length
+            // // en caso que el ususario tenga cerrada esta ventana, le muestro la linea en
+            // //lblAyudaRapida.text = Gb.Left$(txt, -2)
+
+            // //itsTime = false
+            // if (forzar)
+            // {
+            //     // fdebug.txtDebug.Refresh;
+            //     // Wait 0;
+            // }
+
+            // Gb.DoEvents();
 
         }
 

@@ -8,7 +8,7 @@
 
         public DictList() { }
 
-        public DictList(string name, string idSoftOwner = null)
+        public DictList(string name, string? idSoftOwner = null)
         {
             Name = name;
             IdSoftOwner = idSoftOwner;
@@ -64,7 +64,7 @@
 
         public DictEntry() { }
 
-        public DictEntry(string name, string id = null)
+        public DictEntry(string name, string? id = null)
         {
             Name = name;
             Id = id;

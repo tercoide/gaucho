@@ -26,31 +26,35 @@ class DrawingAids
 
 
  // Lineas de puntos para Paint
-public int dashes ;         
+public int dashes = 0;         
 
  // ayudas al usuario en pantalla
  public struct HelperSt
 {
-    public string texto;
-    public int dX; //= 5 //defasaje con respecto al mouse
-    public int dY; //= 5
-    public int fColor; //= Color.black
-    public bool ShowRect; //= True
-    public int fRectangulo; // = Color.ButtonBackground
-    public string fFont; //= "Arial" (ignorado)
-    public int fHeight; //= 20
-}
+    public string texto = "";
+    public int dX = 5; //= 5 //defasaje con respecto al mouse
+    public int dY = 5; //= 5
+    public int fColor = 0; //= Color.black
+    public bool ShowRect = true; //= True
+    public int fRectangulo = 0; // = Color.ButtonBackground
+    public string fFont = "Arial"; // = \"Arial\" (ignorado)
+    public int fHeight = 20; //= 20
+
+        public HelperSt()
+        {
+        }
+    }
 
 public static double ScreenDensity = 1080 / 29.5;   // pixele by cm wich gives a 1:100 scale in my monitor
 
-public static HelperSt Helper ;          // Esto se escribe al lado del mouse
-public static string ErrorMessage ;         
+public static HelperSt Helper = new();          // Esto se escribe al lado del mouse
+public static string ErrorMessage = "";         
 public static int ErrorTimer = 0;
-public static string HelperDibujo ;          // Se escribe abajo "Grid  Ortho" , etc
-public static string trabajoYteclado ;         
+public static string HelperDibujo = "";          // Se escribe abajo "Grid  Ortho" , etc
+public static string trabajoYteclado = "";         
 
-public static string txtSnapTo ;         
-public static string txtFrom ;   
+public static string txtSnapTo = "";         
+public static string txtFrom = "";   
 
 public static VboContainer VBO_GridPoints = new VboContainer();
 public static VboContainer VBO_text = new VboContainer();
@@ -125,7 +129,7 @@ public static void DibujaHelper()
     {
 
 
-    string sNext = "" ;         
+         
 
      // If ErrorMessage <> "" Then
      //
@@ -152,12 +156,12 @@ public static void DibujaHelper()
     if ( Gcd.Drawing.GridActive ) HelperDibujo = HelperDibujo + "  F7-Grid = " + Gcd.Drawing.GridMinorSpacing.ToString("0.00 m");
      // and so on...
 
-    Texting(HelperDibujo, 40, 10 - Gcd.Drawing.Sheet.GlSheet.GetHeight() / 2, Config.WindowInfoColor);
+    Texting(HelperDibujo, 40, 10 - (Gcd.Drawing.Sheet.GlSheet?.GetHeight() ?? 0) / 2, Config.WindowInfoColor);
 
      // helper del mouse
     if ( Helper.texto.Length == 0 ) return;
 
-    Texting(Helper.texto, Helper.dX + Mouse.X - Gcd.Drawing.Sheet.GlSheet.GetWidth() / 2, Helper.dY + -Mouse.Y + Gcd.Drawing.Sheet.GlSheet.GetHeight() / 2, Colors.Cyan, 10);
+    Texting(Helper.texto, Helper.dX + Mouse.X - (Gcd.Drawing.Sheet.GlSheet?.GetWidth() ?? 0) / 2, Helper.dY + -Mouse.Y + (Gcd.Drawing.Sheet.GlSheet?.GetHeight() ?? 0) / 2, Colors.Cyan, 10);
 
 }
 
@@ -174,12 +178,12 @@ public static void DrawDxDy(double[] p1, double[] p2, int iSizePix= 10)
      // Si dX es chico  >--< 3.45
     List<double> flxTextSize ;         
     int iTotalLength ;          // en pixeles
-    string sTextX ;         
-    string sTextY ;         
-    Entity eLineaPpal ;         
-    Entity        eOblique1 ;          // tambien pueden ser flechas Solid
-    Entity eOblique2 ;         
-    Entity eText ;         
+    string sTextX = "";         
+    string sTextY = "";         
+    Entity? eLineaPpal = null;         
+    Entity?        eOblique1 = null;          // tambien pueden ser flechas Solid
+    Entity? eOblique2 = null;         
+    Entity? eText = null;         
     double ArrowSize = Gcd.Metros(iSizePix);
     double ArrowWidth = ArrowSize / 4;
 
@@ -272,9 +276,9 @@ public static void DrawSnapText()
     {
 
 
-    double x ;         
-    double y ;         
-    string s ;         
+    double x = 0.0;         
+    double y = 0.0;         
+    string s = "";         
 
     if ( txtSnapTo == "" ) return;
     if ( Gcd.Drawing.iEntity.Count == 0 ) return;
@@ -292,9 +296,9 @@ public static void DrawCoordenadas()
 
 
      // helpers
-    string l ;         
-    string l2 ;         
-    string lEsc ;         
+    string l = "";         
+    string l2 = "";         
+    string lEsc = "";         
 
     l = Gcd.Near(Gcd.Xreal(Mouse.X)).ToString("0.00") + " : " + Gcd.Near(Gcd.Yreal(Mouse.Y)).ToString("0.00");
 
@@ -309,12 +313,7 @@ public static void DrawCoordenadas()
 
      //fMain.lblCoord.Text = l
      //fMain.lblZoom.text = l2
-    return;
-     // TODO: borrar lo q sigue
-    double e ;         
-    double z ;         
-    e = 1080 / 0.29; // pixeles por metro segun el tamaño real de la pantalla
-    z = Gcd.Metros(1); // metros por pixel segun la ampliacion del usuario (rueda del mouse)
+    return;         
     lEsc = "Esc 1:" + (1 / Gcd.Drawing.Sheet.ScaleZoom * 100 * Gcd.ScreenDensity).ToString("0");
 
     Texting(l, 10 - Gcd.Drawing.Sheet.W / 2, Gcd.Drawing.Sheet.H / 2 - 15, Config.WindowInfoColor);
@@ -345,13 +344,13 @@ public static void RebuildGrid()
     {
 
 
-    double x0 ;         
-    double y0 ;         
-    double x1 ;         
-    double y1 ;         
-    double espaciado ;         
-    double x ;         
-    double y ;         
+    double x0 = 0.0;         
+    double y0 = 0.0;         
+    double x1 = 0.0;         
+    double y1 = 0.0;         
+    double espaciado = 0.0;         
+    double x = 0.0;         
+    double y = 0.0;         
 
     x0 = Gcd.Near(Gcd.Xreal(0));
     y0 = Gcd.Near(Gcd.Yreal(0));
@@ -410,7 +409,6 @@ public static void DrawCaudricula()
 
      // crossing lines each gridspace and darker each 10m
 
-    double i =0;         
     double xgg =0;         
     double ygg =0;         
     double xg =0;         
@@ -488,9 +486,9 @@ public static void DrawGrips(List<Grip> GlxGrips)
     {
 
 
-    Grip g ;         
-    double side ;         
-    double half ;         
+    Grip? g = null;         
+    double side = 0.0;         
+    double half = 0.0;         
 
     side = Gcd.Metros(Config.GripSize);
     half = side / 2;

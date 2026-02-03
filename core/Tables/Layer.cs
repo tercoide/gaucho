@@ -3,7 +3,7 @@ public class Layer
 {
     public const string Gender = "LAYER";
     public int Colour = 0;
-    public LineType? LineType ; // String = "CONTINUOUS"
+    public LineType? LineType = null; // String = "CONTINUOUS"
     public string Name = "";
     public int LineWt = -3;
     public string id="";
@@ -12,7 +12,7 @@ public class Layer
     public bool Locked = false;
     public bool Printable = true;
     public bool Hidden = false;                // Esta propiedad no puede ser modificada por el user
-    public int glList;      // DEPRE
+    public int glList = 0;      // DEPRE
 
     
 

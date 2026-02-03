@@ -7,7 +7,7 @@ using Gaucho;
 using HarfBuzz;
 
 
-static class dxf
+static class Dxf
 {
  // Gambas module file
 
@@ -351,8 +351,8 @@ private static void ReadData()
     if (lpCode != null && lpCode.Length > 0 && lpCode.EndsWith("\r")) lpCode = lpCode.Substring(0, lpCode.Length - 1);
     if (lpValue != null && lpValue.Length > 0 && lpValue.EndsWith("\r")) lpValue = lpValue.Substring(0, lpValue.Length - 1);
 
-    lpCode = Gb.Trim(lpCode);
-    lpValue = Gb.Trim(lpValue);
+    lpCode = Gb.Trim(lpCode ?? "");
+    lpValue = Gb.Trim(lpValue ?? "");
 
      // updating percentage
 
@@ -409,7 +409,7 @@ private static void Load1HeadersDirect(Headers Headers)
 
             }
 
-        } while (!fp.EndOfStream);
+        } while (!(fp?.EndOfStream ?? true));
     
 
     Gcd.debugInfo("DXF: Leidas " + i + " variables de ambiente");
@@ -423,7 +423,7 @@ private static void Load2Classes(Drawing drw)
 
     
 
-        while  (!fp.EndOfStream)
+        while  (!(fp?.EndOfStream ?? true))
         {
 
             if (lpValue == "CLASSES") ReadData();
@@ -434,7 +434,7 @@ private static void Load2Classes(Drawing drw)
 
             ReadData();
 
-                while ((lpCode != "0") && !fp.EndOfStream)
+                while ((lpCode != "0") && !(fp?.EndOfStream ?? true))
                 {
                     // if (lpCode == "0") cClass.recordtype = lpValue;
                     // if (lpCode == "1") cClass.recordName = lpValue;
@@ -892,7 +892,7 @@ private static void Load7Thumbnail(Dictionary<string, string> cThumbnail)
 
         }
 
-    } while ( !fp.EndOfStream );
+    } while ( !(fp?.EndOfStream ?? true) );
 
 }
 
@@ -1000,7 +1000,7 @@ public static int SaveFile(string sName, Drawing drwToSave, bool LoadMinimal= fa
     Save6Objects(drwToSave);
     if ( SaveThumbnail )
     {
-        Save7ThumbNail(null);
+        Save7ThumbNail("");
     }
 
     hFile.Close();
@@ -1011,7 +1011,7 @@ public static int SaveFile(string sName, Drawing drwToSave, bool LoadMinimal= fa
 
 private static int Save1HeadersAndVarsDirect(Drawing drwToSave)
     {
-    hFile.WriteLine( "999" + "\n");
+    hFile?.WriteLine( "999" + "\n");
     hFile.WriteLine( "GambasCAD" + "\n");
     hFile.WriteLine( "  0" + "\n");
     hFile.WriteLine( "SECTION" + "\n");
@@ -1991,7 +1991,7 @@ var de = de2.Value;
 
 }
 
-private static int Save7ThumbNail(Gtk.Image imgGLArea)
+private static int Save7ThumbNail(string imagefile) //Gtk.Image imgGLArea)
     {
 
 
@@ -3142,7 +3142,7 @@ public static void ReadObjectsFromDXF(Dictionary<string, Dictionary<string, stri
 }
 
  // busca un bloque con ese block record
-private static Block GetBlock(Dictionary<string, Block> cBlocks, string hBlockRecord)
+private static Block? GetBlock(Dictionary<string, Block> cBlocks, string hBlockRecord)
     {
 
 

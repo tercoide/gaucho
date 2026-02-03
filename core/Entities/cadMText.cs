@@ -29,60 +29,60 @@ public const string Gender = "MTEXT";
 public const int DrawingOrder = 100;  // 1 a 32.724 esto debe Drawse primero y ser sobreescrito por el resto
 public const int PointsToDraw = 1;              // minimal point requered for drawing something usefull
 public const string CmdLineHelper = ("Inserts a multiline text");
-public const string ParamType = "PAFT";
-public const string ParamHelper = "Start point;Angle;Heigth;";      // a little text that is shown at the prompt waiting for user input during build
-public const string ParamDefault = " ; 0 ; 10 ; ";
-public const bool Regenerable = true;
-public static double TextAngle ;         
+public new const string ParamType = "PAFT";
+public new const string ParamHelper = "Start point;Angle;Heigth;";      // a little text that is shown at the prompt waiting for user input during build
+public new const string ParamDefault = " ; 0 ; 10 ; ";
+public new const bool Regenerable = true;
+public static double TextAngle = 0.0;         
 
-public  string[] TextLines ;         
-public  static List<double>  TextHeigth ;         
-public  static List<double> TextPosX ;         
-public  static List<double> TextBoxWidth ;         
-public  static List<double> TextPosY ;         
-public  static List<double> TextBoxHeight ;         
-public  static List<int> TextAlignment ;         
-public  static List<string> TextFont ;         
-public  static List<bool> TextBold ;         
-public static string CurrentTextLines ;         
-public static double CurrentTextHeigth ;         
-public static double OriginalTextHeigth ;         
-public static double CurrentTextPosX ;         
-public static double OriginalTextPosX ;         
-public static double OriginalTextPosY ;         
-public static double CurrentTextBoxWidth ;         
-public static double CurrentTextPosY ;         
-public static double CurrentTextBoxHeight ;         
-public static int CurrentTextAlignment ;          // horizontal alignment 0 left/1 center/2 right
-public static int CurrentTextAlignmentVertical ;          //
-public static int CurrentParagraphAlignment ;          //
+public  string[] TextLines = [];         
+public  static List<double>  TextHeigth = new();         
+public  static List<double> TextPosX = new();         
+public  static List<double> TextBoxWidth = new();         
+public  static List<double> TextPosY = new();         
+public  static List<double> TextBoxHeight = new();         
+public  static List<int> TextAlignment = new();         
+public  static List<string> TextFont = new();         
+public  static List<bool> TextBold = new();         
+public static string CurrentTextLines = "";         
+public static double CurrentTextHeigth = 0.0;         
+public static double OriginalTextHeigth = 0.0;         
+public static double CurrentTextPosX = 0.0;         
+public static double OriginalTextPosX = 0.0;         
+public static double OriginalTextPosY = 0.0;         
+public static double CurrentTextBoxWidth = 0.0;         
+public static double CurrentTextPosY = 0.0;         
+public static double CurrentTextBoxHeight = 0.0;         
+public static int CurrentTextAlignment = 0;          // horizontal alignment 0 left/1 center/2 right
+public static int CurrentTextAlignmentVertical = 0;          //
+public static int CurrentParagraphAlignment = 0;          //
 public static double CurrentTextRelScaleX = 1;
 
-public static string CurrentTextFont ;         
-public static bool CurrentTextBold ;         
-public static double CurrentTextItalicAngle ;         
-public static bool CurrentTextCrossed ;         
-public static bool CurrentTextUnderline ;         
-public static bool CurrentTextOverline ;         
+public static string CurrentTextFont = "";         
+public static bool CurrentTextBold = false;         
+public static double CurrentTextItalicAngle = 0.0;         
+public static bool CurrentTextCrossed = false;         
+public static bool CurrentTextUnderline = false;         
+public static bool CurrentTextOverline = false;         
 
-public static double CurrentTextAngle ;         
-public static int CurrentTextColor ;         
+public static double CurrentTextAngle = 0.0;         
+public static int CurrentTextColor = 0;         
 
-public static int Lines ;         
-public static bool Line ;         
-public static bool Trimmed ;         
-public static bool TrimText ;         
+public static int Lines = 0;         
+public static bool Line = false;         
+public static bool Trimmed = false;         
+public static bool TrimText = false;         
 
-public static int LastTextLengh ;         
+public static int LastTextLengh = 0;         
 
  // to create the contour
 
-public static List<double> flxText ;         
+public static List<double> flxText = new();         
 
-public static List<TextStyle>  TxtStyles ;          // creados a partir de {}
-public static TextStyle  TxtStyle ;          // el que estoy usando
+public static List<TextStyle>  TxtStyles = new();          // creados a partir de {}
+public static TextStyle  TxtStyle = new TextStyle();          // el que estoy usando
 
-public static bool esperar ;         
+public static bool esperar = false;         
 
  // fParam helpers
 public const int TotalParams = 13;
@@ -106,14 +106,14 @@ public const int sdaText = 0;
 public const int sdaStyle = 1;
 public const int TotalPoints = 1;  // 2021 cambie esto
 
-public static int PrintingType ;         
+public static int PrintingType = 0;         
 
-public static List<double> MyPolygon ;         
+public static List<double> MyPolygon = new();         
 
  // The entity handler receives a user action, and returns the number of expected parameter
  // If definitive = true, means the parameter is set
 public bool NewParameter(Entity eBuild, List<string> vParam, bool Definitive= false)
-    {
+{
 
 
     double f =0.0   ;         
@@ -171,7 +171,7 @@ public void Translate(Entity e, double dx, double dy, bool OnlySelected= false)
     {
 
 
-    int i ;         
+    int i = 0;         
 
     if ( OnlySelected )
     {
@@ -228,7 +228,7 @@ public void DrawSelected(Entity oE)
     {
 
 
-    Glx.DrawLines(oE.PolyLine, Colors.Gradient(Gcd.GetGBColor(oE.Colour, oE.pLayer), Config.ModelBackgroundColor), Gcd.GetLineWt(oE.LineWidth, oE.pLayer));
+    Glx.DrawLines(oE.PolyLine, Colors.Gradient(Gcd.GetGBColor(oE.Colour, oE.pLayer), Config.ModelBackgroundColor), Gcd.GetLineWt(oE.LineWidth, oE.pLayer!));
 
 }
 
@@ -239,7 +239,7 @@ public void DrawRemark(Entity oE)
 
     if ( ! oE.Visible ) return;
 
-    Glx.DrawLines(oE.PolyLine, Colors.Gradient(Gcd.GetGBColor(oE.Colour, oE.pLayer), Config.WhiteAndBlack), Gcd.GetLineWt(oE.LineWidth, oE.pLayer));
+    Glx.DrawLines(oE.PolyLine, Colors.Gradient(Gcd.GetGBColor(oE.Colour, oE.pLayer), Config.WhiteAndBlack), Gcd.GetLineWt(oE.LineWidth, oE.pLayer!));
 
 }
 
@@ -273,7 +273,7 @@ public void Draw(Entity oE)
 
     if ( ! oE.Visible ) return;
 
-    Glx.DrawLines(oE.PolyLine, Gcd.GetGBColor(oE.Colour, oE.pLayer), Gcd.GetLineWt(oE.LineWidth, oE.pLayer));
+    Glx.DrawLines(oE.PolyLine, Gcd.GetGBColor(oE.Colour, oE.pLayer), Gcd.GetLineWt(oE.LineWidth, oE.pLayer!));
 
 }
 
@@ -362,8 +362,8 @@ public void makepolyline(Entity oE)
     CurrentTextColor = Gcd.GetGBColor(oE.Colour, oE.pLayer);
     TrimText = true;
 
-     // https://ezdxf.readthedocs.io/en/stable/tutorials/mtext.html
-     // https://ezdxf.readthedocs.io/en/stable/dxfentities/mtext.html#mtext-inline-codes
+     // https://ezDxf.readthedocs.io/en/stable/tutorials/mtext.html
+     // https://ezDxf.readthedocs.io/en/stable/dxfentities/mtext.html#mtext-inline-codes
 
      // MTEXT tiene in-line formatting, ver esa web
 
@@ -402,8 +402,8 @@ public void ProcessText3(Entity oE)
      List<string> sLines ;         
     string rtf = "";         
     // string sRemains ;         
-    string sToProcess ;         
-     List<double> fRect ;         
+    string sToProcess = "";         
+     List<double> fRect = new();         
     double px =0.0 ;         
     double py =0.0 ;         
     double dx =0.0 ;         
@@ -987,66 +987,66 @@ public bool SaveDxfData(Entity e)
     {
 
 
-    int i ;         
-    string sText ;         
+    int i = 0;         
+    string sText = "";         
 
-     // stxExport.AddRange(["MTEXT", dxf.codEntity])
+     // stxExport.AddRange(["MTEXT", Dxf.codEntity])
      // Los datos comunes a todas las entidades son guardados por la rutina que llama a esta
-    dxf.SaveCodeInv("AcDbMText", "100");
+    Dxf.SaveCodeInv("AcDbMText", "100");
 
-    dxf.SaveCodeInv((e.P[0]), dxf.codX0); // insertion point
-    dxf.SaveCodeInv((e.P[1]), dxf.codY0);
-    dxf.SaveCodeInv("0", dxf.codZ0);
+    Dxf.SaveCodeInv((e.P[0]), Dxf.codX0); // insertion point
+    Dxf.SaveCodeInv((e.P[1]), Dxf.codY0);
+    Dxf.SaveCodeInv("0", Dxf.codZ0);
 
-    dxf.SaveCodeInv((e.fParam[ipaTextHeight]), "40"); // heigth
-    dxf.SaveCodeInv((e.fParam[ipaRectangleWidth]), "41"); // Rectang width
-    dxf.SaveCodeInv(e.fParam[ipaAttchmPoint], "71"); // attchm point
-    dxf.SaveCodeInv(e.fParam[ipaDrawingDirec], "72"); // drawing direction
+    Dxf.SaveCodeInv((e.fParam[ipaTextHeight]), "40"); // heigth
+    Dxf.SaveCodeInv((e.fParam[ipaRectangleWidth]), "41"); // Rectang width
+    Dxf.SaveCodeInv(e.fParam[ipaAttchmPoint], "71"); // attchm point
+    Dxf.SaveCodeInv(e.fParam[ipaDrawingDirec], "72"); // drawing direction
 
     if ( e.sParam[0].Length > 250 )
     {
-        dxf.SaveCodeInv(Gb.Left(e.sParam[sdaText], 250), "1"); // Texti = 250
+        Dxf.SaveCodeInv(Gb.Left(e.sParam[sdaText], 250), "1"); // Texti = 250
         i = 251; // next offset
         do {
 
             if ( e.sParam[0].Length - i > 250 )
             {
                 sText =Gb.Mid(e.sParam[0], i, 250);
-                dxf.SaveCodeInv(sText, "3"); // Texti += 250
+                Dxf.SaveCodeInv(sText, "3"); // Texti += 250
                 i += 250;
             } else {
                 sText =Gb.Mid(e.sParam[0], i);
-                dxf.SaveCodeInv(sText, "3"); // Texti += 250
+                Dxf.SaveCodeInv(sText, "3"); // Texti += 250
                 break;
 
             }
 
         }while ( true );
     } else {
-        dxf.SaveCodeInv(e.sParam[sdaText], "1"); // Text
+        Dxf.SaveCodeInv(e.sParam[sdaText], "1"); // Text
     }
 
-    dxf.SaveCodeInv(e.sParam[sdaStyle], "7"); // text style
+    Dxf.SaveCodeInv(e.sParam[sdaStyle], "7"); // text style
     if ( e.Extrusion[2] != 1 )
     {
-        dxf.SaveCodeInv((e.Extrusion[0]), "210");
-        dxf.SaveCodeInv((e.Extrusion[1]), "220");
-        dxf.SaveCodeInv((e.Extrusion[2]), "230");
+        Dxf.SaveCodeInv((e.Extrusion[0]), "210");
+        Dxf.SaveCodeInv((e.Extrusion[1]), "220");
+        Dxf.SaveCodeInv((e.Extrusion[2]), "230");
     }
 
-    dxf.SaveCodeInv((e.fParam[ipaTextAngle]), "50"); // rotation in radians
+    Dxf.SaveCodeInv((e.fParam[ipaTextAngle]), "50"); // rotation in radians
 
-    dxf.SaveCodeInv((e.fParam[ipaBackFillType]), "90"); // Background fill style
+    Dxf.SaveCodeInv((e.fParam[ipaBackFillType]), "90"); // Background fill style
 
-    dxf.SaveCodeInv((e.fParam[ipaBackColor]), "63"); // Background color
+    Dxf.SaveCodeInv((e.fParam[ipaBackColor]), "63"); // Background color
 
-    dxf.SaveCodeInv("0", "75"); // Column type
-    dxf.SaveCodeInv("0", "76"); // Column count
-    dxf.SaveCodeInv("0", "78"); // Column Flow Reversed
-    dxf.SaveCodeInv("0", "79"); // Column Autoheight
-    dxf.SaveCodeInv("0", "48"); // Column width
-    dxf.SaveCodeInv("0", "49"); // Column gutter
-    dxf.SaveCodeInv("0", "50"); // Column heights
+    Dxf.SaveCodeInv("0", "75"); // Column type
+    Dxf.SaveCodeInv("0", "76"); // Column count
+    Dxf.SaveCodeInv("0", "78"); // Column Flow Reversed
+    Dxf.SaveCodeInv("0", "79"); // Column Autoheight
+    Dxf.SaveCodeInv("0", "48"); // Column width
+    Dxf.SaveCodeInv("0", "49"); // Column gutter
+    Dxf.SaveCodeInv("0", "50"); // Column heights
 
     return true;
 
@@ -1066,26 +1066,26 @@ public bool ImportDXF(Entity e, List<string> sClaves, List<string> sValues)
 
      // Leo los datos comunes a todas las entidades
 
-    e.P[0] = Gb.CDbl(dxf.ReadCodePlusNext(10, sClaves, sValues, 0, 101, 100));
-    e.P[1] = Gb.CDbl(dxf.ReadCodePlusNext(20, sClaves, sValues, 0, 101, 100));
-    e.fParam[ipaTextHeight] = Gb.CDbl(dxf.ReadCodePlusNext(40, sClaves, sValues, 0, 101, 100));
-    e.fParam[ipaRectangleWidth] = Gb.CDbl(dxf.ReadCodePlusNext(41, sClaves, sValues, 0, 101, 100));
+    e.P[0] = Gb.CDbl(Dxf.ReadCodePlusNext(10, sClaves, sValues, 0, 101, 100));
+    e.P[1] = Gb.CDbl(Dxf.ReadCodePlusNext(20, sClaves, sValues, 0, 101, 100));
+    e.fParam[ipaTextHeight] = Gb.CDbl(Dxf.ReadCodePlusNext(40, sClaves, sValues, 0, 101, 100));
+    e.fParam[ipaRectangleWidth] = Gb.CDbl(Dxf.ReadCodePlusNext(41, sClaves, sValues, 0, 101, 100));
 
-    e.fParam[ipaAttchmPoint] = Gb.CDbl(dxf.ReadCodePlusNext(71, sClaves, sValues, 0, 101, 100));
-    e.fParam[ipaDrawingDirec] = Gb.CDbl(dxf.ReadCodePlusNext(72, sClaves, sValues, 0, 101, 100));
-    e.sParam[sdaText] = dxf.ReadCodePlusNext(1, sClaves, sValues, 0, 101, 100);
+    e.fParam[ipaAttchmPoint] = Gb.CDbl(Dxf.ReadCodePlusNext(71, sClaves, sValues, 0, 101, 100));
+    e.fParam[ipaDrawingDirec] = Gb.CDbl(Dxf.ReadCodePlusNext(72, sClaves, sValues, 0, 101, 100));
+    e.sParam[sdaText] = Dxf.ReadCodePlusNext(1, sClaves, sValues, 0, 101, 100);
     do {
-        i = dxf.ReadCodePlus(3, sClaves, sValues, ref s,0, 101, i);
+        i = Dxf.ReadCodePlus(3, sClaves, sValues, ref s,0, 101, i);
         if ( s == "" ) break;
         e.sParam[sdaText] += s;
     }while ( true );
-    e.sParam[sdaStyle] = dxf.ReadCodePlusNext(7, sClaves, sValues,0, 101, 100);
-    ax = Gb.CDbl(dxf.ReadCodePlusNext(11, sClaves, sValues, 0, 101, 100));
-    ay = Gb.CDbl(dxf.ReadCodePlusNext(21, sClaves, sValues, 0, 101, 100));
-    az = Gb.CDbl(dxf.ReadCodePlusNext(31, sClaves, sValues, 0, 101, 100));
-    e.fParam[ipaTextAngle] = Gb.CDbl(dxf.ReadCodePlusNext(50, sClaves, sValues, 0, 101, 100));
-    e.fParam[ipaBackFillType] = Gb.CDbl(dxf.ReadCodePlusNext(90, sClaves, sValues, 0, 101, 100));
-    e.fParam[ipaBackColor] = Gb.CDbl(dxf.ReadCodePlusNext(63, sClaves, sValues, 0, 101, 100));
+    e.sParam[sdaStyle] = Dxf.ReadCodePlusNext(7, sClaves, sValues,0, 101, 100);
+    ax = Gb.CDbl(Dxf.ReadCodePlusNext(11, sClaves, sValues, 0, 101, 100));
+    ay = Gb.CDbl(Dxf.ReadCodePlusNext(21, sClaves, sValues, 0, 101, 100));
+    az = Gb.CDbl(Dxf.ReadCodePlusNext(31, sClaves, sValues, 0, 101, 100));
+    e.fParam[ipaTextAngle] = Gb.CDbl(Dxf.ReadCodePlusNext(50, sClaves, sValues, 0, 101, 100));
+    e.fParam[ipaBackFillType] = Gb.CDbl(Dxf.ReadCodePlusNext(90, sClaves, sValues, 0, 101, 100));
+    e.fParam[ipaBackColor] = Gb.CDbl(Dxf.ReadCodePlusNext(63, sClaves, sValues, 0, 101, 100));
 
     if ( (ax != 0) || (ay != 0) || (az != 0) )
     {
@@ -1109,8 +1109,8 @@ public int GenerateGrips(Entity e)
     int i =0;         
     // Grip g ;         
     int iCount =0 ;         
-    double OffsetWidth ;         
-    double OffsetHeigth ;         
+    double OffsetWidth = 0.0;         
+    double OffsetHeigth = 0.0;         
     double h = 0.0;         
      List<double> flxGrip = new List<double>();         
 
@@ -1223,19 +1223,19 @@ public bool GripEdit(Grip g)
     {
 
 
-    Entity e ;         
-    double r ;         
-    double r1 ;         
-    double r2 ;         
-    double Xr ;         
-    double Yr ;         
-    double xs ;         
-    double ys ;         
-    double l ;         
-    double d ;         
-    double x ;         
-    double l0 ;         
-    double fAngle ;         
+    Entity? e = null;         
+    double r = 0.0;         
+    double r1 = 0.0;         
+    double r2 = 0.0;         
+    double Xr = 0.0;         
+    double Yr = 0.0;         
+    double xs = 0.0;         
+    double ys = 0.0;         
+    double l = 0.0;         
+    double d = 0.0;         
+    double x = 0.0;         
+    double l0 = 0.0;         
+    double fAngle = 0.0;         
 
     e = g.AsociatedEntity;
     switch ( g.Action)

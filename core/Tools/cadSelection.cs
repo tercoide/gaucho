@@ -30,15 +30,15 @@ public class cadSelection : ToolsBase, IToolsBase
  // Create Static
 public string Gender { get; } = "SELECT";
 
-public static string[] EntityType ;         
+public static string[] EntityType = [];         
 
 public static Grip GripPoint =new Grip();         
 public static Grip GripHovered = new Grip();
     public static bool GripCopying = false;
  //Public GripCopying As Boolean = false
 
-public static double dX ;         
-public static double dY ;         
+public static double dX = 0.0;         
+public static double dY = 0.0;         
  //Public ToolActive As Boolean = false
 public static bool PanActive = false;
 public static bool GripActive = false;
@@ -63,7 +63,7 @@ public const int SelectModeRem = 2;
 
 public static bool SelectCrossing = false;                 // las entidades puedn estar parcialmente dentro del contorno
 
-public static List<double> SelectionPoly ;         
+public static List<double> SelectionPoly = new();         
 
  // Funcionamiento:
 

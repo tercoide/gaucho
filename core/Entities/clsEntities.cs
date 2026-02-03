@@ -10,7 +10,7 @@
     //
     // You should compile this together with the rest of the converted code and wire the external dependencies.
     using OpenTK.Graphics.OpenGL4;
-    
+    using Gaucho;
     public static class clsEntities
     {
         // Buffer IDs previously an Integer[] Collection in Gambas
@@ -23,7 +23,7 @@
         }
 
         // Edit properties for a collection of entities
-        public static bool EditEntities(string sProperty, string vValue, bool DoRegen = true, Dictionary<string, Entity> cEntities = null)
+        public static bool EditEntities(string sProperty, string vValue, bool DoRegen = true, Dictionary<string, Entity>? cEntities = null)
         {
             if (cEntities == null) cEntities = Gcd.Drawing.Sheet.EntitiesSelected ?? new Dictionary<string, Entity>();
 
@@ -213,7 +213,7 @@
         // }
 
         // Build GL display lists for entity(s)
-        public static void GlGenDrawList(Entity eEntity = null)
+        public static void GlGenDrawList(Entity? eEntity = null)
         {
             if (eEntity != null)
             {
@@ -312,7 +312,7 @@
             
         }
 
-        public static void GlGenDrawListLayers(Layer aLayer = null)
+        public static void GlGenDrawListLayers(Layer? aLayer = null)
         {
             if (aLayer != null)
             {
@@ -382,7 +382,7 @@
             return e;
         }
 
-        public static Dictionary<string, Entity> ClonElements(Dictionary<string, Entity> cEntities = null, bool GenerateGlList = true)
+        public static Dictionary<string, Entity> ClonElements(Dictionary<string, Entity>? cEntities = null, bool GenerateGlList = true)
         {
             var result = new Dictionary<string, Entity>();
             var cToClone = cEntities ?? Gcd.Drawing.Sheet.EntitiesSelected;
@@ -511,7 +511,7 @@
             Gcd.Drawing.Sheet.EntitiesSelected.Remove(eEntity.id);
         }
 
-        public static void Move(double dX, double dY, Dictionary<string, Entity> cEntitiesToMove = null, bool OnlyPointSelected = false, bool DoUndo = false)
+        public static void Move(double dX, double dY, Dictionary<string, Entity>? cEntitiesToMove = null, bool OnlyPointSelected = false, bool DoUndo = false)
         {
             if (cEntitiesToMove == null) cEntitiesToMove = Gcd.Drawing.Sheet.EntitiesSelected;
             foreach (var ep in cEntitiesToMove)
@@ -524,7 +524,7 @@
 
         public static void Rotate(Entity e, double degAngle) => Gcd.CCC[e.Gender].Rotate(e, degAngle);
 
-        public static void Draw(Entity e, Sheet s = null) => Gcd.CCC[e.Gender].Draw(e);
+        public static void Draw(Entity e, Sheet? s = null) => Gcd.CCC[e.Gender].Draw(e);
 
         public static void Draw2(Entity e, Sheet s = null) => Gcd.CCC[e.Gender].Draw2(e);
 
@@ -691,14 +691,14 @@
         public static bool SelPartial(Entity eTesting, double X1real, double Y1real, double X2real, double Y2real)
             => Gcd.CCC[eTesting.Gender].SelPartial(eTesting, X1real, Y1real, X2real, Y2real);
 
-        public static Entity DXFImportToEntity(Drawing drw, Dictionary<string, string> c, bool IsDummy = false)
+        public static Entity? DXFImportToEntity(Drawing drw, Dictionary<string, string> c, bool IsDummy = false)
         {
             // This function depends on dxf parsing utilities and entity factories.
             // Keep the logic and delegate to per-entity importers.
             var keys = new List<string>();
             var values = new List<string>();   
-            dxf.DigestColeccion(c, ref keys, ref values);
-            var entityType = c.ContainsKey("0") ? c["0"] : null;
+            Dxf.DigestColeccion(c, ref keys, ref values);
+            var entityType = c.TryGetValue("0", out string? value) ? value : "";
             if (string.IsNullOrEmpty(entityType)) return null;
 
             var e = Gcd.CCC[entityType].NewEntity();

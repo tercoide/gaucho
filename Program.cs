@@ -9,7 +9,7 @@ class Program
     static void Main(string[] args)
     {
         Starter.args = args;
-        Starter.main();
+        
         var app = Gtk.Application.New("org.gaucho.app", Gio.ApplicationFlags.FlagsNone);
     
         app.OnActivate += OnActivated;
@@ -25,7 +25,7 @@ class Program
         // Show splash screen first
         var splash = new fSplash();
         splash.ShowSplash();
-        
+        Starter.main();
         // Create main window (but don't show it yet)
         var window = new fMain(application);
         

@@ -18,11 +18,11 @@ public static class clsMouseTracking
 
 
 
-public static Entity   LastFound ;          // ultima entidad encontrada
-public static double LastPointToCursorDistance ;         
+public static Entity?   LastFound = null;          // ultima entidad encontrada
+public static double LastPointToCursorDistance = 0.0;         
 public static bool WaitEnabled = true;
-public static bool Searching ;         
-public static Dictionary<string, Entity> EntitiesSearchables ;         
+public static bool Searching = false;         
+public static Dictionary<string, Entity> EntitiesSearchables = new();         
         
 public static int SearchingSpeed = 250;    // la cantidad de entidades que busco por 0.1 segundos
 
@@ -32,19 +32,19 @@ public static void CollectEntitiesAroundMouse(double Xr, double Yr, int iToleran
     {
 
 
-    double x0 ;         
-    double y0 ;         
-    double x1 ;         
-    double y1 ;         
-    Layer lay ;         
-    Entity e ;         
-    int i ;         
-    int tot ;         
-    Sheet s ;         
-    string ho ;         
-    Timer t ;         
-    bool insideX ;         
-    bool insideY ;         
+    double x0 = 0.0;         
+    double y0 = 0.0;         
+    double x1 = 0.0;         
+    double y1 = 0.0;         
+    Layer? lay = null;         
+    Entity? e = null;         
+    int i = 0;         
+    int tot = 0;         
+    Sheet? s = null;         
+    string ho = "";         
+    Timer? t = null;         
+    bool insideX = false;         
+    bool insideY = false;         
     double tolerance = Gcd.Metros(iTolerance);
     int iCount =0;         
 
@@ -118,14 +118,14 @@ public static void CollectEntitiesAroundMouse(double Xr, double Yr, int iToleran
 
 // }
 
-public static List<double> CheckBestPOI(double Xr, double Yr, Entity eExclude = null)
+public static List<double> CheckBestPOI(double Xr, double Yr, Entity? eExclude = null)
     {
 
 
      List<double> CurrentPoint = new List<double>();
      List<double> BestPoint = new List<double>();         
-    double d ;         
-    double ShortestDistance ;         
+    double d = 0.0;         
+    double ShortestDistance = 1e10;         
     //  Entity e ;         
 
     BestPoint.Add(0);
@@ -172,19 +172,19 @@ public static List<double> CheckBestPOI(double Xr, double Yr, Entity eExclude = 
 }
 
  // Veo si estoy sobre una entidad y la devuelvo
-public static List<Entity> CheckAboveEntity(double Xr, double Yr, int iTolerance= 12, Entity SkipEntiy = null)
+public static List<Entity> CheckAboveEntity(double Xr, double Yr, int iTolerance= 12, Entity? SkipEntiy = null)
     {
 
 
-    int iVisible ;         
+    int iVisible = 0;         
     bool Found = true;
-    Entity eVisible ;         
-    Entity ePartFound ;         
-    Entity eInsertFound ;         
-    Entity eBounded ;         
-    Entity ePolyline ;         
+    Entity? eVisible = null;         
+    Entity? ePartFound = null;         
+    Entity? eInsertFound = null;         
+    Entity? eBounded = null;         
+    Entity? ePolyline = null;         
     double tolerance = Gcd.Metros(iTolerance);
-    Entity eFound ;         
+    Entity? eFound = null;         
 
     Gcd.flgSearchingAllowed = false;
     iVisible = 0;
@@ -267,8 +267,8 @@ public static List<double> CheckPOI(double Xr, double Yr, Entity e)
 
      List<double> rData = new List<double>();
      List<double> CurrentPoint = new List<double>();
-    Entity e2 ;         
-    Entity ePart ;         
+    Entity? e2 = null;         
+    Entity? ePart = null;         
     int indexEntity =0;         
     int i =0;         
     int iInter =0;         
@@ -307,7 +307,7 @@ public static List<double> CheckPOI(double Xr, double Yr, Entity e)
     double DistInter = 1e6;
     double DistNearest = 1e6;
     double Dist = 1e5;   // el menor
-    double DistEnd1B ;         
+    double DistEnd1B = 1e6;         
     double DistEnd2B =1e6;         
     double DistMidB =1e6;         
     double tolerance=0;         
@@ -879,15 +879,15 @@ public static List<double> GetNearestPoint(Entity e, double Xr, double Yr)
     {
 
 
-    double x2 ;         
-    double y2 ;         
-    double c ;         
-    double d ;         
-    double dx ;         
-    double dy ;         
-    double m1 ;         
-    double m2 ;         
-    double angle ;         
+    double x2 = 0.0;         
+    double y2 = 0.0;         
+    double c = 0.0;         
+    double d = 0.0;         
+    double dx = 0.0;         
+    double dy = 0.0;         
+    double m1 = 0.0;         
+    double m2 = 0.0;         
+    double angle = 0.0;         
     List<double> flxIntersec = new List<double>();         
 
     switch ( e.Gender)
