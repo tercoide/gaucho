@@ -30,6 +30,8 @@ public class cadSelection : ToolsBase, IToolsBase
  // Create Static
 public string Gender { get; } = "SELECT";
 
+
+
 public static string[] EntityType = [];         
 
 public static Grip GripPoint =new Grip();         

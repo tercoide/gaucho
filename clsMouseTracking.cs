@@ -265,8 +265,8 @@ public static List<double> CheckPOI(double Xr, double Yr, Entity e)
     {
 
 
-     List<double> rData = new List<double>();
-     List<double> CurrentPoint = new List<double>();
+    List<double> rData = new List<double>();
+    List<double> CurrentPoint = new List<double>();
     Entity? e2 = null;         
     Entity? ePart = null;         
     int indexEntity =0;         
@@ -280,13 +280,13 @@ public static List<double> CheckPOI(double Xr, double Yr, Entity e)
     double base1 =0;         
     double pend2 =0;         
     double base2 =0;         
-     List<double> pNea = new List<double>();
-     List<double> puntoB = new List<double>();
-     List<double> puntoA = new List<double>();
-     List<double> pIntersection = new List<double>();
-     List<double> pInter = new List<double>();
-     List<double> pInterPoly = new List<double>();
-     List<double> pInterPoly2 = new List<double>();         
+    List<double> pNea = new List<double>();
+    List<double> puntoB = new List<double>();
+    List<double> puntoA = new List<double>();
+    List<double> pIntersection = new List<double>();
+    List<double> pInter = new List<double>();
+    List<double> pInterPoly = new List<double>();
+    List<double> pInterPoly2 = new List<double>();         
     double End1X =0;         
     double End1Y =0;         
     double End2X =0;         
@@ -313,18 +313,18 @@ public static List<double> CheckPOI(double Xr, double Yr, Entity e)
     double tolerance=0;         
     double d =0;         
     double ShortestDistance =0;   
-           double qx =0;         
-            double qy =0;         
-            double q1 =0;         
-            double q2 =0;         
-            double q3 =0;         
-            double q4 =0; 
-             double tx =0;         
-                double ty =0;         
-                double t1x =0;         
-                double t1y =0;         
-                double t2x =0;         
-                double t2y =0;       
+    double qx =0;         
+    double qy =0;         
+    double q1 =0;         
+    double q2 =0;         
+    double q3 =0;         
+    double q4 =0; 
+    double tx =0;         
+    double ty =0;         
+    double t1x =0;         
+    double t1y =0;         
+    double t2x =0;         
+    double t2y =0;       
 
      // If Me.flgSearchingPOI Then Return   // no nesting this
     Gcd.flgSearchingPOI = true;

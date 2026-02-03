@@ -1,13 +1,15 @@
 using Gaucho;
 using Gtk;
 
-class cadZoomW :  ToolsBase
+class cadZoomW :  ToolsBase, IToolsBase
 {
  
  // Tool maintained by Terco
 
 
 const string Gender = "ZOOMW";
+
+public const bool IsTool = true;
 
 public bool Start(string ElemToBuild, int _Mode= 0)
     {

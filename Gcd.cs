@@ -385,6 +385,9 @@ public static class Gcd
         public static void main()
         {
 
+            // Para cargar las imagenes GTK tiene que estar inicializado. O sea que esta rutina 
+            // debe correr despues de Gtk.Application.Run()
+
 
         switch (Config.WindowBackColor)
         {
@@ -398,8 +401,8 @@ public static class Gcd
 
         }
             
-            // fDebug = new DebugWindow();
-            // fDebug.Show();
+            fDebug = new DebugWindow();
+            fDebug.Show();
 
             //If WindowBackColor = 0 Then WhiteAndBlack = Color.White Else WhiteAndBlack = Color.Black
             // // armo el array de colores
@@ -431,8 +434,8 @@ public static class Gcd
 
             FontReplacements.Add("arial","kochigothic");
             // FIXME
-            // TextureList = glx.LoadTextures(System.IO.Path.Combine(Config.dirResources, "textures"));
-            //texturelist = glx.LoadTextures(Gcd.sTextures)
+            TextureList = Glx.LoadTextures(System.IO.Path.Combine(Config.dirResources, "textures"));
+            // texturelist = glx.LoadTextures(Gcd.sTextures)
             // debugInfo(System.IO.Path.Combine(Config.dirResources, "png", "visible_on.png"), false, false, true);
             // debugInfo("EXISTE? " + File.Exists(System.IO.Path.Combine(Config.dirResources, "png", "visible_on.png")).ToString(), false, false, true);
             // // otros recursos

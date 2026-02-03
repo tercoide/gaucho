@@ -4129,16 +4129,16 @@ public static List<string> LoadFonts(string DirPath)
 }
 
 //  // Lee todas las texturas del directorio provisto y devuelve un listado con sus nombres
-// public static string[] LoadTextures(string DirPath)
-//     {
+public static List<string> LoadTextures(string DirPath)
+    {
 
 
-//     string sFilename ;         
-//     File fFile ;         
-//     string sCoord ;         
-//      string[] Lista ;         
+    string sFilename="" ;         
+    // File fFile ;         
+    string sCoord ;         
+     List<string> lista = [];         
 
-//     int iTexture = 0;
+     int iTexture = 0;
 //     TextureSt newTexture ;         
 
 //     hText = GL.GenTextures(1);
@@ -4170,11 +4170,11 @@ public static List<string> LoadFonts(string DirPath)
 //         Break;
 //     }
 
-//     Console.WriteLine( "LeIdas " + iTexture + " texturas en " + sFilename);
+    Console.WriteLine( "LeIdas " + iTexture.ToString() + " texturas en " + sFilename);
 
-//     return lista;
+    return lista;
 
-// }
+}
 
 //  // Dibuja un triangulo con una textura ya cargada
 

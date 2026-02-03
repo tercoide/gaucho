@@ -13,6 +13,8 @@ using Gaucho;
 public class ToolsBase
     {
         public  string Gender { get; } = "TOOLSBASE";
+
+        public const bool IsTool = true;
         public  string USEWITH { get; } = "";
 
         // Selection pixel coordinates (initialize to 0)

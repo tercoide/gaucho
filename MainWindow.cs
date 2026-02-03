@@ -7,6 +7,7 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using Menu = Gio.Menu;
 using System.Security.Cryptography.X509Certificates;
+
 namespace Gaucho;
 
 public partial class fMain : ApplicationWindow
@@ -24,6 +25,8 @@ public partial class fMain : ApplicationWindow
     int vbo = 0;
     GestureClick mouse_click = null!;
 
+    public string KeysAccumulator = "";
+
 
     public fMain(Application app) : base()
     {
@@ -31,6 +34,8 @@ public partial class fMain : ApplicationWindow
         InitializeComponent();
         BuildUI();
         SetEventsControllers();
+
+        Gcd.clsJob = Gcd.Tools["SELECTION"];
         
         // Log application startup
         // Gaucho.DebugWindow.LogInfo("Main window initialized");
@@ -104,6 +109,7 @@ public partial class fMain : ApplicationWindow
 
         bool on_key_pressed(object o, EventControllerKey.KeyPressedSignalArgs args)
         {
+            Gcd.clsJob.KeyDown((int) args.Keycode);
             if (args.Keycode == 65505 || args.Keycode == 65506) // Shift keys
             {
                 Key.Shift = true;
@@ -112,20 +118,43 @@ public partial class fMain : ApplicationWindow
             else if (args.Keycode == 65307) // Escape key
             {
                 // Handle Escape key press
-                Console.WriteLine("Escape key pressed");
+                // Console.WriteLine("Escape key pressed");
                 return true; // Event handled
             }
-            Console.WriteLine($"Key pressed: {args.Keycode}");
+            // Console.WriteLine($"Key pressed: {args.Keycode}");
             return true;
         }
         void on_key_released(object o, EventControllerKey.KeyReleasedSignalArgs args)
         {
+            Gcd.clsJob.KeyUp((int) args.Keyval);
+
+            if ((int) args.Keyval == Key.Enter)
+            {
+                
+                Gcd.clsJob.KeyText(KeysAccumulator);
+                Console.WriteLine($"Key Text: " + KeysAccumulator);
+
+                KeysAccumulator = "";   
+            } else 
+
+            if (args.ToString() !="")
+            {
+                var sKey = Gb.Chr((int) args.Keyval).ToString(); ;
+                Gcd.clsJob.KeyPress((int) args.Keyval, sKey);
+                KeysAccumulator += sKey;
+                
+                // Console.WriteLine($"sKey : " + sKey);            
+
+            } 
+            
+
+            
             if (args.Keycode == 65505 || args.Keycode == 65506) // Shift keys
             {
                 Key.Shift = false;
                 return;
             }
-            Console.WriteLine($"Key released: {args.Keycode}");
+            // Console.WriteLine($"Key released: {args.Keycode}");
         }
     }
 

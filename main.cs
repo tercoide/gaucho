@@ -1,4 +1,4 @@
-
+using System.Reflection;
 namespace Gaucho
 {
     public static class Starter
@@ -130,7 +130,7 @@ namespace Gaucho
             // leo la configuracion inicial
             //Utils.LoadClass(Config, Config.ConfigFile) // Deshabilitado, con la nueva configuracion no es necesario.
             InitColors(); // CAD color init
-            //nitClasses();
+            InitClasses();
             // InitMenus(); // fMain menus
             // loadPrintStyles();
             LoadPatterns();
@@ -388,7 +388,7 @@ namespace Gaucho
 
         // }
 
-        // public void InitClasses()
+        public static void InitClasses()
         // {
 
 
@@ -425,6 +425,59 @@ namespace Gaucho
         //     // }
 
         // }
+
+         
+    {
+        // Get all types in the current assembly that implement IToolsBase
+        var assembly = Assembly.GetExecutingAssembly();
+        var ToolTypes = assembly.GetTypes()
+            .Where(type => typeof(IToolsBase).IsAssignableFrom(type) && 
+                          !type.IsInterface && 
+                          !type.IsAbstract &&
+                          type.GetConstructor(Type.EmptyTypes) != null)
+            .ToList();
+        
+        // Create instances and add to dictionary
+        foreach (var type in ToolTypes)
+        {
+            try
+            {
+                var instance = (IToolsBase)Activator.CreateInstance(type);
+                Gcd.Tools[Gb.Mid(type.Name.ToUpper(),4)] = instance;
+                Console.WriteLine($"Loaded {type.Name} ");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading {type.Name}: {ex.Message}");
+            }
+        }
+        
+        Console.WriteLine($"Total tools loaded: {Gcd.Tools.Count}\n");
+
+         var EntityTypes = assembly.GetTypes()
+            .Where(type => typeof(IEntity).IsAssignableFrom(type) && 
+                          !type.IsInterface && 
+                          !type.IsAbstract &&
+                          type.GetConstructor(Type.EmptyTypes) != null)
+            .ToList();
+        
+        // Create instances and add to dictionary
+        foreach (var type in EntityTypes)
+        {
+            try
+            {
+                var instance = (IEntity)Activator.CreateInstance(type);
+                Gcd.CCC[Gb.Mid(type.Name.ToUpper(),4)] = instance;
+                Console.WriteLine($"Loaded {type.Name} ");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading {type.Name}: {ex.Message}");
+            }
+        }
+        
+        Console.WriteLine($"Total entities loaded: {Gcd.CCC.Count}\n");
+    }
 
         public static int RGB(int r, int g, int b)
         {

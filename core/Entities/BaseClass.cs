@@ -9,13 +9,14 @@ namespace Gaucho
         // {
 
         // }
-        public string ParamHelper { get ;  } 
-        public string ParamType { get;  } 
 
-        public string ParamDefault { get;  }
+        public const bool IsTool = false;
+        public  string ParamHelper { get ;  } ="";
+        public  string ParamType { get;  } = "";
 
-        public string Prompt { get;  }
+        public  string ParamDefault { get;  } ="";
 
+        public  string Prompt { get;  } ="";
         public bool Regenerable { get; set; } = false;
 
         public int LastMode {get; set;} = -1;

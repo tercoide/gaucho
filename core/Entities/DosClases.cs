@@ -17,7 +17,7 @@ namespace Gaucho
     {
         public static string Gender = "LINE";
         
-        public bool Regenerable { get; set; }
+        public new bool Regenerable { get; set; }
         
         // Constructor, equivalente a _New en Gambas.
         public cadLine()
@@ -45,14 +45,14 @@ namespace Gaucho
     {
         public static string Gender = "CIRCLE";
         
-        public bool Regenerable { get; set; }
+        public new bool Regenerable { get; set; }
         
         public cadCircle()
         {
             Console.WriteLine("Creo un circulo");
         }
 
-        public void  Draw()
+        public new void  Draw()
         {
             Console.WriteLine("Dibujo un circulo");
             return;

@@ -1841,23 +1841,23 @@ private static int Save5EntitiesDirect(Drawing drwToSAve)
             {
 
                 bAttribPresent = false;
-                if ( (eEnty.pBlock.entities.Count > 0) )
+                if ( eEnty.pBlock.entities.Count > 0 )
                 {
                     eEnty.pBlock.idContainer = eEnty.id;
 
                     foreach (var eBlock2 in eEnty.pBlock.entities)
                     {
 
-eBlock = eBlock2.Value;
-                                if (eBlock.Gender == "ATTRIB")
-                                {
-                                    bAttribPresent = true;
+                        eBlock = eBlock2.Value;
+                        if (eBlock.Gender == "ATTRIB")
+                        {
+                            bAttribPresent = true;
 
-                                    eBlock.id = Handle();
-                                    DXFSaveCommonEntityData(eBlock);
-                                    Gcd.CCC[eBlock.Gender].SaveDxfData(eBlock);
+                            eBlock.id = Handle();
+                            DXFSaveCommonEntityData(eBlock);
+                            Gcd.CCC[eBlock.Gender].SaveDxfData(eBlock);
 
-                                }
+                        }
                     }
 
                      // que pasa con el ENDBLK?
