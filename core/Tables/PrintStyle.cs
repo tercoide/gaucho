@@ -13,30 +13,30 @@ public class PrintStyle
     public string handle = "";
 
     public int PrintArea = 0;                 //// El sector a ser impreso: 0=todo, 1=viewport, 2=window definida por lo siguiente
-    public float PrintAreaX0 = 0;                //// graphics area to be printed
-    public float PrintAreaY0 = 0;
-    public float PrintAreaX1 = 0;
-    public float PrintAreaY1 = 0;
+    public double PrintAreaX0 = 0;                //// graphics area to be printed
+    public double PrintAreaY0 = 0;
+    public double PrintAreaX1 = 0;
+    public double PrintAreaY1 = 0;
 
     public int ColorStyle = 0;            //// 0=B/W  1=Gray 2=Color
-    public float PrintScale = 1;              //// Draw Units/Paper mm
-    public float ScalePaper = 1;
-    public float ScaleDrawingUnit = 1;
+    public double PrintScale = 1;              //// Draw Units/Paper mm
+    public double ScalePaper = 1;
+    public double ScaleDrawingUnit = 1;
     public int PrintOrientation = 0;      //// 0=LandScape  1=Portrait
     public bool PrintInvert = false;
 
-    public float PrintOffsetX = 0;           //// mm from page left side
-    public float PrintOffsetY = 0;           //// mm from top of page
+    public double PrintOffsetX = 0;           //// mm from page left side
+    public double PrintOffsetY = 0;           //// mm from top of page
     public int CenteringStyle = 0;            //// 0=Custom, 1=Top Left, 2=Centered
 
     public string PaperName = "";                  //// una descripcion or ej: A3
-    public float PaperSizeW = 210;           //// mm
-    public float PaperSizeH = 294;           //// mm
+    public double PaperSizeW = 210;           //// mm
+    public double PaperSizeH = 294;           //// mm
 
-    public float MarginLeft = 0;             //// mm
-    public float MarginRigth = 0;            //// mm
-    public float MarginTop = 0;              //// mm
-    public float MarginBottom = 0;           //// mm
+    public double MarginLeft = 0;             //// mm
+    public double MarginRigth = 0;            //// mm
+    public double MarginTop = 0;              //// mm
+    public double MarginBottom = 0;           //// mm
 
 // 0 Object name (PLOTSETTINGS)
 //
@@ -133,7 +133,7 @@ public class PrintStyle
 //
 // Only applied when the ShadePlot resolution level is set to 5 (Custom)
 //
-// 147 A floating point scale factor that represents the standard scale value specified in code 75
+// 147 A doubleing point scale factor that represents the standard scale value specified in code 75
 //
 // 148 Paper image origin: X value
 //

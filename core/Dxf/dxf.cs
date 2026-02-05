@@ -3048,7 +3048,7 @@ public static void ReadObjectsFromDXF(Dictionary<string, Dictionary<string, stri
 
             DigestColeccion(cObject, ref sClaves, ref sValues);
             s =  new Sheet();
-            // objLayout.importDXF(s, cObject); TODO 
+            Layout.ImportDxf(s, cObject);
             if ( s.Name == "" ) s.Name = s.pPrintStyle.ViewName;
             if ( s.Name == "" ) s.Name = "Sheet " + drw.Sheets.Count.ToString();
             drw.Sheets.Add(s.Name,s);
