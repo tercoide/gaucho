@@ -9,6 +9,8 @@ namespace Gaucho
         // {
 
         // }
+        // public string Gender = "";
+        public virtual string Gender { get; } = ""; // Virtual hace que las clases hijas puedan sobreescribirla
 
         public const bool IsTool = false;
         public  string ParamHelper { get ;  } ="";
@@ -22,7 +24,18 @@ namespace Gaucho
         public int LastMode {get; set;} = -1;
 
         public int iiiMode { get;  } =0;
+public Entity NewEntity(List<double>? fPoints = null, bool bNewid = false) { 
+    
+    var e = new Entity();
 
+    e.Gender = Gender;
+    if (bNewid) e.id = Gcd.NewId();
+    if (fPoints != null) e.P = fPoints;
+    
+    return e;
+    
+    
+     }
        
  public  void Draw2()
         {
@@ -41,7 +54,7 @@ namespace Gaucho
 
     public interface IEntity
     {
-
+        public abstract string Gender { get;  }
         public Entity NewEntity(List<double>? fPoints = null, bool bNewid = false) { return new Entity(); }
         public Entity ClonEntity(Entity e, bool NewId = false) { return e; }
         public bool Regenerable { get; set; }
@@ -67,7 +80,7 @@ namespace Gaucho
         }
         
         public void SaveDxfData(Entity e ) { }
-        public bool ImportDXF(Entity e , ref List<string> keys, ref List<string> values) { return false;  }
+        public bool ImportDXF(Entity e , List<string> keys, List<string> values) { return false;  }
 
          public void DrawSelected(Entity e) { }
 

@@ -121,6 +121,10 @@ namespace Gaucho
             //MyLog = Open User.Home &/ ".config/gambascad/log.txt" For Write Create
             //TINCHO 2023.05.22 > Config.class implementation
             
+            if (File.Exists(Config.Log))
+            {
+                File.Delete(Config.Log);
+            }   
 
             Gcd.debugInfo("Init program - Version 0.02 - GTK4" , false, false, true);
             Gcd.debugInfo("Debug mode = " + DebugMode.ToString(), false, false, true);

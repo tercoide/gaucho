@@ -401,8 +401,8 @@ public static class Gcd
 
         }
             
-            fDebug = new DebugWindow();
-            fDebug.Show();
+            // fDebug = new DebugWindow();
+            // fDebug.Show();
 
             //If WindowBackColor = 0 Then WhiteAndBlack = Color.White Else WhiteAndBlack = Color.Black
             // // armo el array de colores

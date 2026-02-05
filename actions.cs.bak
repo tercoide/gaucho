@@ -1,0 +1,622 @@
+using Gaucho;
+static class Actions
+{
+ // Gambas module file
+
+ // Este modulo contiene las acciones que , desde ahora, saco de FMain
+
+public double r ;         
+
+public string f ;         
+public string fDxf ;         
+public string fBak ;         
+ //public fMinimal As String = "./minimal/minimal-2010.dxf"
+public string fMinimal = "./minimal/minimal.dxf";
+public string[] fx ;         
+public string fbas ;         
+public string t ;         
+public int iColor ;         
+public int i ;         
+public Image imgCirculito ;         
+public string clsJob ;         
+ // Public d As Drawing
+public string[] sActionParams ;         
+
+public static void NewFile()
+    {
+
+
+     // Vamos a tratar de armar todo para que se pueda dibujar, sin necesidad de cargar un DXF base.
+    Drawing Drawing ;         
+    string k ;         
+
+    Drawing = Gcd.Drawing("<new>"); // me devuelve un Drawing con una Sheet
+    Wait;
+     //Apunto Gcd.Drawing a este nuevo Drawing
+    Gcd.Drawing = Drawing;
+
+     // FIXME: URG aca no llega a agregarse el nuevo Drawing
+    k = Drawing.id;
+    Gcd.Drawings.Add(Drawing, k); //Lo agrego al listado de dibujos abiertos
+    Wait;
+    fmain.TabForDrawing(Drawing); //Creo una nueva petaña,
+    Wait;
+
+    DrawingAids.RebuildGrid;
+    Gcd.setdashes;
+
+    Gcd.Regen();
+
+    fmain.UpdateLayersCombo;
+    fmain.UpdateLineWtCombo;
+    fmain.UpdateLineTypeCombo;
+    fmain.UpdatDimTypeTypeCombo;
+    fmain.Text = f;
+    Gcd.DrawingReady = true;
+
+     // this is what we are doing now
+    Gcd.clsJob = cadSelection;
+    Gcd.clsJob.start();
+    Gcd.clsJobPrevious = cadSelection;
+    Gcd.clsJobPreZoom = cadSelection;
+    Gcd.clsJobPreviousParam = 0;
+
+     //fmain.FillWindowMenu
+
+}
+
+public static void FileSave(string sFile= "")
+    {
+
+
+    if ( sFile == "" ) // pregunto
+    {
+
+        Dialog.Title = ("File Name");
+
+        if ( main.convODA || main.convLibreDWG )
+        {
+            Dialog.Filter = ["*.dxf;*.dwg", "Drawings", "*.dxf", "DXF Drawing exchange 2010", "*.dwg", "DWG AutoCAD Drawing file 2010"];
+        }
+
+            Dialog.Filter = ["*.dxf", "Drawings", "*.dxf", "DXF Drawing exchange 2010"];
+
+        }
+        if ( ! Dialog.SaveFile() ) return;
+
+        sFile = Dialog.Path;
+
+    }
+
+}
+
+
+
+
+public static void AddFilesOpen(string sFilename)
+    {
+
+
+     // verifico que ya lo tenga en la lista de recientes
+    if ( sFilename == Config.FilesLastOpen1 ) return; // nada que hacer
+
+     // ubico en primer lugar al archivo reciente
+    if ( sFilename == Config.FilesLastOpen2 )
+    {
+        Swap Config.FilesLastOpen2, Config.FilesLastOpen1;
+        return;
+    }
+
+    if ( sFilename == Config.FilesLastOpen3 )
+    {
+        Swap Config.FilesLastOpen3, Config.FilesLastOpen1;
+        return;
+    }
+    if ( sFilename == Config.FilesLastOpen4 )
+    {
+        Swap Config.FilesLastOpen4, Config.FilesLastOpen1;
+        return;
+    }
+    if ( sFilename == Config.FilesLastOpen5 )
+    {
+        Swap Config.FilesLastOpen5, Config.FilesLastOpen1;
+        return;
+    }
+
+    if ( sFilename == Config.FilesLastOpen6 )
+    {
+        Swap Config.FilesLastOpen6, Config.FilesLastOpen1;
+        return;
+    }
+
+    if ( sFilename == Config.FilesLastOpen7 )
+    {
+        Swap Config.FilesLastOpen7, Config.FilesLastOpen1;
+        return;
+    }
+    if ( sFilename == Config.FilesLastOpen8 )
+    {
+        Swap Config.FilesLastOpen8, Config.FilesLastOpen1;
+        return;
+    }
+    if ( sFilename == Config.FilesLastOpen9 )
+    {
+        Swap Config.FilesLastOpen9, Config.FilesLastOpen1;
+        return;
+    }
+
+    if ( sFilename == Config.FilesLastOpen10 )
+    {
+        Swap Config.FilesLastOpen10, Config.FilesLastOpen1;
+        return;
+    }
+
+     // no lo tengo, descarto el ultimo y lo agrego al principio, desplazando el resto
+    Config.FilesLastOpen10 = Config.FilesLastOpen9;
+    Config.FilesLastOpen9 = Config.FilesLastOpen8;
+    Config.FilesLastOpen8 = Config.FilesLastOpen7;
+    Config.FilesLastOpen7 = Config.FilesLastOpen6;
+    Config.FilesLastOpen6 = Config.FilesLastOpen5;
+    Config.FilesLastOpen5 = Config.FilesLastOpen4;
+    Config.FilesLastOpen4 = Config.FilesLastOpen3;
+    Config.FilesLastOpen3 = Config.FilesLastOpen2;
+    Config.FilesLastOpen2 = Config.FilesLastOpen1;
+    Config.FilesLastOpen1 = sFilename;
+
+}
+
+public static void ActionActivate(string sAction)
+    {
+
+
+     // Acciones de los botones y los menús (para no repetir código)
+     // El string de la acción es una propiedad de cada botón o menú
+     // El código que se ejecuta lo hace dentro de la rutina llamada, nunca dentro de este mismo evento.
+
+    double r ;         
+    Drawing Drawing ;         
+    string f ;         
+    string fDxf ;         
+    string fBak ;         
+     //Dim fMinimal As String = "./minimal/minimal-2010.dxf"
+    string fMinimal = "./minimal/minimal.dxf";
+    string[] fx ;         
+    string fbas ;         
+    string sWName ;         
+    string t ;         
+    int iColor ;         
+    int i ;         
+    Image imgCirculito ;         
+    string clsJob ;         
+    Drawing d ;         
+    string[] sActionParams ;         
+
+    Try Gcd.debuginfo(Last.name);
+
+    switch ( LCase(sAction))
+    {
+
+        case "applyprops": // FIXME: pasa al nuevo formulario flotante
+            for ( i = 0; i <= fmain.fp.tblProperties.Rows.Max; i + 1)
+            {
+                if ( fmain.fp.tblProperties[i, 1].Tag ) // esta propiedad cambio
+                {
+                    clsEntities.EditEntities(LCase(fmain.fp.tblProperties[i, 0].text), fmain.fp.tblProperties[i, 1].Text);
+                }
+            }
+        case "maximize":
+            fmain.Border = Not fmain.Border;
+            if ( ! fmain.Border )
+            {
+                Layout.Fix(fmain);
+            }
+
+        case "savesvg":
+             SvgImage hsvg ;         
+            string sFile ;         
+            sFile = Gcd.Drawing.FileName + ".svg";
+            if ( Left(sFile, 1) == "<" ) sFile = User.Home &/ "0-sin nombre.svg";
+            hsvg.Resize(420, 297);
+
+            Gcd.FitEntitiesToImage(Gcd.Drawing.Model.Entities, hsvg, -1, 0, Config.ModelBackgroundColor);
+            if ( Exist(sFile) ) Kill sFile;
+            hsvg.Save(sFile);
+
+        case "new_sheet":
+
+            fSheet.ShowModal();
+            fmain.GLArea1.Refresh;
+
+        case Like "_*":
+             // todo lo que empiece con _ lo envio al job
+            Gcd.clsJob.KeyText(sAction);
+        case "mentities-copy":
+            string sToCopy ;         
+            foreach ( e As Entity in Gcd.Drawing.Sheet.EntitiesSelected)
+            {
+                sToCopy &= clsEntities.EntityToJsonString(e);
+
+            }
+
+            Clipboard.Clear;
+            Clipboard.Copy(sToCopy);
+
+        case "undo":
+
+            Gcd.Drawing.uUndo.DoUndo();
+            Gcd.Regen;
+
+        case "redo":
+
+            Gcd.Drawing.uUndo.DoRedo();
+            Gcd.Regen;
+
+        case "config":
+             //fOptions.ShowModal
+            FConfig.ShowModal();
+            fmain.tabDrawings[0].Visible = true; //Config.ShowConsoleTab
+            glx.ClearColor(Config.ModelBackgroundColor);
+
+        case "center":
+
+            Gcd.PanTo(0, 0);
+            Gcd.Redraw;
+
+        case "exit":
+
+            fmain.form_Close;
+
+        case "regen":
+
+            Gcd.Regen;
+
+             // Case "pdf_export"
+             //
+             //     If Printer1.Configure() Then Return
+             //     Printer1.Print
+        case "print":
+
+            if ( ! Gcd.Drawing.CurrPrintStyle ) Gcd.Drawing.CurrPrintStyle = new PrintStyle;
+             // fPrint.Show //.run()
+            Gcd.clsJobPrevious = Gcd.clsJob;
+            Gcd.clsJob = cadPrint;
+            Gcd.clsJob.run;
+
+        case "undo":
+            Gcd.Drawing.uUndo.DoUndo();
+            Gcd.Regen;
+
+        case "about":
+            i = fAbout.ShowModal();
+
+             // Case "redo"
+             //     Gcd.Drawing.uUndo.DoRedo()
+             //     Gcd.Regen
+        case "window_close":
+
+            Gcd.Drawings.Remove(Gcd.Drawing.Headers.FINGERPRINTGUID);
+            if ( Gcd.Drawings.Count > 0 )
+            {
+                Gcd.Drawing = Gcd.Drawings[Gcd.Drawings.First];
+                fmain.Redraw;
+            }
+
+                ActionActivate("file_new");
+            }
+
+        case "window_closeall":
+            Gcd.Drawings.Clear;
+            ActionActivate("file_new");
+
+        case Like "windowchange_*":
+
+            sWName = Mid(sAction, 14);
+
+            foreach ( d in Gcd.Drawings)
+            {
+                if ( sWName == d.FileName )
+                {
+                    Gcd.Drawing = d;
+                    Gcd.UpdateLayersCombo;
+                    Gcd.UpdateLineWtCombo;
+                    Gcd.UpdateLineTypeCombo;
+                    Gcd.UpdatDimTypeTypeCombo;
+                    fmain.redraw;
+                    fmain.Text = f;
+
+                     //FillWindowMenu
+                    Break;
+                }
+            }
+
+        case "file_quit":
+
+            fmain.Close;
+            Quit;
+
+        case "file_new":
+
+            actions.File;
+
+        case "file_open":
+
+            actions.FileOpen;
+
+        case Like "file_open_*":
+
+            sWName = Mid(sAction, 11);
+
+            actions.FileOpen(sWName);
+
+        case "file_save":
+
+            f = Gcd.Drawing.FileName;
+            fbas = File.Dir(f) &/ File.BaseName(f);
+            fBak = "; //" & fbas & ".bak//"
+            if ( Gcd.Drawing.RequiresFileRename )
+            {
+                ActionActivate("file_saveas");
+                return;
+            }
+                if ( Exist(f) )
+                {
+                    if ( Exist(fBak) ) Shell "rm " + fBak Wait;
+                    Shell "mv; //" & f & "// //" & fbas & ".bak//" Wait
+                }
+
+                if ( File.Ext(f) == "dxf" )
+                {
+                    Dxf.SaveFile(f, Gcd.Drawing);
+                }
+                else if ( File.Ext(f) == "dwg" )
+                {
+                     // guardamos la version DXF en el dir adecuado, con el nombre elegido
+                     //t = main.dirDxfOut &/ Utils.FileWithoutExtension(Utils.FileFromPath(f)) & ".dxf"
+                    t = Temp + ".dxf";
+                    Dxf.SaveFile(t, Gcd.Drawing);
+                    t = Gcd.oda_dxftodwg(t);
+                     // como el proceso de grabado pudo resultar en error, chequeo la existencia primero
+
+                    if ( Exist(t) ) Move t To f;
+
+                }
+
+                fmain.tabDrawings.Text = Utils.FileFromPath(Utils.FileWithoutExtension(fbas));
+
+            }
+
+        case "file_saveas":
+
+            f = Gcd.Drawing.FileName;
+            fbas = File.Dir(f) &/ File.BaseName(f);
+            fBak = "; //" & fbas & ".bak//"
+
+            Dialog.AutoExt = true;
+            Dialog.Filter = ["*.dxf", "DXF Drawing exchange 2010", "*.dwg", "DWG AutoCAD Drawing file 2010"];
+            if ( Dialog.SaveFile() ) return; // cancel saving
+
+            f = Dialog.Path;
+
+            if ( File.Ext(f) == "" ) f = File.SetExt(f, "dxf");
+
+            if ( Exist(f) )
+            {
+                if ( Message.Question(("The file exist"), ("Replace"), ("Cancel")) == 2 )
+                {
+                    f = "";
+                }
+            }
+
+            if ( f == "" )
+            {
+                Console.WriteLine("Cancel" + "\n");
+            }
+
+                if ( Exist(f) )
+                {
+                    if ( Exist(fBak) ) Shell "rm " + fBak Wait;
+                    Shell "mv; //" & f & "// //" & fbas & ".bak//" Wait
+                }
+
+                Gcd.Drawing.FileName = f;
+                Gcd.Drawing.RequiresFileRename = false;
+                ActionActivate("file_save");
+
+                fmain.Text = f;
+
+            }
+
+        case Like "cad*":
+
+             // actions, with & for additional parameters
+             // cadDimension_Linear&horizontal
+
+            Object o ;         
+            string sRunWith ;         
+            int iParam ;         
+            Class c ;         
+
+            sActionParams = Split(sAction, "&");
+            sRunWith = UCase(Mid(sActionParams[0], 4));
+            Try iParam = CInt(sActionParams[1]);
+
+            o = Gcd.CCC[sRunWith];
+            if ( ! o ) return;
+            Gcd.clsJobPrevious = Gcd.clsJob;
+             // check if the class needs to be run trough other class
+            if ( o.usewith == "" ) // its a tool
+            {
+                Gcd.clsJob = o;
+                Gcd.clsJob.start(iParam);
+
+            } // its propably an eentity
+
+                Gcd.clsJob = Gcd.CCC[o.usewith];
+                Gcd.clsJob.start(o, iParam);
+
+            }
+
+        case Like "layer_change_*":
+
+            string sLayerName ;         
+
+            sLayerName = Mid(sAction, 14);
+
+             // mbtLayers.Text = sLayerName
+             // iColor = Gcd.Drawing.cLayers[sLayerName][dxf.codColor]
+             // mbtLayers.Picture = paintPlus.picCirculito(8, Gcd.gColor[iColor], Color.ButtonForeground)
+
+             // informamos
+            Gcd.Drawing.CurrLayer = Gcd.GetLayer(sLayerName);
+
+             // si tengo algo seleccionado, debo cambiar su color a este
+            clsEntities.EditEntities("layer", Gcd.Drawing.CurrLayer.name);
+
+            clsEntities.DeSelection();
+
+        case Like "color_*":
+
+            iColor = CInt(Mid(sAction, 7));
+            fmain.mbtColors.Text = "Color " + CStr(iColor); //Me.mbtColors.Children[iColor].Text
+            if ( iColor == 256 ) fmain.mbtColors.Text = "ByLayer";
+            if ( iColor == 257 ) fmain.mbtColors.Text = "ByBlock";
+
+            fmain.mbtColors.Picture = paintPlus.picCirculito(8, Gcd.gColor[iColor], Color.ButtonForeground);
+
+            Gcd.Drawing.CurrColor = iColor;
+
+             // si tengo algo seleccionado, debo cambiar su color a este
+            clsEntities.EditEntities("color", iColor);
+            clsEntities.DeSelection();
+
+        case "more_colors":
+
+            iColor = fColors.ShowModal();
+            if ( iColor < 0 ) return;
+
+            ActionActivate("color_" + CStr(iColor));
+
+        case Like "linewt_change_*":
+
+            Gcd.Drawing.CurrLineWt = CInt(Mid(sAction, 15)) / 100;
+
+            clsEntities.EditEntities("linewt", Gcd.Drawing.CurrLineWt);
+            clsEntities.DeSelection();
+
+        case Like "ltype_change_*":
+
+            Gcd.Drawing.CurrLineType = Gcd.FindLType(Mid(sAction, 14));
+
+            clsEntities.EditEntities("linetype", Gcd.Drawing.CurrLineType);
+            clsEntities.DeSelection();
+        case "dimstyle_change":
+            Gcd.Drawing.CurrDimStyle = Gcd.Drawing.DimStyles[fMain.cmbDimStyle.Text];
+
+        case "grid":
+            Gcd.Drawing.GrIdActive = Not Gcd.Drawing.GrIdActive;
+            if ( Gcd.Drawing.GrIdActive ) DrawingAIds.RebuildGrId;
+
+        case "ortho":
+            Gcd.Orthogonal = Not Gcd.Orthogonal;
+        case "snap":
+            if ( Gcd.SnapMode != 0 ) Gcd.SnapMode = 0 } else { Gcd.SnapMode = Config.SnapModeSaved;
+        case "debugwindow":
+            fDebug.Show(); //If Gcd.SnapMode <> 0 Then Gcd.SnapMode = 0 Else Gcd.SnapMode = Config.SnapModeSaved
+
+        case "selectadd":
+            cadSelection.SelectMode = cadSelection.SelectModeAdd;
+
+        case "selectrem":
+            cadSelection.SelectMode = cadSelection.SelectModeRem;
+
+        case "selectnew":
+            cadSelection.SelectMode = cadSelection.SelectMode;
+
+        case "selectsingle":
+
+            Gcd.clsJob.Cancel;
+            Gcd.clsJob = cadSelection;
+            Gcd.clsJob.start();
+            cadSelection.SelectType = cadSelection.SelectTypeSingle;
+
+             // pnlToolBarRigth.tbnSelectionRect.Value = False
+             // pnlToolBarRigth.tbnSelectionPoly.Value = False
+
+        case "selectrect":
+            Gcd.clsJob.Cancel;
+            Gcd.clsJob = cadSelection;
+            Gcd.clsJob.start();
+            cadSelection.SelectType = cadSelection.SelectTypeRect;
+             // pnlToolBarRigth.tbnSelectionSingle.Value = False
+             //
+             // pnlToolBarRigth.tbnSelectionPoly.Value = False
+
+        case "selectpoly":
+            Gcd.clsJob.Cancel;
+            Gcd.clsJob = cadSelection;
+            Gcd.clsJob.start();
+            cadSelection.SelectType = cadSelection.SelectTypePoly;
+             // pnlToolBarRigth.tbnSelectionSingle.Value = False
+             // pnlToolBarRigth.tbnSelectionRect.Value = False
+
+        case "selectcross":
+            cadSelection.SelectCrossing = Not cadSelection.SelectCrossing;
+
+        case "options":
+            fOptions.ShowModal;
+        case "dimstyles":
+            fDimStyles.ShowModal;
+            fmain.UpdatDimTypeTypeCombo();
+             // Case "dimstyle_change"
+             // dDimStyles.ShowModal
+
+             //=================SNAP BUTTONS===========================================
+             // Utils.tbnCreator(pnlToolBarRigth, "tbnQuadrant", "snapquadrant")
+             // Utils.tbnCreator(pnlToolBarRigth, "tbnTangent", "snaptangent")
+             // Utils.tbnCreator(pnlToolBarRigth, "tbnbase_point", "snapbase")
+             // Utils.tbnCreator(pnlToolBarRigth, "tbnIntersection", "snapintersection")
+             // Utils.tbnCreator(pnlToolBarRigth, "tbnPerpendicular", "snapperpendicular")
+             // Utils.tbnCreator(pnlToolBarRigth, "tbnAparentCenter", "snapaparentcenter")
+             // Utils.tbnCreator(pnlToolBarRigth, "tbnNearest", "snapnearest")
+        case "snapend":
+            Gcd.SnapMode = Gcd.poiEndPoint;
+        case "snapcenter":
+            Gcd.SnapMode = Gcd.poiCenter;
+        case "snapmid":
+            Gcd.SnapMode = Gcd.poiMIdPoint;
+        case "snapquadrant":
+            Gcd.SnapMode = Gcd.poiQuadrant;
+        case "snaptangent":
+            Gcd.SnapMode = Gcd.poiTangent;
+        case "snapbase":
+            Gcd.SnapMode = Gcd.poiBasePoint;
+        case "snapintersection":
+            Gcd.SnapMode = Gcd.poiIntersection;
+        case "snapperpendicular":
+            Gcd.SnapMode = Gcd.poiPerpendicular;
+        case "snapaparentcenter":
+            Gcd.SnapMode = Gcd.poiCenter;
+        case "snapnearest":
+
+            Gcd.SnapMode = Gcd.poiNearest;
+
+        case "3dshowwireframe":
+            Gcd.Drawing.Sheet.scene.ShowWireframe = true;
+        case "3dshowcolor":
+            Gcd.Drawing.Sheet.scene.ShowColor = true;
+            Gcd.Drawing.Sheet.scene.ShowMaterial = false;
+            Gcd.Drawing.Sheet.scene.ShowTexture = false;
+        case "3dshowmaterial":
+            Gcd.Drawing.Sheet.scene.ShowColor = false;
+            Gcd.Drawing.Sheet.scene.ShowMaterial = true;
+            Gcd.Drawing.Sheet.scene.ShowTexture = false;
+        case "3dshowtexture":
+            Gcd.Drawing.Sheet.scene.ShowColor = false;
+            Gcd.Drawing.Sheet.scene.ShowMaterial = false;
+            Gcd.Drawing.Sheet.scene.ShowTexture = true;
+
+    }
+
+}
+
+}

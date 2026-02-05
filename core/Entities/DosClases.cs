@@ -5,6 +5,7 @@
 // Equivale a un archivo cadLine.class y a otro cadCircle.class en Gb.
 
 using Gaucho;
+using OpenTK.Graphics.OpenGL;
 
 namespace Gaucho
 {
@@ -15,10 +16,15 @@ namespace Gaucho
 
     public class cadLine: EntityBase,IEntity
     {
-        public static string Gender = "LINE";
+        public override string Gender { get; } = "LINE"; // Override para sobreescribir la propiedad virtual de la clase base.
         
         public new bool Regenerable { get; set; }
         
+        public int DrawingOrder { get; } = 1;         // 1 = draws first
+        public string CmdLineHelper { get; } = "a line";
+        public string ParamType { get; } = "PP";                              // that is Point, Point; could be Color Text, etc
+        public string ParamHelper { get; } = "Start point;End point";
+        public int TotalPoints { get; } = 2;
         // Constructor, equivalente a _New en Gambas.
         public cadLine()
         {
@@ -38,12 +44,97 @@ namespace Gaucho
             return;
         }
 
+        public bool ImportDXF(Entity e, List<string> sClaves, List<string> sValues)
+        {
+
+
+            int i ;         
+
+            e.P.Clear();
+            for ( i = 0; i < sClaves.Count; i += 1)
+            {
+
+                if ( sClaves[i] == "10" ) e.P.Add(Gb.CDbl(sValues[i]));
+                if ( sClaves[i] == "20" ) e.P.Add(Gb.CDbl(sValues[i]));
+                if ( sClaves[i] == "11" ) e.P.Add(Gb.CDbl(sValues[i]));
+                if ( sClaves[i] == "21" ) e.P.Add(Gb.CDbl(sValues[i]));
+
+            }
+            return true;
+
+            // catch
+
+            return false;
+
+        }
+
+        public  bool NewParameter(Entity eBuild, List<string> vParam, bool Definitive= false)
+    {
+
+
+     // la linea solo recibe puntos
+
+    if ( vParam[0] != "point" ) return false;
+
+    if ( Gcd.StepsDone == 0 )
+    {
+         eBuild.P[0] = Gb.CDbl(vParam[1]);
+         eBuild.P[1] = Gb.CDbl(vParam[2]);
+        eBuild.P[2] = eBuild.P[0];
+        eBuild.P[3] = eBuild.P[1];
+        if ( Definitive ) return true;
+    }
+    else if ( Gcd.StepsDone == 1 )
+    {
+
+         eBuild.P[2] = Gb.CDbl(vParam[1]);
+         eBuild.P[3] = Gb.CDbl(vParam[2]);
+        if ( Definitive ) return true;
+
+    }
+    return false;
+
+}
+
+public static bool SaveDxfData(Entity e)
+    {
+
+
+     // stxExport.insert(["LINE", dxf.codEntity])
+     // Los datos comunes a todas las entidades son guardados por la rutina que llama a esta
+    Dxf.SaveCodeInv("AcDbLine", "100");
+    Dxf.SaveCodeInv((e.P[0]).ToString(), Dxf.codX0);
+    Dxf.SaveCodeInv((e.P[1]).ToString(), Dxf.codY0);
+    Dxf.SaveCodeInv((e.P[2]).ToString(), Dxf.codX1);
+    Dxf.SaveCodeInv((e.P[3]).ToString(), Dxf.codY1);
+    if ( e.Extrusion[2] != 1 )
+    {
+        Dxf.SaveCodeInv((e.Extrusion[0]).ToString(), "210");
+        Dxf.SaveCodeInv((e.Extrusion[1]).ToString(), "220");
+        Dxf.SaveCodeInv((e.Extrusion[2]).ToString(), "230");
+    }
+    return true;
+
+}
+
+
+
+ // Return if that position is over the entity within the tolerance
+
+public bool OverMe(Entity e, double Xr , double Yr, double tolerance ) 
+{
+     //If Abs(puntos.PointToLineDistance([xr, yr], e.p)) <= tolerance Then Return True Else Return False
+    if ( Puntos.PointOverLine([Xr, Yr], e.P, tolerance) ){ return true; } else { return false;}
+
+
+
+    }
     }
 
 
     public class cadCircle: EntityBase,IEntity
     {
-        public static string Gender = "CIRCLE";
+        public override string Gender { get; } = "CIRCLE";
         
         public new bool Regenerable { get; set; }
         

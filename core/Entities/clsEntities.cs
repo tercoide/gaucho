@@ -702,6 +702,7 @@
             if (string.IsNullOrEmpty(entityType)) return null;
 
             var e = Gcd.CCC[entityType].NewEntity();
+            if (e.Gender=="") return null;
             e.pLayer = GetLayerByName(c.ContainsKey("8") ? c["8"] : null) ?? Gcd.Drawing.CommonLayer;
             e.id = c.ContainsKey("5") ? c["5"] : Gcd.NewId();
 
@@ -720,7 +721,7 @@
                 e.LType = drw.LineTypes.Values.FirstOrDefault();
             }
 
-            if (Gcd.CCC[e.Gender].ImportDXF(e, ref keys, ref values))
+            if (Gcd.CCC[e.Gender].ImportDXF(e,  keys, values))
             {
                 if (c.ContainsKey("210")) e.Extrusion[0] = float.Parse(c["210"]);
                 if (c.ContainsKey("220")) e.Extrusion[1] = float.Parse(c["220"]);

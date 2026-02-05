@@ -29,7 +29,7 @@ public partial class fMain
         }
 
         button.SetName(name);
-        button.OnClicked += (_, _) => ActionActivate($"cad:{name}");
+        button.OnClicked += (_, _) => ActionActivate($"{name}");
 
         return button;
     }

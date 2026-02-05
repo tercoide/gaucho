@@ -394,6 +394,39 @@ public static class Util
 
         }
 
+        /// <summary>
+        /// Adds a value to a dictionary using the specified key. If the key already exists,
+        /// it appends an underscore followed by a number (starting from 0) until an unused key is found.
+        /// </summary>
+        /// <typeparam name="TValue">The type of the dictionary values</typeparam>
+        /// <param name="dictionary">The dictionary to add the value to</param>
+        /// <param name="originalKey">The desired key for the value</param>
+        /// <param name="value">The value to add to the dictionary</param>
+        /// <returns>The actual key used to store the value</returns>
+        public static string AddWithUniqueKey<TValue>(Dictionary<string, TValue> dictionary, string originalKey, TValue value)
+        {
+            if (dictionary == null)
+                throw new ArgumentNullException(nameof(dictionary));
+            
+            if (originalKey == null)
+                throw new ArgumentNullException(nameof(originalKey));
+
+            string keyToUse = originalKey;
+            int counter = 0;
+
+            // Keep trying keys until we find one that doesn't exist
+            while (dictionary.ContainsKey(keyToUse))
+            {
+                keyToUse = $"{originalKey}_{counter}";
+                counter++;
+            }
+
+            dictionary[keyToUse] = value;
+            return keyToUse;
+        }
+
+        
+
     }
 
 
