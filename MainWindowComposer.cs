@@ -7,6 +7,7 @@ namespace Gaucho;
 
 public partial class fMain
 {
+    private Box? _layersListBox = null; // Store reference for later initialization
     public Button CreateButton(string tag, string name, int iconSize = 24, string? tooltip = null)
     {
         var shortname = Gb.Mid(name, 4).ToLower();
@@ -285,7 +286,12 @@ public partial class fMain
 
         glArea = glAreaPrimary;
 
-        // Right property grid
+        // Right property and layer panels
+        var rightNotebook = Notebook.New();
+        rightNotebook.ShowBorder = true;
+        rightNotebook.TabPos = PositionType.Top;
+        
+        // Properties tab
         var propertyFrame = Frame.New("Properties");
         var propertyGrid = Grid.New();
         propertyGrid.MarginTop = 12;
@@ -313,15 +319,21 @@ public partial class fMain
         AddPropertyRow(3, "Last Modified", DateTime.Now.ToShortDateString());
 
         propertyFrame.SetChild(propertyGrid);
-        propertyFrame.SetSizeRequest(260, -1);
-        propertyFrame.SetVexpand(true);
+        rightNotebook.AppendPage(propertyFrame, Label.New("Properties"));
+        
+        // Layers tab
+        var layersFrame = CreateLayersPanel();
+        rightNotebook.AppendPage(layersFrame, Label.New("Layers"));
+        
+        rightNotebook.SetSizeRequest(260, -1);
+        rightNotebook.SetVexpand(true);
 
         // Combine center notebook and property grid
         var centerAndProperties = Paned.New(Orientation.Horizontal);
         centerAndProperties.SetStartChild(_viewportNotebook);
         centerAndProperties.SetResizeStartChild(true);
         centerAndProperties.SetShrinkStartChild(false);
-        centerAndProperties.SetEndChild(propertyFrame);
+        centerAndProperties.SetEndChild(rightNotebook);
         centerAndProperties.SetResizeEndChild(false);
         centerAndProperties.SetShrinkEndChild(false);
         centerAndProperties.SetHexpand(true);
@@ -359,6 +371,139 @@ public partial class fMain
         mainPaned.SetVexpand(true);
 
         SetChild(_mainBox);
+    }
+
+    public Frame CreateLayersPanel()
+    {
+        var layersFrame = Frame.New("Layer Visibility");
+        var layersBox = Box.New(Orientation.Vertical, 6);
+        layersBox.MarginTop = 12;
+        layersBox.MarginBottom = 12;
+        layersBox.MarginStart = 12;
+        layersBox.MarginEnd = 12;
+        
+        // Header controls
+        var headerBox = Box.New(Orientation.Horizontal, 6);
+        var showAllButton = Button.NewWithLabel("Show All");
+        var hideAllButton = Button.NewWithLabel("Hide All");
+        var refreshButton = Button.NewWithLabel("Refresh");
+        
+        showAllButton.OnClicked += OnShowAllLayers;
+        hideAllButton.OnClicked += OnHideAllLayers;
+        refreshButton.OnClicked += OnRefreshLayers;
+        
+        headerBox.Append(showAllButton);
+        headerBox.Append(hideAllButton);
+        headerBox.Append(refreshButton);
+        
+        layersBox.Append(headerBox);
+        
+        // Scrolled window for layer list
+        var scrolledWindow = ScrolledWindow.New();
+        scrolledWindow.SetPolicy(PolicyType.Never, PolicyType.Automatic);
+        scrolledWindow.SetVexpand(true);
+        
+        // Layer list container
+        var layersListBox = Box.New(Orientation.Vertical, 4);
+        scrolledWindow.SetChild(layersListBox);
+        
+        // Store reference for later initialization
+        _layersListBox = layersListBox;
+        
+        layersBox.Append(scrolledWindow);
+        layersFrame.SetChild(layersBox);
+        
+        return layersFrame;
+    }
+
+    /// <summary>
+    /// Initialize demo layers - call this after the main window is shown and OpenGL is ready
+    /// </summary>
+    public void InitializeDemoLayers()
+    {
+        if (_layersListBox != null)
+        {
+            CreateDemoLayers(_layersListBox);
+        }
+    }
+
+    public void CreateDemoLayers(Box container)
+    {
+
+       // var container = layersListBox; // fixmme: esto es un hack, deberia ser parametro del metodo CreateLayersPanel() o algo asi
+        // Create some demo layers and add them to the layer manager
+        var demoLayers = new[]
+        {
+            new Layer { Name = "Construction", Visible = true, Colour = 8 },
+            new Layer { Name = "Dimensions", Visible = true, Colour = 2 },
+            new Layer { Name = "Text", Visible = true, Colour = 3 },
+            new Layer { Name = "Centerlines", Visible = false, Colour = 4 },
+            new Layer { Name = "Hidden", Visible = false, Colour = 1 }
+        };
+        
+        foreach (var layer in demoLayers)
+        {
+            // Register layer with manager to get ID
+            var layerId = LayerManager.RegisterLayer(layer);
+            
+            // Create UI row for this layer
+            var layerRow = Box.New(Orientation.Horizontal, 6);
+            
+            var visibilityCheck = CheckButton.NewWithLabel(layer.Name);
+            visibilityCheck.SetActive(layer.Visible);
+            visibilityCheck.OnToggled += (sender, e) => {
+                var isVisible = visibilityCheck.GetActive();
+                LayerManager.SetLayerVisibility(layerId, isVisible);
+                // Only trigger redraw if OpenGL is initialized
+                if (shader != null) {
+                    glArea?.QueueRender(); // Trigger redraw
+                }
+            };
+            
+            var colorBox = Box.New(Orientation.Horizontal, 0);
+            colorBox.SetSizeRequest(20, 20);
+            colorBox.AddCssClass("layer-color");
+            
+            layerRow.Append(visibilityCheck);
+            layerRow.Append(colorBox);
+            
+            container.Append(layerRow);
+        }
+    }
+
+    private void OnShowAllLayers(object? sender, EventArgs e)
+    {
+        var layers = LayerManager.GetAllLayers();
+        foreach (var kvp in layers)
+        {
+            LayerManager.SetLayerVisibility(kvp.Key, true);
+        }
+        // Only trigger redraw if OpenGL is initialized
+        if (shader != null) {
+            glArea?.QueueRender(); // Trigger redraw
+        }
+    }
+
+    private void OnHideAllLayers(object? sender, EventArgs e)
+    {
+        var layers = LayerManager.GetAllLayers();
+        foreach (var kvp in layers)
+        {
+            LayerManager.SetLayerVisibility(kvp.Key, false);
+        }
+        // Only trigger redraw if OpenGL is initialized
+        if (shader != null) {
+            glArea?.QueueRender(); // Trigger redraw
+        }
+    }
+
+    private void OnRefreshLayers(object? sender, EventArgs e)
+    {
+        LayerManager.UpdateVisibilityArray();
+        // Only trigger redraw if OpenGL is initialized
+        if (shader != null) {
+            glArea?.QueueRender(); // Trigger redraw
+        }
     }
 
     // fixmme: revisar menus

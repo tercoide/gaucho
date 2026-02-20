@@ -157,7 +157,10 @@ using OpenTK.Mathematics;
         public void SetInt(string name, int data)
         {
             GL.UseProgram(Handle);
-            GL.Uniform1(_uniformLocations[name], data);
+            if (_uniformLocations.ContainsKey(name))
+            {
+                GL.Uniform1(_uniformLocations[name], data);
+            }
         }
 
         /// <summary>
@@ -197,6 +200,37 @@ using OpenTK.Mathematics;
             GL.UseProgram(Handle);
             GL.Uniform3(_uniformLocations[name], data);
         }
+        
+        /// <summary>
+        /// Set a uniform Vector4 on this shader.
+        /// </summary>
+        /// <param name="name">The name of the uniform</param>
+        /// <param name="data">The data to set</param>
+        public void SetVector4(string name, Vector4 data)
+        {
+            GL.UseProgram(Handle);
+            GL.Uniform4(_uniformLocations[name], data);
+        }
+
+        /// <summary>
+        /// Set a uniform boolean array on this shader.
+        /// </summary>
+        /// <param name="name">The name of the uniform array</param>
+        /// <param name="data">The boolean array data to set</param>
+        public void SetBoolArray(string name, bool[] data)
+        {
+            GL.UseProgram(Handle);
+            if (_uniformLocations.ContainsKey(name))
+            {
+                // Convert bool array to int array (0 for false, 1 for true) since GLSL doesn't have bool arrays
+                int[] intArray = new int[data.Length];
+                for (int i = 0; i < data.Length; i++)
+                {
+                    intArray[i] = data[i] ? 1 : 0;
+                }
+                GL.Uniform1(_uniformLocations[name], intArray.Length, intArray);
+            }
+        }
     }
 
     /// <summary>
@@ -219,20 +253,40 @@ using OpenTK.Mathematics;
         public int ColorVBO { get; set; }
         public int NormalsVBO { get; set; }
         public int TextureVBO { get; set; }
+        public int LayerIdVBO { get; set; }
         public int VertexCount { get; set; }
         public double[]? VertexArray { get; set; }
         public float[]? ColorArray { get; set; }
         public float[]? NormalsArray { get; set; }
         public float[]? TextureUVArray { get; set; }
+        public int[]? LayerIdArray { get; set; }
 
         public VboData()
         {
-            VAO = GL.GenVertexArray();
-            VertexVBO = GL.GenBuffer();
-            ColorVBO = GL.GenBuffer();
-            NormalsVBO = GL.GenBuffer();
-            TextureVBO = GL.GenBuffer();
+            // Initialize to 0 - actual OpenGL objects will be created when needed
+            VAO = 0;
+            VertexVBO = 0;
+            ColorVBO = 0;
+            NormalsVBO = 0;
+            TextureVBO = 0;
+            LayerIdVBO = 0;
             VertexCount = 0;
+        }
+
+        /// <summary>
+        /// Initialize OpenGL objects (call this after OpenGL context is ready)
+        /// </summary>
+        public void InitializeGL()
+        {
+            if (VAO == 0) // Only create if not already created
+            {
+                VAO = GL.GenVertexArray();
+                VertexVBO = GL.GenBuffer();
+                ColorVBO = GL.GenBuffer();
+                NormalsVBO = GL.GenBuffer();
+                TextureVBO = GL.GenBuffer();
+                LayerIdVBO = GL.GenBuffer();
+            }
         }
 
         public void Dispose()
@@ -242,6 +296,7 @@ using OpenTK.Mathematics;
             GL.DeleteBuffer(ColorVBO);
             GL.DeleteBuffer(NormalsVBO);
             GL.DeleteBuffer(TextureVBO);
+            GL.DeleteBuffer(LayerIdVBO);
         }
     }
 
@@ -275,7 +330,7 @@ using OpenTK.Mathematics;
             Index = _nextIndex++;
             CurrentPrimitiveType = defaultPrimitiveType;
             
-            // Create individual VBOs for each primitive type
+            // Create individual VBOs for each primitive type (OpenGL objects will be created when InitializeGL is called)
             TrianglesVbo = new VboData();
             LinesVbo = new VboData();
             LineStripVbo = new VboData();
@@ -287,6 +342,16 @@ using OpenTK.Mathematics;
                 { PrimitiveType.Lines, LinesVbo },
                 { PrimitiveType.LineStrip, LineStripVbo }
             };
+        }
+
+        /// <summary>
+        /// Initialize OpenGL objects for all VBOs (call this after OpenGL context is ready)
+        /// </summary>
+        public void InitializeGL()
+        {
+            TrianglesVbo.InitializeGL();
+            LinesVbo.InitializeGL();
+            LineStripVbo.InitializeGL();
         }
 
         /// <summary>
@@ -342,11 +407,18 @@ using OpenTK.Mathematics;
             set => GetCurrentVbo().TextureUVArray = value; 
         }
 
+        public int[]? LayerIdArray 
+        { 
+            get => GetCurrentVbo().LayerIdArray; 
+            set => GetCurrentVbo().LayerIdArray = value; 
+        }
+
         public int VAO => GetCurrentVbo().VAO;
         public int VertexVBO => GetCurrentVbo().VertexVBO;
         public int ColorVBO => GetCurrentVbo().ColorVBO;
         public int NormalsVBO => GetCurrentVbo().NormalsVBO;
         public int TextureVBO => GetCurrentVbo().TextureVBO;
+        public int LayerIdVBO => GetCurrentVbo().LayerIdVBO;
         public int VertexCount => GetCurrentVbo().VertexCount;
 
         // /// <summary>
@@ -434,38 +506,53 @@ using OpenTK.Mathematics;
         /// </summary>
         public void SetupVertexAttributes()
         {
-            GL.BindVertexArray(VAO);
+            // Ensure OpenGL objects are initialized
+            var currentVbo = GetCurrentVbo();
+            if (currentVbo.VAO == 0)
+            {
+                currentVbo.InitializeGL();
+            }
+
+            GL.BindVertexArray(currentVbo.VAO);
 
             // Vertex positions (location 0)
-            if (VertexArray != null)
+            if (currentVbo.VertexArray != null)
             {
-                GL.BindBuffer(BufferTarget.ArrayBuffer, VertexVBO);
+                GL.BindBuffer(BufferTarget.ArrayBuffer, currentVbo.VertexVBO);
                 GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 0, 0);
                 GL.EnableVertexAttribArray(0);
             }
 
             // Colors (location 1)
-            if (ColorArray != null)
+            if (currentVbo.ColorArray != null)
             {
-                GL.BindBuffer(BufferTarget.ArrayBuffer, ColorVBO);
+                GL.BindBuffer(BufferTarget.ArrayBuffer, currentVbo.ColorVBO);
                 GL.VertexAttribPointer(1, 4, VertexAttribPointerType.Float, false, 0, 0);
                 GL.EnableVertexAttribArray(1);
             }
 
             // Normals (location 2)
-            if (NormalsArray != null)
+            if (currentVbo.NormalsArray != null)
             {
-                GL.BindBuffer(BufferTarget.ArrayBuffer, NormalsVBO);
+                GL.BindBuffer(BufferTarget.ArrayBuffer, currentVbo.NormalsVBO);
                 GL.VertexAttribPointer(2, 3, VertexAttribPointerType.Float, false, 0, 0);
                 GL.EnableVertexAttribArray(2);
             }
 
             // Texture UVs (location 3)
-            if (TextureUVArray != null)
+            if (currentVbo.TextureUVArray != null)
             {
-                GL.BindBuffer(BufferTarget.ArrayBuffer, TextureVBO);
+                GL.BindBuffer(BufferTarget.ArrayBuffer, currentVbo.TextureVBO);
                 GL.VertexAttribPointer(3, 2, VertexAttribPointerType.Float, false, 0, 0);
                 GL.EnableVertexAttribArray(3);
+            }
+
+            // Layer IDs (location 4)
+            if (currentVbo.LayerIdArray != null)
+            {
+                GL.BindBuffer(BufferTarget.ArrayBuffer, currentVbo.LayerIdVBO);
+                GL.VertexAttribIPointer(4, 1, VertexAttribIntegerType.Int, 0, IntPtr.Zero);
+                GL.EnableVertexAttribArray(4);
             }
 
             GL.BindVertexArray(0);
@@ -595,13 +682,27 @@ using OpenTK.Mathematics;
         }
 
         /// <summary>
-        /// Appends complete vertex data (vertices, colors, normals, UVs) in one operation
+        /// Appends layer ID data to the existing layer ID array
+        /// </summary>
+        /// <param name="newLayerIds">Array of new layer IDs to append (one ID per vertex)</param>
+        public void AppendLayerIds(int[] newLayerIds)
+        {
+            if (newLayerIds == null || newLayerIds.Length == 0) return;
+
+            // Combine existing and new layer ID data
+            var combinedLayerIds = CombineIntArrays(LayerIdArray, newLayerIds);
+            LayerIdArray = combinedLayerIds;
+        }
+
+        /// <summary>
+        /// Appends complete vertex data (vertices, colors, normals, UVs, layer IDs) in one operation
         /// </summary>
         /// <param name="vertices">New vertices to append</param>
         /// <param name="colors">New colors to append (optional)</param>
         /// <param name="normals">New normals to append (optional)</param>
         /// <param name="uvs">New UV coordinates to append (optional)</param>
-        public void AppendVertexData(double[] vertices, float[]? colors = null, float[]? normals = null, float[]? uvs = null, bool SetToGPU=false)
+        /// <param name="layerIds">New layer IDs to append (optional)</param>
+        public void AppendVertexData(double[] vertices, float[]? colors = null, float[]? normals = null, float[]? uvs = null, int[]? layerIds = null, bool SetToGPU=false)
         {
             if (vertices == null || vertices.Length == 0) return;
 
@@ -616,6 +717,9 @@ using OpenTK.Mathematics;
                 
             if (uvs != null && uvs.Length > 0)
                 AppendTextureUVs(uvs);
+
+            if (layerIds != null && layerIds.Length > 0)
+                AppendLayerIds(layerIds);
 
             // Re-setup vertex attributes after appending all data
             if (SetToGPU) SetupVertexAttributes();
@@ -672,6 +776,26 @@ using OpenTK.Mathematics;
                 return (double[])existing.Clone();
 
             var combined = new double[existing.Length + newData.Length];
+            Array.Copy(existing, 0, combined, 0, existing.Length);
+            Array.Copy(newData, 0, combined, existing.Length, newData.Length);
+            return combined;
+        }
+
+        /// <summary>
+        /// Helper method to combine two int arrays
+        /// </summary>
+        /// <param name="existing">Existing array (can be null)</param>
+        /// <param name="newData">New data to append</param>
+        /// <returns>Combined array</returns>
+        private static int[] CombineIntArrays(int[]? existing, int[] newData)
+        {
+            if (existing == null || existing.Length == 0)
+                return (int[])newData.Clone();
+
+            if (newData == null || newData.Length == 0)
+                return (int[])existing.Clone();
+
+            var combined = new int[existing.Length + newData.Length];
             Array.Copy(existing, 0, combined, 0, existing.Length);
             Array.Copy(newData, 0, combined, existing.Length, newData.Length);
             return combined;

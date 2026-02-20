@@ -383,7 +383,7 @@ public class ToolsBase
         }
 
         // Mouse wheel for dynamic zoom, keeping mouse-point stationary in world coordinates
-        public  void MouseWheel()
+        public void MouseWheel()
         {
             bool outside;
             if (Gcd.Drawing.Sheet.Viewport != null)

@@ -27,6 +27,19 @@ public partial class fMain : ApplicationWindow
 
     public string KeysAccumulator = "";
 
+    // Matrix management for pan and zoom
+    private Matrix4 projectionMatrix = Matrix4.Identity;
+    private Matrix4 viewMatrix = Matrix4.Identity;
+    private Matrix4 modelMatrix = Matrix4.Identity;
+    
+    // Pan and zoom state
+    private Vector2 panOffset = Vector2.Zero;
+    private float zoomLevel = 1.0f;
+    private Vector2 lastMousePos = Vector2.Zero;
+    private bool isPanning = false;
+
+
+    private bool _demoLayersInitialized = false;
 
     public fMain(Application app) : base()
     {
@@ -68,9 +81,6 @@ public partial class fMain : ApplicationWindow
         _menuButton.Popover = _popover;
 
         _headerBar.PackEnd(_menuButton);
-
-
-
     }
     
     private void SetEventsControllers()
@@ -89,8 +99,10 @@ public partial class fMain : ApplicationWindow
         // quitAction.OnActivate += OnQuitActivated;
         app.AddAction(quitAction);
 
-         // Se agrega un controlador de eventos del mouse
+        // Se agrega un controlador de eventos del mouse
         EventControllerMotion events = EventControllerMotion.New();
+        events.OnMotion += OnMouseMotion;
+        glArea.AddController(events);
 
         // Create and connect a click gesture
         mouse_click = GestureClick.New();
@@ -98,9 +110,13 @@ public partial class fMain : ApplicationWindow
         // mouse_click = glArea;
 
         mouse_click.OnPressed += EventsMouse;
+        mouse_click.OnReleased += OnMouseReleased;
         glArea.AddController(mouse_click);
 
-        
+        // Add mouse wheel (scroll) event controller
+        var scroll_controller = EventControllerScroll.New(EventControllerScrollFlags.Vertical | EventControllerScrollFlags.Horizontal);
+        scroll_controller.OnScroll += OnMouseWheel;
+        glArea.AddController(scroll_controller);
 
         EventControllerKey key_controller = EventControllerKey.New();
         key_controller.OnKeyPressed += on_key_pressed;
@@ -172,8 +188,7 @@ public partial class fMain : ApplicationWindow
         Console.WriteLine("OpenGL Version: " + glVersion);
         Console.WriteLine("GLSL Version: " + glslVersion);
 
-
-        shader = new Shader("/home/martin/estru3dc/data/shaders/basic.vert", "/home/martin/estru3dc/data/shaders/basic.frag");
+        shader = new Shader("/home/martin/gaucho/shaders/basic.vert", "/home/martin/gaucho/shaders/basic.frag");
 
         // Triangle vertices (x, y, z)
         float[] vertices = new float[] {
@@ -182,9 +197,13 @@ public partial class fMain : ApplicationWindow
             0.5f, -0.5f, 0.0f
         };
 
+        // Layer IDs for each vertex (all belong to layer 0)
+        int[] layerIds = new int[] { 0, 0, 0 };
+
         vao = GL.GenVertexArray();
         GL.BindVertexArray(vao);
 
+        // Vertex buffer
         vbo = GL.GenBuffer();
         GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
         GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
@@ -192,7 +211,29 @@ public partial class fMain : ApplicationWindow
         GL.EnableVertexAttribArray(0);
         GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
 
+        // Layer ID buffer
+        int layerVbo = GL.GenBuffer();
+        GL.BindBuffer(BufferTarget.ArrayBuffer, layerVbo);
+        GL.BufferData(BufferTarget.ArrayBuffer, layerIds.Length * sizeof(int), layerIds, BufferUsageHint.StaticDraw);
+
+        GL.EnableVertexAttribArray(4);
+        GL.VertexAttribIPointer(4, 1, VertexAttribIntegerType.Int, 0, IntPtr.Zero);
+
         GL.BindVertexArray(0);
+        
+        // Initialize a demo layer for the test triangle
+        var demoLayer = new Layer { Name = "Test Triangle", Visible = true, Colour = 1 };
+        LayerManager.RegisterLayer(demoLayer);
+        
+        // Initialize demo layers now that OpenGL is ready (only once)
+        if (!_demoLayersInitialized)
+        {
+            InitializeDemoLayers();
+            _demoLayersInitialized = true;
+        }
+        
+        // Initialize matrices
+        UpdateMatrices();
     }
         
 
@@ -201,6 +242,7 @@ public partial class fMain : ApplicationWindow
             int w = glArea.GetAllocatedWidth();
             int h = glArea.GetAllocatedHeight();
             GL.Viewport(0, 0, w, h);
+            UpdateMatrices();
             return true;
         }
 
@@ -210,12 +252,54 @@ public partial class fMain : ApplicationWindow
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            shader?.Use();
-            GL.BindVertexArray(vao);
-            GL.DrawArrays(OpenTK.Graphics.OpenGL4.PrimitiveType.Triangles, 0, 3);
-            GL.BindVertexArray(0);
+            if (shader != null)
+            {
+                shader.Use();
+                
+                // Set matrix uniforms
+                shader.SetMatrix4("uProjection", projectionMatrix);
+                shader.SetMatrix4("uView", viewMatrix);
+                shader.SetMatrix4("uModel", modelMatrix);
+                
+                // Set layer visibility data
+                var layerVisibility = LayerManager.GetLayerVisibilityArray();
+                shader.SetBoolArray("uLayerVisible", layerVisibility);
+                shader.SetInt("uMaxLayers", LayerManager.MAX_LAYERS);
+                
+                // Set color uniform
+                shader.SetVector4("uColor", new Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+                
+                GL.BindVertexArray(vao);
+                GL.DrawArrays(OpenTK.Graphics.OpenGL4.PrimitiveType.Triangles, 0, 3);
+                GL.BindVertexArray(0);
+            }
+            
             return true;
 
+        }
+        
+        private void UpdateMatrices()
+        {
+            int w = glArea.GetAllocatedWidth();
+            int h = glArea.GetAllocatedHeight();
+            
+            if (w == 0 || h == 0) return;
+            
+            float aspectRatio = (float)w / (float)h;
+            
+            // Create orthographic projection matrix
+            float zoom = 20.0f / zoomLevel;
+            projectionMatrix = Matrix4.CreateOrthographic(w, h, -1.0f, 1.0f);
+            
+            projectionMatrix *= Matrix4.CreateScale(zoom);
+
+             projectionMatrix *= Matrix4.CreateTranslation(-panOffset.X, -panOffset.Y, 0.0f);
+
+            // Create view matrix with pan offset
+           // viewMatrix = Matrix4.CreateTranslation(-panOffset.X, -panOffset.Y, 0.0f);
+            
+            // Model matrix remains identity for now
+            modelMatrix = Matrix4.Identity;
         }
 
     private new void Unrealize()
@@ -236,12 +320,103 @@ public partial class fMain : ApplicationWindow
     private void EventsMouse(GestureClick o, GestureClick.PressedSignalArgs e)
     {
         int b = (int)mouse_click.GetCurrentButton();  // 1 = left, 2 = middle, 3 = right
-        int x = (int)e.X;
-        int y = (int)e.Y;
+        float x = (float)e.X;
+        float y = (float)e.Y;
+        
+        lastMousePos = new Vector2(x, y);
+        
+        // Middle mouse button starts panning
+        if (b == 2)
+        {
+            isPanning = true;
+            Console.WriteLine("Started panning");
+        }
+        
         Console.WriteLine($"Mouse pressed at ({x}, {y}) with button {b} ");
         
         // Also log to debug window
         DebugWindow.LogInfo($"Mouse pressed at ({x}, {y}) with button {b}");
+    }
+    
+    private void OnMouseReleased(GestureClick o, GestureClick.ReleasedSignalArgs e)
+    {
+        int b = (int)mouse_click.GetCurrentButton();
+        
+        if (b == 2)
+        {
+            isPanning = false;
+            Console.WriteLine("Stopped panning");
+        }
+    }
+    
+    private void OnMouseMotion(EventControllerMotion o, EventControllerMotion.MotionSignalArgs e)
+    {
+        Vector2 currentMousePos = new Vector2((float)e.X, (float)e.Y);
+        
+        if (isPanning)
+        {
+            // Calculate mouse delta in screen coordinates
+            Vector2 mouseDelta = currentMousePos - lastMousePos;
+            
+            // Convert mouse delta to world coordinates
+            int w = glArea.GetAllocatedWidth();
+            int h = glArea.GetAllocatedHeight();
+            
+            if (w > 0 && h > 0)
+            {
+                float aspectRatio = (float)w / (float)h;
+                float zoom = 1.0f / zoomLevel;
+                
+                // Scale mouse movement based on current zoom and viewport size
+                Vector2 worldDelta = new Vector2(
+                    mouseDelta.X * 2.0f * zoom * aspectRatio / w,
+                    -mouseDelta.Y * 2.0f * zoom / h  // Negative Y to match OpenGL coordinate system
+                );
+                
+                panOffset += worldDelta;
+                UpdateMatrices();
+                
+                // Queue a redraw
+                glArea.QueueRender();
+                
+                Console.WriteLine($"Pan offset: {panOffset}");
+            }
+        }
+        
+        lastMousePos = currentMousePos;
+    }
+
+    private bool OnMouseWheel(EventControllerScroll o, EventControllerScroll.ScrollSignalArgs e)
+    {
+        // Implement zooming with mouse wheel
+        float zoomFactor = 1.1f;
+        
+        if (e.Dy < 0) // Scroll up - zoom in
+        {
+            zoomLevel *= zoomFactor;
+        }
+        else if (e.Dy > 0) // Scroll down - zoom out
+        {
+            zoomLevel /= zoomFactor;
+        }
+        
+        // Limit zoom levels
+        zoomLevel = Math.Max(0.1f, Math.Min(10.0f, zoomLevel));
+        
+        UpdateMatrices();
+        glArea.QueueRender();
+        
+        Console.WriteLine($"Zoom level: {zoomLevel}");
+        
+        // Still call original handler if needed
+        Mouse.Delta = (int)e.Dy;
+        
+        if (Gcd.clsJob != null)
+        {
+            Gcd.clsJob.MouseWheel();
+        }
+        
+        return true; // Event handled
     }
 
     private void OnDebugActivated(object? sender, EventArgs e)
@@ -428,7 +603,12 @@ public partial class fMain : ApplicationWindow
 
         mouse_click_2.OnPressed += EventsMouse;
         glArea1.AddController(mouse_click_2);
-       
+
+        // Add mouse wheel (scroll) event controller to viewport
+        var scroll_controller_viewport = EventControllerScroll.New(EventControllerScrollFlags.Vertical | EventControllerScrollFlags.Horizontal);
+        scroll_controller_viewport.OnScroll += OnMouseWheel;
+        glArea1.AddController(scroll_controller_viewport);
+
         glArea1.MarginTop = 6;
         glArea1.MarginBottom = 6;
         glArea1.MarginStart = 6;

@@ -227,8 +227,6 @@ public class View
         /// </summary>
         public Punto3d OriginForOrthographicType { get; set; } = new Punto3d();
 
-        public UCS() { }
-
         public UCS(string name, string? id = null)
         {
             Name = name;
