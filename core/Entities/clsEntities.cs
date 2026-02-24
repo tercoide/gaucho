@@ -160,6 +160,29 @@
         //         return false;
         //     }
         // }
+    public static void GlGenBuffers(Layer l = null)
+        {
+            if (l != null)
+            {
+                Layer lay = l;
+                    if (lay.vbo != null) lay.vbo.Dispose(); //VboManager.RemoveVbo(VboManager.GetVbo(lay.vbo.index));
+                    lay.vbo = VboManager.CreateVbo();
+                return;
+            } else {
+
+                foreach (var layp in Gcd.Drawing.Layers)
+                {
+                    Layer lay = layp.Value;
+                    if (lay.vbo != null) lay.vbo.Dispose(); //VboManager.RemoveVbo(VboManager.GetVbo(lay.vbo.index));
+                    lay.vbo = VboManager.CreateVbo();
+                   
+                }
+                // Per-entity GL list generation is done in GlGenDrawList.
+                return;
+            }
+
+        }
+
 
         // // Generate GL buffers: either for a single entity or for the whole drawing VBOs
         // public static void GlGenBuffers(Entity eEntity = null)
@@ -311,6 +334,8 @@
 
             
         }
+
+        
 
         public static void GlGenDrawListLayers(Layer? aLayer = null)
         {

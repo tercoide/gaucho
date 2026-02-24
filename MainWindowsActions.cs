@@ -207,8 +207,8 @@ namespace Gaucho;
         // fmain.tabDrawings.Text = Left(f, 12)
 
         // TODO: Uncomment when dependencies are available
-        /*
-        Gcd.debugInfo("Showing drawing", "", "", true);
+        
+        Gcd.debugInfo("Showing drawing", false, false, true);
         Gcd.DrawingReady = true;
         // fmain.GLArea1.Enabled = true;
          // this is what we are doing now
@@ -218,16 +218,16 @@ namespace Gaucho;
         Gcd.clsJobPreZoom = Gcd.Tools["SELECTION"];
         Gcd.clsJobPreviousParam = 0;
 
-        AddFilesOpen(f);
+        // AddFilesOpen(f);
 
-        Gcd.Redraw();
+        Gcd.Regen();
 
-        Gcd.debugInfo("File not found", "", "", true);
+        // Gcd.debugInfo("File not found", false, false, true);
         
-        Config.FilesLastPath = Util.PathFromFile(f);
+        // Config.FilesLastPath = Util.PathFromFile(f);
 
         // Application.Busy--; // or however busy counter is managed
-        */
+        
     }
 
     private static void LoadDXF(string fDxf)

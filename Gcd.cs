@@ -1228,6 +1228,7 @@ public static class Gcd
            StepsDone = 0;
             //ReEscalar(drawing.Sheet)
             //PanToOrigin()
+            clsEntities.GlGenBuffers();
             clsEntities.BuildGeometry();
            Drawing.Sheet.ScaleZoomLast =Drawing.Sheet.ScaleZoom;
             clsEntities.GlGenDrawList();
