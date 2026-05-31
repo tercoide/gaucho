@@ -53,7 +53,7 @@ namespace Gaucho;
 
         //NEW: Estas variables provienen del formulario main. En dicho formulario se estableceran pero sean guardadas siempre en esta clase y no se alterraran manualmente (de momento)
         //TINCHO 2023.05.22 > Config.class implementation
-        public static string dirResources = Root + "/resources";
+        public static string dirResources = Home + "/resources";
         public static string dirDwgIn="";
         public static string dirDxfIn="";
         public static string dirDwgOut="";

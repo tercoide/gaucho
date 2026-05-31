@@ -412,7 +412,7 @@ public static class Gcd
             //FileName = User.Home &/ "autosaveV5.xml"
 
             debugInfo("Reading fonts from " + System.IO.Path.Combine(Config.dirResources, "fonts", "lff"), false, false, true);
-            FontList = Glx.LoadFonts(System.IO.Path.Combine(Config.dirResources, "fonts", "lff"));
+            FontList = Glx.LoadFonts(System.IO.Path.Combine(Config.Home + Config.dirResources, "fonts", "lff"));
             //FontList = glx.LoadFonts(Gcd.sFonts)
             Glx.SelectFont("romans");
 
@@ -1648,7 +1648,7 @@ public static class Gcd
 
             if (LogToFile)
             {
-                System.IO.File.AppendAllText(Config.Log,
+                System.IO.File.AppendAllText(Config.Home +Config.Log,
                     DateTime.Now.ToString("HH:mm:ss") + " -> " + txt + Environment.NewLine);
             }
 

@@ -218,6 +218,22 @@ namespace Gaucho
         public static double CDbl(string str)
         {
             double result;
+            if (Left(str, 1).Equals(".")   ) str = "0" + str; // Handle cases like ".5" which should be "0.5"
+            if (Left(str, 2).Equals("-.")) str = "-0" + str.Substring(1); // Handle cases like "-.5" which should be "-0.5"
+            if (str.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+            {
+                // Handle hexadecimal double conversion if needed (not standard, but for consistency with CInt)
+                try
+                {
+                    string hexPart = str.Substring(2);
+                    long hexValue = Convert.ToInt64(hexPart, 16);
+                    return BitConverter.Int64BitsToDouble(hexValue);
+                }
+                catch (Exception)
+                {
+                    throw new FormatException($"'{str}' is not a valid hexadecimal double.");
+                }
+            }
             if (double.TryParse(str, out result))
             {
                 return result;
