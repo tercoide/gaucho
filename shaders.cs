@@ -131,13 +131,33 @@ using OpenTK.Mathematics;
 
         public int GetUniformLocation(string uniformName)
         {
-            return GL.GetUniformLocation(Handle, uniformName);
+            if (_uniformLocations.TryGetValue(uniformName, out var cachedLocation))
+            {
+                return cachedLocation;
+            }
+
+            var location = GL.GetUniformLocation(Handle, uniformName);
+            if (location == -1 && !uniformName.EndsWith("[0]", StringComparison.Ordinal))
+            {
+                location = GL.GetUniformLocation(Handle, uniformName + "[0]");
+            }
+
+            if (location != -1)
+            {
+                _uniformLocations[uniformName] = location;
+            }
+
+            return location;
         }
 
         public void SetBool(string name, bool data)
         {
             GL.UseProgram(Handle);
-            GL.Uniform1(_uniformLocations[name], Convert.ToInt32(data));
+            var location = GetUniformLocation(name);
+            if (location != -1)
+            {
+                GL.Uniform1(location, Convert.ToInt32(data));
+            }
         }
 
         // Uniform setters
@@ -157,9 +177,10 @@ using OpenTK.Mathematics;
         public void SetInt(string name, int data)
         {
             GL.UseProgram(Handle);
-            if (_uniformLocations.ContainsKey(name))
+            var location = GetUniformLocation(name);
+            if (location != -1)
             {
-                GL.Uniform1(_uniformLocations[name], data);
+                GL.Uniform1(location, data);
             }
         }
 
@@ -171,7 +192,11 @@ using OpenTK.Mathematics;
         public void SetFloat(string name, float data)
         {
             GL.UseProgram(Handle);
-            GL.Uniform1(_uniformLocations[name], data);
+            var location = GetUniformLocation(name);
+            if (location != -1)
+            {
+                GL.Uniform1(location, data);
+            }
         }
 
         /// <summary>
@@ -187,7 +212,11 @@ using OpenTK.Mathematics;
         public void SetMatrix4(string name, Matrix4 data)
         {
             GL.UseProgram(Handle);
-            GL.UniformMatrix4(_uniformLocations[name], true, ref data);
+            var location = GetUniformLocation(name);
+            if (location != -1)
+            {
+                GL.UniformMatrix4(location, true, ref data);
+            }
         }
 
         /// <summary>
@@ -198,7 +227,11 @@ using OpenTK.Mathematics;
         public void SetVector3(string name, Vector3 data)
         {
             GL.UseProgram(Handle);
-            GL.Uniform3(_uniformLocations[name], data);
+            var location = GetUniformLocation(name);
+            if (location != -1)
+            {
+                GL.Uniform3(location, data);
+            }
         }
         
         /// <summary>
@@ -209,7 +242,11 @@ using OpenTK.Mathematics;
         public void SetVector4(string name, Vector4 data)
         {
             GL.UseProgram(Handle);
-            GL.Uniform4(_uniformLocations[name], data);
+            var location = GetUniformLocation(name);
+            if (location != -1)
+            {
+                GL.Uniform4(location, data);
+            }
         }
 
         /// <summary>
@@ -220,7 +257,8 @@ using OpenTK.Mathematics;
         public void SetBoolArray(string name, bool[] data)
         {
             GL.UseProgram(Handle);
-            if (_uniformLocations.ContainsKey(name))
+            var location = GetUniformLocation(name);
+            if (location != -1)
             {
                 // Convert bool array to int array (0 for false, 1 for true) since GLSL doesn't have bool arrays
                 int[] intArray = new int[data.Length];
@@ -228,7 +266,7 @@ using OpenTK.Mathematics;
                 {
                     intArray[i] = data[i] ? 1 : 0;
                 }
-                GL.Uniform1(_uniformLocations[name], intArray.Length, intArray);
+                GL.Uniform1(location, intArray.Length, intArray);
             }
         }
     }
@@ -556,6 +594,83 @@ using OpenTK.Mathematics;
             }
 
             GL.BindVertexArray(0);
+        }
+
+        public void SetVertices(float[] vertices, PrimitiveType? primitiveType = null)
+        {
+            if (vertices == null) throw new ArgumentNullException(nameof(vertices));
+            if (vertices.Length % 3 != 0)
+            {
+                throw new ArgumentException("Vertex array must contain xyz triplets.", nameof(vertices));
+            }
+
+            var vbo = GetTargetVbo(primitiveType);
+            if (vbo.VAO == 0)
+            {
+                vbo.InitializeGL();
+            }
+
+            vbo.VertexArray = Array.ConvertAll(vertices, static value => (double)value);
+            vbo.VertexCount = vertices.Length / 3;
+
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo.VertexVBO);
+            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
+        }
+
+        public void SetLayerIds(int[] layerIds, PrimitiveType? primitiveType = null)
+        {
+            if (layerIds == null) throw new ArgumentNullException(nameof(layerIds));
+
+            var vbo = GetTargetVbo(primitiveType);
+            if (vbo.VAO == 0)
+            {
+                vbo.InitializeGL();
+            }
+
+            if (vbo.VertexCount > 0 && layerIds.Length != vbo.VertexCount)
+            {
+                throw new ArgumentException("Layer ID count must match vertex count.", nameof(layerIds));
+            }
+
+            vbo.LayerIdArray = (int[])layerIds.Clone();
+
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo.LayerIdVBO);
+            GL.BufferData(BufferTarget.ArrayBuffer, layerIds.Length * sizeof(int), layerIds, BufferUsageHint.StaticDraw);
+        }
+
+        public void LoadPrimitive(float[] vertices, int[]? layerIds = null, PrimitiveType primitiveType = PrimitiveType.Triangles)
+        {
+            SetCurrentPrimitiveType(primitiveType);
+            SetVertices(vertices, primitiveType);
+
+            if (layerIds != null)
+            {
+                SetLayerIds(layerIds, primitiveType);
+            }
+
+            SetupVertexAttributes();
+        }
+
+        public static VboContainer CreateTestTriangle(int[]? layerIds = null)
+        {
+            var triangle = new VboContainer(PrimitiveType.Triangles);
+            triangle.InitializeGL();
+            triangle.LoadPrimitive(
+                new float[]
+                {
+                    0.0f, 0.8f, 0.0f,
+                    -0.8f, -0.8f, 0.0f,
+                    0.8f, -0.8f, 0.0f
+                },
+                layerIds ?? new[] { 0, 0, 0 },
+                PrimitiveType.Triangles);
+
+            return triangle;
+        }
+
+        private VboData GetTargetVbo(PrimitiveType? primitiveType)
+        {
+            return primitiveType.HasValue ? GetVbo(primitiveType.Value) : GetCurrentVbo();
         }
 
         /// <summary>
@@ -967,11 +1082,10 @@ using OpenTK.Mathematics;
         {
             if (_disposed) return;
 
-            GL.DeleteVertexArray(VAO);
-            GL.DeleteBuffer(VertexVBO);
-            GL.DeleteBuffer(ColorVBO);
-            GL.DeleteBuffer(NormalsVBO);
-            GL.DeleteBuffer(TextureVBO);
+            foreach (var vbo in _vbosByType.Values)
+            {
+                vbo.Dispose();
+            }
 
             _disposed = true;
         }

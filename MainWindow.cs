@@ -19,10 +19,9 @@ public partial class fMain : ApplicationWindow
     public Label _statusLabel = null!;
     private Notebook _viewportNotebook = null!;
     Shader? shader;
+    VboContainer? testTriangle;
 
     GLArea glArea = null!;
-    int vao = 0;
-    int vbo = 0;
     GestureClick mouse_click = null!;
 
     public string KeysAccumulator = "";
@@ -125,7 +124,7 @@ public partial class fMain : ApplicationWindow
 
         bool on_key_pressed(object o, EventControllerKey.KeyPressedSignalArgs args)
         {
-            Gcd.clsJob.KeyDown((int) args.Keycode);
+            Gcd.clsJob?.KeyDown((int) args.Keycode);
             if (args.Keycode == 65505 || args.Keycode == 65506) // Shift keys
             {
                 Key.Shift = true;
@@ -142,12 +141,12 @@ public partial class fMain : ApplicationWindow
         }
         void on_key_released(object o, EventControllerKey.KeyReleasedSignalArgs args)
         {
-            Gcd.clsJob.KeyUp((int) args.Keyval);
+            Gcd.clsJob?.KeyUp((int) args.Keyval);
 
             if ((int) args.Keyval == Key.Enter)
             {
                 
-                Gcd.clsJob.KeyText(KeysAccumulator);
+                Gcd.clsJob?.KeyText(KeysAccumulator);
                 Console.WriteLine($"Key Text: " + KeysAccumulator);
 
                 KeysAccumulator = "";   
@@ -156,7 +155,7 @@ public partial class fMain : ApplicationWindow
             if (args.ToString() !="")
             {
                 var sKey = Gb.Chr((int) args.Keyval).ToString(); ;
-                Gcd.clsJob.KeyPress((int) args.Keyval, sKey);
+                Gcd.clsJob?.KeyPress((int) args.Keyval, sKey);
                 KeysAccumulator += sKey;
                 
                 // Console.WriteLine($"sKey : " + sKey);            
@@ -188,42 +187,13 @@ public partial class fMain : ApplicationWindow
         Console.WriteLine("OpenGL Version: " + glVersion);
         Console.WriteLine("GLSL Version: " + glslVersion);
 
-        shader = new Shader("/home/martin/gaucho/shaders/basic.vert", "/home/martin/gaucho/shaders/basic.frag");
-
-        // Triangle vertices (x, y, z)
-        float[] vertices = new float[] {
-            0.0f,  0.5f, 0.0f,
-           -0.5f, -0.5f, 0.0f,
-            0.5f, -0.5f, 0.0f
-        };
-
-        // Layer IDs for each vertex (all belong to layer 0)
-        int[] layerIds = new int[] { 0, 0, 0 };
-
-        vao = GL.GenVertexArray();
-        GL.BindVertexArray(vao);
-
-        // Vertex buffer
-        vbo = GL.GenBuffer();
-        GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
-        GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
-
-        GL.EnableVertexAttribArray(0);
-        GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
-
-        // Layer ID buffer
-        int layerVbo = GL.GenBuffer();
-        GL.BindBuffer(BufferTarget.ArrayBuffer, layerVbo);
-        GL.BufferData(BufferTarget.ArrayBuffer, layerIds.Length * sizeof(int), layerIds, BufferUsageHint.StaticDraw);
-
-        GL.EnableVertexAttribArray(4);
-        GL.VertexAttribIPointer(4, 1, VertexAttribIntegerType.Int, 0, IntPtr.Zero);
-
-        GL.BindVertexArray(0);
+        shader = new Shader(Config.Home + Config.dirResources + "/shaders/basic.vert", Config.Home + Config.dirResources + "/shaders/basic.frag");
         
         // Initialize a demo layer for the test triangle
         var demoLayer = new Layer { Name = "Test Triangle", Visible = true, Colour = 1 };
         LayerManager.RegisterLayer(demoLayer);
+        testTriangle?.Dispose();
+        testTriangle = VboContainer.CreateTestTriangle(LayerManager.CreateLayerIdArray(demoLayer, 3));
         
         // Initialize demo layers now that OpenGL is ready (only once)
         if (!_demoLayersInitialized)
@@ -256,10 +226,10 @@ public partial class fMain : ApplicationWindow
             {
                 shader.Use();
                 
-                // Set matrix uniforms
-                shader.SetMatrix4("uProjection", projectionMatrix);
-                shader.SetMatrix4("uView", viewMatrix);
-                shader.SetMatrix4("uModel", modelMatrix);
+                // Draw the test triangle in clip space so it stays visible while GLArea wiring is being verified.
+                shader.SetMatrix4("uProjection", Matrix4.Identity);
+                shader.SetMatrix4("uView", Matrix4.Identity);
+                shader.SetMatrix4("uModel", Matrix4.Identity);
                 
                 // Set layer visibility data
                 var layerVisibility = LayerManager.GetLayerVisibilityArray();
@@ -269,9 +239,7 @@ public partial class fMain : ApplicationWindow
                 // Set color uniform
                 shader.SetVector4("uColor", new Vector4(1.0f, 0.0f, 0.0f, 1.0f));
                 
-                GL.BindVertexArray(vao);
-                GL.DrawArrays(OpenTK.Graphics.OpenGL4.PrimitiveType.Triangles, 0, 3);
-                GL.BindVertexArray(0);
+                testTriangle?.Render();
             }
             
             return true;
@@ -305,15 +273,10 @@ public partial class fMain : ApplicationWindow
     private new void Unrealize()
     {
         glArea.MakeCurrent();
-        if (vbo != 0)
+        if (testTriangle != null)
         {
-            GL.DeleteBuffer(vbo);
-            vbo = 0;
-        }
-        if (vao != 0)
-        {
-            GL.DeleteVertexArray(vao);
-            vao = 0;
+            testTriangle.Dispose();
+            testTriangle = null;
         }
     }
         
